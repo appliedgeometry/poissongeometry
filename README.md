@@ -1,9 +1,9 @@
 # Poisson Geometry
 Es una clase de Python para hacer Cálculo Simbólico en Geometría de Poisson, algunas de sus funciones son:
  - [x] Obtener Estructuras de Poisson del tipo Flaska-Ratiu
- - [] Calcular Corchete de Schouten
- - [] Calcular Corchete de Poisson
- - [] Calcular Cohomología de Poisson
+ - [ ] Calcular Corchete de Schouten
+ - [ ] Calcular Corchete de Poisson
+ - [ ] Calcular Cohomología de Poisson
 
 ## Comenzando 🚀
 Simplemente descarga el archivo poisson.py e importalo para obtener todas sus funciones
