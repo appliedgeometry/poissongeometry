@@ -734,7 +734,7 @@ class PoissonGeometry:
                 else:
                     # Case: Hessian of <E,P> with index 1
                     return {12: 0, 13: x_aux[0] + 4*sym.sympify('a')*x_aux[1],
-                            23: 4*sy.sympify('a')*x_aux[0] + x_aux[1]}
+                            23: 4*sym.sympify('a')*x_aux[0] + x_aux[1]}
             if hess_pairing_E_P.rank() == 1:
                 return {12: 0, 13: x_aux[0], 23: 4*x_aux[0] + x_aux[1]}
 
@@ -842,104 +842,104 @@ class PoissonGeometry:
                 print(f'Case VIII')
 
 
-        def gauge_transformation(self, bivector, two_form):
-            two_form_B = sym.MatrixSymbol('B', self.dim, self.dim)
-            two_form_B = sym.Matrix(two_form_B)
-            # Assigns the corresponding coefficients of the 2-form
-            for z in itools.combinations_with_replacement(range(1, self.dim + 1),
-                                                          2):
-                if z[0] == z[1]:
-                    two_form_B[z[0] - 1, z[1] - 1] = 0
-                else:
-                    two_form_B[z[0] - 1, z[1] - 1] = sym.sympify(
-                        two_form[int(''.join(str(i) for i in z))])
-                    two_form_B[z[1] - 1, z[0] - 1] = (-1) * two_form_B[
-                        z[0] - 1, z[1] - 1]
-            I_minus_BP = sym.Matrix(sy.simplify(
-                sy.eye(self.dim) - two_form_B * self.bivector_to_matrix(bivector)))
-            det_I_minus_BP = sym.factor(sym.simplify(I_minus_BP.det()))
-            if det_I_minus_BP == 0:
-                return f'\nThe differential 2-form can\'t induces a gauge ' \
-                    f'transformation.'
+    def gauge_transformation(self, bivector, two_form):
+        two_form_B = sym.MatrixSymbol('B', self.dim, self.dim)
+        two_form_B = sym.Matrix(two_form_B)
+        # Assigns the corresponding coefficients of the 2-form
+        for z in itools.combinations_with_replacement(range(1, self.dim + 1),
+                                                      2):
+            if z[0] == z[1]:
+                two_form_B[z[0] - 1, z[1] - 1] = 0
             else:
-                gauge_mtx = sym.Matrix(
-                    sym.simplify(self.bivector_to_matrix(bivector) * (I_minus_BP.inv())))
-                return gauge_mtx, sym.sympify(det_I_minus_BP)
+                two_form_B[z[0] - 1, z[1] - 1] = sym.sympify(
+                    two_form[int(''.join(str(i) for i in z))])
+                two_form_B[z[1] - 1, z[0] - 1] = (-1) * two_form_B[
+                    z[0] - 1, z[1] - 1]
+        I_minus_BP = sym.Matrix(sy.simplify(
+            sy.eye(self.dim) - two_form_B * self.bivector_to_matrix(bivector)))
+        det_I_minus_BP = sym.factor(sym.simplify(I_minus_BP.det()))
+        if det_I_minus_BP == 0:
+            return f'\nThe differential 2-form can\'t induces a gauge ' \
+                f'transformation.'
+        else:
+            gauge_mtx = sym.Matrix(
+                sym.simplify(self.bivector_to_matrix(bivector) * (I_minus_BP.inv())))
+            return gauge_mtx, sym.sympify(det_I_minus_BP)
 
 # CLASSIFICATION
 
-        def lie_der_vf_2_form(self, vector_field, two_form):
-            for i in vector_field:
-                vector_field[i] = sym.sympify(vector_field[i])
-            for key in two_form:
-                two_form[key] = sym.sympify(two_form[key])
-            lie_der_2_form = {}
-            for key in two_form:
-                lie_der_aux_k = sym.simplify(sum(
-                    vector_field[k] * sym.diff(two_form[key], self.x_coord[k - 1])
-                    for k in range(1, self.dim + 1)))
-                ky2 = tuple(int(i) for i in str(key))
-                lie_der_aux_ki = sym.simplify(sum(
-                    (-1) * sym.diff(vector_field[k], self.x_coord[ky2[1] - 1]) *
-                    two_form[int(''.join((f'{k}', f'{ky2[0]}')))] for k in
-                    range(1, ky2[0])))
-                lie_der_aux_ik = sym.simplify(sum(
-                    sym.diff(vector_field[k], self.x_coord[ky2[1] - 1]) * two_form[
-                        int(''.join((f'{ky2[0]}', f'{k}')))] for k in
-                    range(ky2[0] + 1, self.dim + 1)))
-                lie_der_aux_kj = sym.simplify(sum(
-                    sym.diff(vector_field[k], self.x_coord[ky2[0] - 1]) * two_form[
-                        int(''.join((f'{k}', f'{ky2[1]}')))] for k in
-                    range(1, ky2[1])))
-                lie_der_aux_jk = sym.simplify(sum(
-                    (-1) * sym.diff(vector_field[k], self.x_coord[ky2[0] - 1]) *
-                    two_form[int(''.join((f'{ky2[1]}', f'{k}')))] for k in
-                    range(ky2[1] + 1, self.dim + 1)))
-                lie_der_2_form.setdefault(key, sym.simplify(
-                    lie_der_aux_k + lie_der_aux_ki + lie_der_aux_ik
-                    + lie_der_aux_kj + lie_der_aux_jk))
-            return lie_der_2_form
+    def lie_der_vf_2_form(self, vector_field, two_form):
+        for i in vector_field:
+            vector_field[i] = sym.sympify(vector_field[i])
+        for key in two_form:
+            two_form[key] = sym.sympify(two_form[key])
+        lie_der_2_form = {}
+        for key in two_form:
+            lie_der_aux_k = sym.simplify(sum(
+                vector_field[k] * sym.diff(two_form[key], self.x_coord[k - 1])
+                for k in range(1, self.dim + 1)))
+            ky2 = tuple(int(i) for i in str(key))
+            lie_der_aux_ki = sym.simplify(sum(
+                (-1) * sym.diff(vector_field[k], self.x_coord[ky2[1] - 1]) *
+                two_form[int(''.join((f'{k}', f'{ky2[0]}')))] for k in
+                range(1, ky2[0])))
+            lie_der_aux_ik = sym.simplify(sum(
+                sym.diff(vector_field[k], self.x_coord[ky2[1] - 1]) * two_form[
+                    int(''.join((f'{ky2[0]}', f'{k}')))] for k in
+                range(ky2[0] + 1, self.dim + 1)))
+            lie_der_aux_kj = sym.simplify(sum(
+                sym.diff(vector_field[k], self.x_coord[ky2[0] - 1]) * two_form[
+                    int(''.join((f'{k}', f'{ky2[1]}')))] for k in
+                range(1, ky2[1])))
+            lie_der_aux_jk = sym.simplify(sum(
+                (-1) * sym.diff(vector_field[k], self.x_coord[ky2[0] - 1]) *
+                two_form[int(''.join((f'{ky2[1]}', f'{k}')))] for k in
+                range(ky2[1] + 1, self.dim + 1)))
+            lie_der_2_form.setdefault(key, sym.simplify(
+                lie_der_aux_k + lie_der_aux_ki + lie_der_aux_ik
+                + lie_der_aux_kj + lie_der_aux_jk))
+        return lie_der_2_form
 
 
-        def ext_der_two_form(self, two_form):
-            d_2_form = {}
-            for z in itools.combinations(range(1, self.dim + 1), 3):
-                d_2_form_aux = sym.simplify(sym.simplify(sym.diff(
-                    two_form[int(''.join((f'{z[1]}', f'{z[2]}')))],
-                    self.x_coord[z[0] - 1])) + sym.simplify((-1) * sym.diff(
-                    two_form[int(''.join((f'{z[0]}', f'{z[2]}')))],
-                    self.x_coord[z[1] - 1])) + sym.simplify(sym.diff(
-                    two_form[int(''.join((f'{z[0]}', f'{z[1]}')))],
-                    self.x_coord[z[2] - 1])))
-                d_2_form.setdefault(int(''.join(str(i) for i in z)),
-                                    sym.simplify(d_2_form_aux))
-            return d_2_form
+    def ext_der_two_form(self, two_form):
+        d_2_form = {}
+        for z in itools.combinations(range(1, self.dim + 1), 3):
+            d_2_form_aux = sym.simplify(sym.simplify(sym.diff(
+                two_form[int(''.join((f'{z[1]}', f'{z[2]}')))],
+                self.x_coord[z[0] - 1])) + sym.simplify((-1) * sym.diff(
+                two_form[int(''.join((f'{z[0]}', f'{z[2]}')))],
+                self.x_coord[z[1] - 1])) + sym.simplify(sym.diff(
+                two_form[int(''.join((f'{z[0]}', f'{z[1]}')))],
+                self.x_coord[z[2] - 1])))
+            d_2_form.setdefault(int(''.join(str(i) for i in z)),
+                                sym.simplify(d_2_form_aux))
+        return d_2_form
 
 
-        def inner_euler_vf_2_form(self, two_form):
-            for key in two_form:
-                two_form[key] = sym.sympify(two_form[key])
-            ii_E_two_form = {}
-            for i in range(1, self.dim + 1):
-                ii_E_2_form_ji = sum(self.x_coord[j - 1] * two_form[int(''.join((f'{j}', f'{i}')))] for j in range(1, i))
-                ii_E_2_form_ij = sum((-1) * self.x_coord[j - 1] * two_form[int(''.join((f'{i}', f'{j}')))] for j in range(i + 1, self.dim + 1))
-                ii_E_two_form.setdefault(i, sym.simplify(ii_E_2_form_ji + ii_E_2_form_ij))
-            return ii_E_two_form
+    def inner_euler_vf_2_form(self, two_form):
+        for key in two_form:
+            two_form[key] = sym.sympify(two_form[key])
+        ii_E_two_form = {}
+        for i in range(1, self.dim + 1):
+            ii_E_2_form_ji = sum(self.x_coord[j - 1] * two_form[int(''.join((f'{j}', f'{i}')))] for j in range(1, i))
+            ii_E_2_form_ij = sum((-1) * self.x_coord[j - 1] * two_form[int(''.join((f'{i}', f'{j}')))] for j in range(i + 1, self.dim + 1))
+            ii_E_two_form.setdefault(i, sym.simplify(ii_E_2_form_ji + ii_E_2_form_ij))
+        return ii_E_two_form
 
 
-        def inner_euler_vf_2_form_2(self, two_form):
-            form = sym.MatrixSymbol('O', self.dim, self.dim)
-            form = sym.Matrix(form)
-            # Assigns the corresponding coefficients of the 2-form
-            for z in itools.combinations_with_replacement(range(1, self.dim + 1),
-                                                          2):
-                if z[0] == z[1]:
-                    form[z[0] - 1, z[1] - 1] = 0
-                else:
-                    form[z[0] - 1, z[1] - 1] = sym.sympify(
-                        two_form[int(''.join(str(i) for i in z))])
-                    form[z[1] - 1, z[0] - 1] = (-1) * form[
-                        z[0] - 1, z[1] - 1]
-            euler_vf = sym.Matrix(self.x_coord)
-            ii_E_2_form_2 = (-1) * form * euler_vf
-            return ii_E_2_form_2
+    def inner_euler_vf_2_form_2(self, two_form):
+        form = sym.MatrixSymbol('O', self.dim, self.dim)
+        form = sym.Matrix(form)
+        # Assigns the corresponding coefficients of the 2-form
+        for z in itools.combinations_with_replacement(range(1, self.dim + 1),
+                                                      2):
+            if z[0] == z[1]:
+                form[z[0] - 1, z[1] - 1] = 0
+            else:
+                form[z[0] - 1, z[1] - 1] = sym.sympify(
+                    two_form[int(''.join(str(i) for i in z))])
+                form[z[1] - 1, z[0] - 1] = (-1) * form[
+                    z[0] - 1, z[1] - 1]
+        euler_vf = sym.Matrix(self.x_coord)
+        ii_E_2_form_2 = (-1) * form * euler_vf
+        return ii_E_2_form_2
