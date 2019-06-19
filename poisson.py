@@ -642,7 +642,7 @@ class PoissonGeometry:
         # Calculates the third term of the Lie bracket
         # d_P(alpha,beta) = d(<beta,P#(alpha)>), with <,> the pairing
         # Formula: d(<beta,P#(alpha)>) = d(P#(alpha)^i * beta_i)
-        d_pairing_beta_sharp_alpha = sym.simplify(sy.derive_by_array(sum(
+        d_pairing_beta_sharp_alpha = sym.simplify(sym.derive_by_array(sum(
             one_form_2[ky] * self.p_sharp(bivector, one_form_1)[ky] for ky
             in one_form_2), self.x_coord))
         # List for the coefficients of {alpha,beta}_P, P == 'bivector'
@@ -699,7 +699,7 @@ class PoissonGeometry:
         # Classification:
         # Unimodular case. The modular vector field of P relative to the Euclid
         # volume form on R^3 is zero
-        if all(vl == 0 for vl in self.modular_vectro_field(bivector, 1).values()):
+        if all(vl == 0 for vl in self.modular_vector_field(bivector, 1).values()):
             if hess_pairing_E_P.rank() == 1:
                 return {12: 0, 13: 0, 23: x_aux[0]}
             if hess_pairing_E_P.rank() == 2:
@@ -769,7 +769,7 @@ class PoissonGeometry:
         return False
 
 
-def quadratic_normal_form_R3(self, bivector):
+    def quadratic_normal_form_R3(self, bivector):
         """ Calculates a normal form for quadratic Poisson bivector
         fields on R^3 modulo linear isomorphisms.
         Recall that two quadratic bivector fields P1 and P2 on R^3 is
