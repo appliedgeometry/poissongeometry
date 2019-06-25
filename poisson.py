@@ -51,7 +51,7 @@ class PoissonGeometry:
         return biv_mtx
 
 
-    def p_sharp(self, bivector, one_form):
+    def sharp_map(self, bivector, one_form):
         """ Calculates the image of a differential 1-form under the
         vector bundle morphism 'sharp' induced by a (Poisson) bivector
         field.
@@ -140,7 +140,7 @@ class PoissonGeometry:
         :return: a boolean variable.
         """
         # Check if the vector field bivector#(one_form) is zero or not
-        if all(val == 0 for val in self.p_sharp(bivector, one_form).values()):
+        if all(val == 0 for val in self.sharp_map(bivector, one_form).values()):
             return True
         return False
 
@@ -178,7 +178,7 @@ class PoissonGeometry:
         # Calculates the differential of hamiltonian_function
         dh = sym.derive_by_array(sym.sympify(hamiltonian_function), self.coordinates)
         # Calculates the Hamiltonian vector field
-        ham_vector_field = self.p_sharp(bivector, dict(zip(range(1, self.dim + 1), dh)))
+        ham_vector_field = self.sharp_map(bivector, dict(zip(range(1, self.dim + 1), dh)))
 
         # return a dictionary
         return ham_vector_field
@@ -252,7 +252,7 @@ class PoissonGeometry:
         df1 = dict(zip(range(1, self.dim + 1), sym.derive_by_array(f1, self.coordinates)))
         df2 = dict(zip(range(1, self.dim + 1), sym.derive_by_array(f2, self.coordinates)))
         # Calculates {f1,f2} = <df2,P#(df1)> = ∑_{i} (P#(df1))^i * (df2)_i
-        bracket_f1_f2 = sym.simplify(sum(self.p_sharp(bivector, df1)[index] * df2[index] for index in df1))
+        bracket_f1_f2 = sym.simplify(sum(self.sharp_map(bivector, df1)[index] * df2[index] for index in df1))
 
         # Return a symbolic type expression
         return bracket_f1_f2
@@ -616,22 +616,22 @@ class PoissonGeometry:
         # for i<j. Here, X==P#(alpha). Analogous for i_P#(beta)(d_alpha)
         for z in itools.combinations(range(1, self.dim + 1), 2):
             ii_sharp_alpha_d_beta[z[0] - 1] = sym.simplify(
-                ii_sharp_alpha_d_beta[z[0] - 1] + self.p_sharp(
+                ii_sharp_alpha_d_beta[z[0] - 1] + self.sharp_map(
                     bivector, one_form_1)[z[1]] * (sym.diff(
                     one_form_2[z[0]], self.coordinates[z[1] - 1]) - sym.diff(
                     one_form_2[z[1]], self.coordinates[z[0] - 1])))
             ii_sharp_alpha_d_beta[z[1] - 1] = sym.simplify(
-                ii_sharp_alpha_d_beta[z[1] - 1] + self.p_sharp(
+                ii_sharp_alpha_d_beta[z[1] - 1] + self.sharp_map(
                     bivector, one_form_1)[z[0]] * (sym.diff(
                     one_form_2[z[1]], self.coordinates[z[0] - 1]) - sym.diff(
                     one_form_2[z[0]], self.coordinates[z[1] - 1])))
             ii_sharp_beta_d_alpha[z[0] - 1] = sym.simplify(
-                ii_sharp_beta_d_alpha[z[0] - 1] + self.p_sharp(
+                ii_sharp_beta_d_alpha[z[0] - 1] + self.sharp_map(
                     bivector, one_form_2)[z[1]] * (sym.diff(
                     one_form_1[z[0]], self.coordinates[z[1] - 1]) - sym.diff(
                     one_form_1[z[1]], self.coordinates[z[0] - 1])))
             ii_sharp_beta_d_alpha[z[1] - 1] = sym.simplify(
-                ii_sharp_beta_d_alpha[z[1] - 1] + self.p_sharp(
+                ii_sharp_beta_d_alpha[z[1] - 1] + self.sharp_map(
                     bivector, one_form_2)[z[0]] * (sym.diff(
                     one_form_1[z[1]], self.coordinates[z[0] - 1]) - sym.diff(
                     one_form_1[z[0]], self.coordinates[z[1] - 1])))
@@ -639,7 +639,7 @@ class PoissonGeometry:
         # d_P(alpha,beta) = d(<beta,P#(alpha)>), with <,> the pairing
         # Formula: d(<beta,P#(alpha)>) = d(P#(alpha)^i * beta_i)
         d_pairing_beta_sharp_alpha = sym.simplify(sym.derive_by_array(sum(
-            one_form_2[ky] * self.p_sharp(bivector, one_form_1)[ky] for ky
+            one_form_2[ky] * self.sharp_map(bivector, one_form_1)[ky] for ky
             in one_form_2), self.coordinates))
         # List for the coefficients of {alpha,beta}_P, P == 'bivector'
         one_forms_brack_aux = []
