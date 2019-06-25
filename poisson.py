@@ -14,11 +14,7 @@ class PoissonGeometry:
         # Obtains the dimension
         self.dim = dimension
         # Create the symbolics symbols
-        self.x_coord = sym.symbols(f'x1:{self.dim + 1}')
-        if self.dim == 1:
-            print(f'The dimension must be greater than 1')
-        else:
-            print(f'The coordinates are {self.x_coord}.')
+        self.coordinates = sym.symbols(f'x1:{self.dim + 1}')
 
 
     def bivector_to_matrix(self, bivector):
@@ -180,7 +176,7 @@ class PoissonGeometry:
             X_h = (x2 - x3)*Dx1 + (-x1 + x3)*Dx2 + (x1 - x2)*Dx3.
         """
         # Calculates the differential of hamiltonian_function
-        dh = sym.derive_by_array(sym.sympify(hamiltonian_function), self.x_coord)
+        dh = sym.derive_by_array(sym.sympify(hamiltonian_function), self.coordinates)
         # Calculates the Hamiltonian vector field
         ham_vector_field = self.p_sharp(bivector, dict(zip(range(1, self.dim + 1), dh)))
 
@@ -253,8 +249,8 @@ class PoissonGeometry:
         if f1 == f2:
             return 0
         # Calculates the differentials of function_1 and function_2
-        df1 = dict(zip(range(1, self.dim + 1), sym.derive_by_array(f1, self.x_coord)))
-        df2 = dict(zip(range(1, self.dim + 1), sym.derive_by_array(f2, self.x_coord)))
+        df1 = dict(zip(range(1, self.dim + 1), sym.derive_by_array(f1, self.coordinates)))
+        df2 = dict(zip(range(1, self.dim + 1), sym.derive_by_array(f2, self.coordinates)))
         # Calculates {f1,f2} = <df2,P#(df1)> = ∑_{i} (P#(df1))^i * (df2)_i
         bracket_f1_f2 = sym.simplify(sum(self.p_sharp(bivector, df1)[index] * df2[index] for index in df1))
 
@@ -330,7 +326,7 @@ class PoissonGeometry:
                         # Calculates the Poisson bracket {xi,A^J}, J == nw_idx
                         lich_poiss_aux_11 = sym.simplify(
                             (-1)**(z.index(i)) * self.poisson_bracket(
-                                bivector, self.x_coord[i - 1], sym.sympify(
+                                bivector, self.coordinates[i - 1], sym.sympify(
                                     mltv[int(''.join(str(i) for i in nw_idx)
                                              )])))
                         lich_poiss_aux_1 = sym.simplify(lich_poiss_aux_1
@@ -359,7 +355,7 @@ class PoissonGeometry:
                                     * sym.diff(sym.sympify(
                                         bivector[
                                             int(''.join(str(j) for j in y))]),
-                                        self.x_coord[i - 1])
+                                        self.coordinates[i - 1])
                                     * sym.sympify(
                                         mltv[int(''.join(
                                             str(k) for k in nw_idx_mltv))]))
@@ -520,10 +516,10 @@ class PoissonGeometry:
             ij_int = tuple(int(i) for i in str(ij_str))
             modular_vf_aux[ij_int[0] - 1] = sym.simplify(modular_vf_aux[ij_int[0] - 1] +
                                                         sym.diff(bivector[ij_str],
-                                                                self.x_coord[ij_int[1] - 1]))
+                                                                self.coordinates[ij_int[1] - 1]))
             modular_vf_aux[ij_int[1] - 1] = sym.simplify(modular_vf_aux[ij_int[1] - 1] -
                                                         sym.diff(bivector[ij_str],
-                                                                self.x_coord[ij_int[0] - 1]))
+                                                                self.coordinates[ij_int[0] - 1]))
 
         modular_vf_0 = dict(zip(range(1, self.dim + 1), modular_vf_aux))
         # Dictionary for the modular vector f. Z relative to g*Omega_0
@@ -622,29 +618,29 @@ class PoissonGeometry:
             ii_sharp_alpha_d_beta[z[0] - 1] = sym.simplify(
                 ii_sharp_alpha_d_beta[z[0] - 1] + self.p_sharp(
                     bivector, one_form_1)[z[1]] * (sym.diff(
-                    one_form_2[z[0]], self.x_coord[z[1] - 1]) - sym.diff(
-                    one_form_2[z[1]], self.x_coord[z[0] - 1])))
+                    one_form_2[z[0]], self.coordinates[z[1] - 1]) - sym.diff(
+                    one_form_2[z[1]], self.coordinates[z[0] - 1])))
             ii_sharp_alpha_d_beta[z[1] - 1] = sym.simplify(
                 ii_sharp_alpha_d_beta[z[1] - 1] + self.p_sharp(
                     bivector, one_form_1)[z[0]] * (sym.diff(
-                    one_form_2[z[1]], self.x_coord[z[0] - 1]) - sym.diff(
-                    one_form_2[z[0]], self.x_coord[z[1] - 1])))
+                    one_form_2[z[1]], self.coordinates[z[0] - 1]) - sym.diff(
+                    one_form_2[z[0]], self.coordinates[z[1] - 1])))
             ii_sharp_beta_d_alpha[z[0] - 1] = sym.simplify(
                 ii_sharp_beta_d_alpha[z[0] - 1] + self.p_sharp(
                     bivector, one_form_2)[z[1]] * (sym.diff(
-                    one_form_1[z[0]], self.x_coord[z[1] - 1]) - sym.diff(
-                    one_form_1[z[1]], self.x_coord[z[0] - 1])))
+                    one_form_1[z[0]], self.coordinates[z[1] - 1]) - sym.diff(
+                    one_form_1[z[1]], self.coordinates[z[0] - 1])))
             ii_sharp_beta_d_alpha[z[1] - 1] = sym.simplify(
                 ii_sharp_beta_d_alpha[z[1] - 1] + self.p_sharp(
                     bivector, one_form_2)[z[0]] * (sym.diff(
-                    one_form_1[z[1]], self.x_coord[z[0] - 1]) - sym.diff(
-                    one_form_1[z[0]], self.x_coord[z[1] - 1])))
+                    one_form_1[z[1]], self.coordinates[z[0] - 1]) - sym.diff(
+                    one_form_1[z[0]], self.coordinates[z[1] - 1])))
         # Calculates the third term of the Lie bracket
         # d_P(alpha,beta) = d(<beta,P#(alpha)>), with <,> the pairing
         # Formula: d(<beta,P#(alpha)>) = d(P#(alpha)^i * beta_i)
         d_pairing_beta_sharp_alpha = sym.simplify(sym.derive_by_array(sum(
             one_form_2[ky] * self.p_sharp(bivector, one_form_1)[ky] for ky
-            in one_form_2), self.x_coord))
+            in one_form_2), self.coordinates))
         # List for the coefficients of {alpha,beta}_P, P == 'bivector'
         one_forms_brack_aux = []
         for i in range(self.dim):
@@ -876,23 +872,23 @@ class PoissonGeometry:
         lie_der_2_form = {}
         for key in two_form:
             lie_der_aux_k = sym.simplify(sum(
-                vector_field[k] * sym.diff(two_form[key], self.x_coord[k - 1])
+                vector_field[k] * sym.diff(two_form[key], self.coordinates[k - 1])
                 for k in range(1, self.dim + 1)))
             ky2 = tuple(int(i) for i in str(key))
             lie_der_aux_ki = sym.simplify(sum(
-                (-1) * sym.diff(vector_field[k], self.x_coord[ky2[1] - 1]) *
+                (-1) * sym.diff(vector_field[k], self.coordinates[ky2[1] - 1]) *
                 two_form[int(''.join((f'{k}', f'{ky2[0]}')))] for k in
                 range(1, ky2[0])))
             lie_der_aux_ik = sym.simplify(sum(
-                sym.diff(vector_field[k], self.x_coord[ky2[1] - 1]) * two_form[
+                sym.diff(vector_field[k], self.coordinates[ky2[1] - 1]) * two_form[
                     int(''.join((f'{ky2[0]}', f'{k}')))] for k in
                 range(ky2[0] + 1, self.dim + 1)))
             lie_der_aux_kj = sym.simplify(sum(
-                sym.diff(vector_field[k], self.x_coord[ky2[0] - 1]) * two_form[
+                sym.diff(vector_field[k], self.coordinates[ky2[0] - 1]) * two_form[
                     int(''.join((f'{k}', f'{ky2[1]}')))] for k in
                 range(1, ky2[1])))
             lie_der_aux_jk = sym.simplify(sum(
-                (-1) * sym.diff(vector_field[k], self.x_coord[ky2[0] - 1]) *
+                (-1) * sym.diff(vector_field[k], self.coordinates[ky2[0] - 1]) *
                 two_form[int(''.join((f'{ky2[1]}', f'{k}')))] for k in
                 range(ky2[1] + 1, self.dim + 1)))
             lie_der_2_form.setdefault(key, sym.simplify(
@@ -906,11 +902,11 @@ class PoissonGeometry:
         for z in itools.combinations(range(1, self.dim + 1), 3):
             d_2_form_aux = sym.simplify(sym.simplify(sym.diff(
                 two_form[int(''.join((f'{z[1]}', f'{z[2]}')))],
-                self.x_coord[z[0] - 1])) + sym.simplify((-1) * sym.diff(
+                self.coordinates[z[0] - 1])) + sym.simplify((-1) * sym.diff(
                 two_form[int(''.join((f'{z[0]}', f'{z[2]}')))],
-                self.x_coord[z[1] - 1])) + sym.simplify(sym.diff(
+                self.coordinates[z[1] - 1])) + sym.simplify(sym.diff(
                 two_form[int(''.join((f'{z[0]}', f'{z[1]}')))],
-                self.x_coord[z[2] - 1])))
+                self.coordinates[z[2] - 1])))
             d_2_form.setdefault(int(''.join(str(i) for i in z)),
                                 sym.simplify(d_2_form_aux))
         return d_2_form
@@ -921,8 +917,8 @@ class PoissonGeometry:
             two_form[key] = sym.sympify(two_form[key])
         ii_E_two_form = {}
         for i in range(1, self.dim + 1):
-            ii_E_2_form_ji = sum(self.x_coord[j - 1] * two_form[int(''.join((f'{j}', f'{i}')))] for j in range(1, i))
-            ii_E_2_form_ij = sum((-1) * self.x_coord[j - 1] * two_form[int(''.join((f'{i}', f'{j}')))] for j in range(i + 1, self.dim + 1))
+            ii_E_2_form_ji = sum(self.coordinates[j - 1] * two_form[int(''.join((f'{j}', f'{i}')))] for j in range(1, i))
+            ii_E_2_form_ij = sum((-1) * self.coordinates[j - 1] * two_form[int(''.join((f'{i}', f'{j}')))] for j in range(i + 1, self.dim + 1))
             ii_E_two_form.setdefault(i, sym.simplify(ii_E_2_form_ji + ii_E_2_form_ij))
         return ii_E_two_form
 
@@ -940,6 +936,6 @@ class PoissonGeometry:
                     two_form[int(''.join(str(i) for i in z))])
                 form[z[1] - 1, z[0] - 1] = (-1) * form[
                     z[0] - 1, z[1] - 1]
-        euler_vf = sym.Matrix(self.x_coord)
+        euler_vf = sym.Matrix(self.coordinates)
         ii_E_2_form_2 = (-1) * form * euler_vf
         return ii_E_2_form_2
