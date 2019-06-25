@@ -247,6 +247,7 @@ class PoissonGeometry:
         """
         f1, f2 = sym.sympify(function_1), sym.sympify(function_2)
         if f1 == f2:
+            # {f1,f2} = 0 for f1=f2
             return 0
         # Calculates the differentials of function_1 and function_2
         df1 = dict(zip(range(1, self.dim + 1), sym.derive_by_array(f1, self.coordinates)))
@@ -770,79 +771,6 @@ class PoissonGeometry:
         return False
 
 
-    def quadratic_normal_form_R3(self, bivector):
-        """ Calculates a normal form for quadratic Poisson bivector
-        fields on R^3 modulo linear isomorphisms.
-        Recall that two quadratic bivector fields P1 and P2 on R^3 is
-        said to be equivalents if there exists a linear isomorphism
-        T:R^3 -> R^3 such that T*P2 = P1.
-        :param bivector: is a dictionary with integer type 'keys' and
-         string type 'values'. For example, on R^3,
-            {12: 'x1*x2', 13: '-x1*x3', 23: 'x2*x3'}.
-         The 'keys' are the ordered indices of the given bivector field
-         P and the 'values' their coefficients. In this case,
-            P1 = x1*x2*Dx1^Dx2 - x1*x3*Dx1^Dx3 + x2*x3*Dx2^Dx3.
-        :return: a dictionary with integer type 'keys' and
-         string type 'values'. For the previous example,
-            {12: 'x1*x2', 13: '-x1*x3', 23: 'x2*x3'},
-         which represents the normal form
-            Q = x1*x2*Dx1^Dx2 - x1*x3*Dx1^Dx3 + x2*x3*Dx2^Dx3.
-        """
-        x_aux = sym.symbols(f'x1:{4}')
-        mtx_mod_vf_biv = sym.Matrix((sym.derive_by_array(
-            self.modular_vector_field(bivector, 1)[1], x_aux), sym.derive_by_array(
-            self.modular_vector_field(bivector, 1)[2], x_aux), sym.derive_by_array(
-            self.modular_vector_field(bivector, 1)[3], x_aux)))
-        egval_mod_vf = mtx_mod_vf_biv.eigenvals()
-        # All multiplicity are 1
-        if mtx_mod_vf_biv == sym.zeros(3):
-            # print(f'Case I')
-            return bivector
-        if reduce((lambda a, b: a * b), list(egval_mod_vf.values())) == 1:
-            # Three real eigenvalues
-            if all(sy.im(t) == 0 for t in list(egval_mod_vf.keys())):
-                # Nonzero eigenvalues
-                if reduce((lambda c, d: c * d),
-                          list(egval_mod_vf.keys())) != 0:
-                    # print(f'Case II', egval_mod_vf)
-                    return {12: sym.sympify(f'(1/3*(b1 - b2) - a)*x1*x2'),
-                            13: sym.sympify(f'(1/3*(b1 - b3) + a)*x1*x3'),
-                            23: sym.sympify(f'(1/3*(b2 - b3) - a)*x2*x3')}
-                # One zero eigenvalue
-                else:
-                    print(f'Case III', egval_mod_vf)
-            # Two complex and one real eigenvalues
-            else:
-                # Nonzero eigenvalues
-                if reduce((lambda c, d: c * d), list(egval_mod_vf.keys())) != 0:
-                    # print(f'Case V', egval_mod_vf)
-                    return {12: sym.sympify(f'-(a + 1/3*b2)*(x1**2 + x2**2)'),
-                            13: sym.sympify(f'(b1*x1 + (2*a - 1/3*b2)*x2)*x3'),
-                            23: sym.sympify(f'(b1*x2 - (2*a - 1/3*b2)*x1)*x3')}
-                # One zero eigenvalue
-                else:
-                    print(f'Case VI', egval_mod_vf)
-        # One nonzero real eigenvalue with multiplicity 2
-        if reduce((lambda a, b: a * b), list(egval_mod_vf.values())) == 2:
-            # Diagonalizable case
-            if mtx_mod_vf_biv.is_diagonalizable(reals_only=True):
-                print(f'Case IV')
-            # Non-diagonalizable case
-            else:
-                # print(f'Case VII')
-                return {12: sym.sympify(f'(1/3 - a)*x2**2'),
-                        13: sym.sympify(f'(b*x1 + (2*a + 1/3)*x2)*x3'),
-                        23: sym.sympify(f'b*x2*x3')}
-        # Zero eigenvalue with multiplicity 3
-        if reduce((lambda a, b: a * b), list(egval_mod_vf.values())) == 3:
-            # Rank 2 case
-            if mtx_mod_vf_biv.rank() == 2:
-                print(f'Case IX')
-            # Rank 1 case
-            if mtx_mod_vf_biv.rank() == 1:
-                print(f'Case VIII')
-
-
     def gauge_transformation(self, bivector, two_form):
         two_form_B = sym.MatrixSymbol('B', self.dim, self.dim)
         two_form_B = sym.Matrix(two_form_B)
@@ -866,81 +794,3 @@ class PoissonGeometry:
             gauge_mtx = sym.Matrix(
                 sym.simplify(self.bivector_to_matrix(bivector) * (I_minus_BP.inv())))
             return gauge_mtx, sym.sympify(det_I_minus_BP)
-
-# CLASSIFICATION
-
-    def lie_der_vf_2_form(self, vector_field, two_form):
-        for i in vector_field:
-            vector_field[i] = sym.sympify(vector_field[i])
-        for key in two_form:
-            two_form[key] = sym.sympify(two_form[key])
-        lie_der_2_form = {}
-        for key in two_form:
-            lie_der_aux_k = sym.simplify(sum(
-                vector_field[k] * sym.diff(two_form[key], self.coordinates[k - 1])
-                for k in range(1, self.dim + 1)))
-            ky2 = tuple(int(i) for i in str(key))
-            lie_der_aux_ki = sym.simplify(sum(
-                (-1) * sym.diff(vector_field[k], self.coordinates[ky2[1] - 1]) *
-                two_form[int(''.join((f'{k}', f'{ky2[0]}')))] for k in
-                range(1, ky2[0])))
-            lie_der_aux_ik = sym.simplify(sum(
-                sym.diff(vector_field[k], self.coordinates[ky2[1] - 1]) * two_form[
-                    int(''.join((f'{ky2[0]}', f'{k}')))] for k in
-                range(ky2[0] + 1, self.dim + 1)))
-            lie_der_aux_kj = sym.simplify(sum(
-                sym.diff(vector_field[k], self.coordinates[ky2[0] - 1]) * two_form[
-                    int(''.join((f'{k}', f'{ky2[1]}')))] for k in
-                range(1, ky2[1])))
-            lie_der_aux_jk = sym.simplify(sum(
-                (-1) * sym.diff(vector_field[k], self.coordinates[ky2[0] - 1]) *
-                two_form[int(''.join((f'{ky2[1]}', f'{k}')))] for k in
-                range(ky2[1] + 1, self.dim + 1)))
-            lie_der_2_form.setdefault(key, sym.simplify(
-                lie_der_aux_k + lie_der_aux_ki + lie_der_aux_ik
-                + lie_der_aux_kj + lie_der_aux_jk))
-        return lie_der_2_form
-
-
-    def ext_der_two_form(self, two_form):
-        d_2_form = {}
-        for z in itools.combinations(range(1, self.dim + 1), 3):
-            d_2_form_aux = sym.simplify(sym.simplify(sym.diff(
-                two_form[int(''.join((f'{z[1]}', f'{z[2]}')))],
-                self.coordinates[z[0] - 1])) + sym.simplify((-1) * sym.diff(
-                two_form[int(''.join((f'{z[0]}', f'{z[2]}')))],
-                self.coordinates[z[1] - 1])) + sym.simplify(sym.diff(
-                two_form[int(''.join((f'{z[0]}', f'{z[1]}')))],
-                self.coordinates[z[2] - 1])))
-            d_2_form.setdefault(int(''.join(str(i) for i in z)),
-                                sym.simplify(d_2_form_aux))
-        return d_2_form
-
-
-    def inner_euler_vf_2_form(self, two_form):
-        for key in two_form:
-            two_form[key] = sym.sympify(two_form[key])
-        ii_E_two_form = {}
-        for i in range(1, self.dim + 1):
-            ii_E_2_form_ji = sum(self.coordinates[j - 1] * two_form[int(''.join((f'{j}', f'{i}')))] for j in range(1, i))
-            ii_E_2_form_ij = sum((-1) * self.coordinates[j - 1] * two_form[int(''.join((f'{i}', f'{j}')))] for j in range(i + 1, self.dim + 1))
-            ii_E_two_form.setdefault(i, sym.simplify(ii_E_2_form_ji + ii_E_2_form_ij))
-        return ii_E_two_form
-
-
-    def inner_euler_vf_2_form_2(self, two_form):
-        form = sym.MatrixSymbol('O', self.dim, self.dim)
-        form = sym.Matrix(form)
-        # Assigns the corresponding coefficients of the 2-form
-        for z in itools.combinations_with_replacement(range(1, self.dim + 1),
-                                                      2):
-            if z[0] == z[1]:
-                form[z[0] - 1, z[1] - 1] = 0
-            else:
-                form[z[0] - 1, z[1] - 1] = sym.sympify(
-                    two_form[int(''.join(str(i) for i in z))])
-                form[z[1] - 1, z[0] - 1] = (-1) * form[
-                    z[0] - 1, z[1] - 1]
-        euler_vf = sym.Matrix(self.coordinates)
-        ii_E_2_form_2 = (-1) * form * euler_vf
-        return ii_E_2_form_2
