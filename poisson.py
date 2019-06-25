@@ -10,11 +10,11 @@ class PoissonGeometry:
     
     """
 
-    def __init__(self, dimension):
+    def __init__(self, dimension, variable='x'):
         # Obtains the dimension
         self.dim = dimension
         # Create the symbolics symbols
-        self.coordinates = sym.symbols(f'x1:{self.dim + 1}')
+        self.coordinates = sym.symbols(f'{variable}1:{self.dim + 1}')
 
 
     def bivector_to_matrix(self, bivector):
