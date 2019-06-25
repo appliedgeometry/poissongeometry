@@ -111,7 +111,7 @@ class PoissonGeometry:
         return p_sharp_dict
 
 
-    def p_sharp_in_kernel(self, bivector, one_form):
+    def is_in_kernel(self, bivector, one_form):
         """ Check if a differential 1-form belongs to the kernel of a
         given (Poisson) bivector field.
 
