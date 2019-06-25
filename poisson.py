@@ -17,7 +17,7 @@ class PoissonGeometry:
         self.coordinates = sym.symbols(f'{variable}1:{self.dim + 1}')
 
 
-    def bivector_to_matrix(self, bivector):
+    def bivector_to_matrix(self, bivector, latex_syntax=False):
         """ Constructs the matrix of a 2-contravariant tensor field or
         bivector field.
 
@@ -48,7 +48,7 @@ class PoissonGeometry:
             biv_mtx[j-1,i-1] = (-1) * biv_mtx[i-1, j-1]
 
         # Return a symbolic skew-symmetric matrix
-        return biv_mtx
+        return sym.latex(biv_mtx) if latex_syntax else biv_mtx
 
 
     def sharp_map(self, bivector, one_form):
@@ -214,7 +214,7 @@ class PoissonGeometry:
         return False
 
 
-    def poisson_bracket(self, bivector, function_1, function_2):
+    def poisson_bracket(self, bivector, function_1, function_2, latex_syntax=False):
         """ Calculates the poisson bracket of two functions induced by
         a given Poisson bivector field.
 
@@ -256,7 +256,7 @@ class PoissonGeometry:
         bracket_f1_f2 = sym.simplify(sum(self.sharp_map(bivector, df1)[index] * df2[index] for index in df1))
 
         # Return a symbolic type expression
-        return bracket_f1_f2
+        return sym.latex(bracket_f1_f2) if latex_syntax else bracket_f1_f2
 
 
     def lichnerowicz_poisson_operator(self, bivector, multivector):
