@@ -307,12 +307,10 @@ class PoissonGeometry:
         if deg_mltv + 1 > self.dim:
             return 0
         else:
-            if next(iter(multivector)) == 0:  # In this case, mltv is a fnction
+            # In this case, mltv is a fnction
+            if isinstance(multivector, str):
                 # [P,f] = -X_f, for any function f.
-                schouten_biv_f = self.hamiltonian_vector_field(
-                    bivector, (-1) * sym.sympify(
-                        multivector[next(iter(multivector))]))
-                return schouten_biv_f
+                return self.hamiltonian_vector_field(bivector, (-1)*sym.sympify(multivector))
             else:
                 # A dictionary for the first term of [P,A], A a multivector
                 schouten_biv_mltv_1 = {}
