@@ -378,13 +378,16 @@ class PoissonGeometry:
                     schouten_biv_mltv.setdefault(
                         ky, sym.simplify(schouten_biv_mltv_1[ky]
                                         + schouten_biv_mltv_2[ky]))
-                return schouten_biv_mltv  # return a list
+                # return a dictionary
+                return schouten_biv_mltv
 
 
-    def poisson_tensor_test(self, bivector):
-        """ Check if a bivector field is a Poisson tensor.
+    def is_poisson(self, bivector):
+        """ Calculates de Schouten-Nijenhuis bracket of a given bivec-
+        tor field with himself.
 
-        Recall that a bivector field P is said to be a Poisson tensor,
+        Remark:
+        A bivector field P is said to be a Poisson tensor,
         or Poisson bivector field, if (and only if)
             [P,P] = 0,
         where [,] denote the Schouten bracket for multivector fields.
@@ -404,12 +407,13 @@ class PoissonGeometry:
         return False
 
 
-    def vector_field_is_poisson(self, bivector, vector_field):
+    def is_poisson_vector_field(self, bivector, vector_field):
         """ Check if a vector field is a Poisson vector field of a
         given Poisson bivector field.
 
-        Recall that a vector field Z on a Poisson manifold (M,P) is
-        said to be a Poisson vector field if (and only if)
+        Remark:
+        A vector field Z on a Poisson manifold (M,P) is said to be a
+        Poisson vector field if (and only if)
             [Z,P] = 0,
         where [,] denote the Schouten bracket for multivector fields.
 
@@ -435,7 +439,7 @@ class PoissonGeometry:
         return False
 
 
-    def sum_is_poisson(self, bivector_1, bivector_2):
+    def is_poisson_pair(self, bivector_1, bivector_2):
         """ Check if the sum of two Poisson bivector fields is a
         Poisson bivector field.
 
@@ -531,7 +535,7 @@ class PoissonGeometry:
         return modular_vf_a  # Return a dictionary
 
 
-    def unimodularity_homogeneous(self, bivector):
+    def is_homogeneous_unimodular(self, bivector):
         """ Check if a homogeneous Poisson bivector field is unimodular
         or not.
 
@@ -739,9 +743,10 @@ class PoissonGeometry:
         """ Determines if two Lie-Poisson bivector fields on R^3 are
         isomorphic or not.
 
-        Recall that two Lie-Poisson bivector fields P1 and P2 on R^3 is
-        said to be equivalents, or isomorphics, if there exists a li-
-        near isomorphism T: R^3 -> R^3 such that T*P2 = P1.
+        Remark:
+        Two Lie-Poisson bivector fields P1 and P2 on R^3 are said to be
+        equivalents, or isomorphics, if there exists a linear isomorphism
+        T: R^3 -> R^3 such that T*P2 = P1
 
         :param bivector_1: is a dictionary with integer type 'keys' and
          string type 'values'. For example, on R^3,
