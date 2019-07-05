@@ -1,5 +1,6 @@
 import sympy as sym
 import itertools as itools
+from galgebra.ga import Ga
 
 
 class PoissonGeometry:
