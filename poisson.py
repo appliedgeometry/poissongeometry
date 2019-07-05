@@ -812,7 +812,7 @@ class PoissonGeometry:
                 two_form_B[z[1] - 1, z[0] - 1] = (-1) * two_form_B[
                     z[0] - 1, z[1] - 1]
         I_minus_BP = sym.Matrix(sy.simplify(
-            sy.eye(self.dim) - two_form_B * self.bivector_to_matrix(bivector)))
+            sym.eye(self.dim) - two_form_B * self.bivector_to_matrix(bivector)))
         det_I_minus_BP = sym.factor(sym.simplify(I_minus_BP.det()))
         if det_I_minus_BP == 0:
             return f'\nThe differential 2-form can\'t induces a gauge ' \
