@@ -13,8 +13,11 @@ class PoissonGeometry:
     def __init__(self, dimension, variable='x', variables_complex=False):
         # Obtains the dimension
         self.dim = dimension
+        self.variable = variable
         # Create the symbolics symbols
-        self.coordinates = sym.symbols(f'{variable}1:{self.dim + 1}', complex=variables_complex)
+        self.coordinates = sym.symbols(f'{self.variable}1:{self.dim + 1}', complex=variables_complex)
+        # show the coordinates that the user work
+        self.coords = f'{self.coordinates[0]},...,{self.coordinates[-1]}'
 
 
     def bivector_to_matrix(self, bivector, latex_syntax=False):
@@ -686,7 +689,7 @@ class PoissonGeometry:
         for key in bivector:
             bivector[key] = sym.sympify(bivector[key])
         # List for coordinates (x1,x2,x3) on R^3
-        x_aux = sym.symbols(f'x1:{4}')
+        x_aux = sym.symbols(f'{self.variable}1:{4}')
         # Here, E is the Euler vector field on R3, E = x1*Dx1 + x2*Dx2 + x3*Dx3
         # P == 'bivector'
         pairing_E_P = sym.simplify(x_aux[0] * bivector[23] + (-1) * x_aux[1]
