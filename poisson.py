@@ -1,6 +1,5 @@
 import sympy as sym
 import itertools as itools
-from galgebra.ga import Ga
 
 
 class PoissonGeometry:
@@ -821,3 +820,83 @@ class PoissonGeometry:
             gauge_mtx = sym.Matrix(
                 sym.simplify(self.bivector_to_matrix(bivector) * (I_minus_BP.inv())))
             return gauge_mtx, sym.sympify(det_I_minus_BP)
+
+
+    def flaska_ratiu(self, bivector, casimirs, structure_symplectic=False, latex_syntax=False):
+        ''''''
+        for key in bivector.keys():
+            bivector[key] = sym.sympify(bivector[key])
+        if self.dim - len(casimirs) == 2:
+            casimir_list = []
+            for casimir in casimirs:
+                casimir_list.append(sym.sympify(casimir))
+
+            # This block calculates d(C), where C is a function Casimir
+            diff_casimir_list = []
+            diff_casimir_matrix = []
+            for casimir in casimir_list:
+                casimir_matrix = []
+                diff_casimir = 0
+                for i, variable in enumerate(variables_list):
+                    casimir_matrix.append(casimir.diff(variable))
+                    diff_casimir = diff_casimir + (casimir.diff(variable) * dx_list[i])
+                diff_casimir_matrix.append(casimir_matrix)
+                diff_casimir_list.append(diff_casimir)
+
+            # This block calculates d(C_1)^...^d(C_dimension)
+            d_casimir = diff_casimir_list[0]
+            for index, element in enumerate(diff_casimir_list):
+                d_casimir = d_casimir ^ element if index != 0 else d_casimir
+    
+            if d_casimir.is_zero():
+            return "Tu bivector es cero :("
+
+            # This blocks obtains Poisson coefficients
+            bivector_coeff_dict = {}
+            combinations = [x for x in itertools.combinations(range(1, dimension + 1), 2)]
+            for combination in combinations:
+                combination = list(combination)
+                casimir_matrix_without_combination = sympy.Matrix(diff_casimir_matrix)
+                for i, element in enumerate(combination):
+                    casimir_matrix_without_combination.col_del(element - (i + 1))
+
+                # Makes a dictionary with Poisson coefficients
+                key = int(F'{combination[0]}{combination[1]}')
+                coeff = ((-1)**(combination[0] + combination[1]))
+                bivector_coeff_dict[key] = sympy.simplify(coeff * casimir_matrix_without_combination.det())
+
+            if structure_symplectic:
+                variables = variable_string(dim, symbol='Dx')
+                basis = Ga(variables, g=sym.eye(dim), coords=coordinates)
+                basis = basis.mv()
+
+                # Makes a basis {dxi^dxj}_{i<j} and it save in a dictionary type variable
+                dx_ij_basis = {}
+                i = 0
+                while i < len(dx_list):
+                    j = i + 1
+                    while j < len(dx_list):
+                        key = int(F"{i+1}{j+1}")
+                        dx_ij_basis[key] = dx_list[i] ^ dx_list[j]
+                        j = j + 1
+                    i = i + 1
+
+                bivector = 0
+                estructure_symplectic_num = 0
+                estructure_symplectic_dem = 0
+                for key in dx_ij_basis.keys():
+                    bivector = bivector + bivector_coeff_dict[key] * dx_ij_basis[key]
+                    estructure_symplectic_num = estructure_symplectic_num + bivector_coeff_dict[key] * dx_ij_basis[key]
+                    estructure_symplectic_dem = estructure_symplectic_dem + bivector_coeff_dict[key] * bivector_coeff_dict[key]
+
+                symplectic = estructure_symplectic_num * (-1 / estructure_symplectic_dem)
+
+                if latex_syntax:
+                    return [sym.latex(dict_to_symbol_exp(bivector, self.dim ,self.coordinates)),
+                            sym.latex(dict_to_symbol_exp(symplectic, self.dim ,self.coordinates))]
+                else:
+                    return [bivector, symplectic]
+            else:
+                return sym.latex(dict_to_symbol_exp(bivector_coeff_dict, self.dim ,self.coordinates)) if latex_syntax else bivector_coeff_dict
+        else:
+            return F'No es posible aplicar flaska ratiu'
