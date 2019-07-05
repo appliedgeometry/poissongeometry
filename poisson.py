@@ -51,7 +51,7 @@ class PoissonGeometry:
         return sym.latex(biv_mtx) if latex_syntax else biv_mtx
 
 
-    def sharp_map(self, bivector, one_form):
+    def sharp_morphism(self, bivector, one_form, latex_syntax=False):
         """ Calculates the image of a differential 1-form under the
         vector bundle morphism 'sharp' induced by a (Poisson) bivector
         field.
@@ -619,22 +619,22 @@ class PoissonGeometry:
         # for i<j. Here, X==P#(alpha). Analogous for i_P#(beta)(d_alpha)
         for z in itools.combinations(range(1, self.dim + 1), 2):
             ii_sharp_alpha_d_beta[z[0] - 1] = sym.simplify(
-                ii_sharp_alpha_d_beta[z[0] - 1] + self.sharp_map(
+                ii_sharp_alpha_d_beta[z[0] - 1] + self.sharp_morphism(
                     bivector, one_form_1)[z[1]] * (sym.diff(
                     one_form_2[z[0]], self.coordinates[z[1] - 1]) - sym.diff(
                     one_form_2[z[1]], self.coordinates[z[0] - 1])))
             ii_sharp_alpha_d_beta[z[1] - 1] = sym.simplify(
-                ii_sharp_alpha_d_beta[z[1] - 1] + self.sharp_map(
+                ii_sharp_alpha_d_beta[z[1] - 1] + self.sharp_morphism(
                     bivector, one_form_1)[z[0]] * (sym.diff(
                     one_form_2[z[1]], self.coordinates[z[0] - 1]) - sym.diff(
                     one_form_2[z[0]], self.coordinates[z[1] - 1])))
             ii_sharp_beta_d_alpha[z[0] - 1] = sym.simplify(
-                ii_sharp_beta_d_alpha[z[0] - 1] + self.sharp_map(
+                ii_sharp_beta_d_alpha[z[0] - 1] + self.sharp_morphism(
                     bivector, one_form_2)[z[1]] * (sym.diff(
                     one_form_1[z[0]], self.coordinates[z[1] - 1]) - sym.diff(
                     one_form_1[z[1]], self.coordinates[z[0] - 1])))
             ii_sharp_beta_d_alpha[z[1] - 1] = sym.simplify(
-                ii_sharp_beta_d_alpha[z[1] - 1] + self.sharp_map(
+                ii_sharp_beta_d_alpha[z[1] - 1] + self.sharp_morphism(
                     bivector, one_form_2)[z[0]] * (sym.diff(
                     one_form_1[z[1]], self.coordinates[z[0] - 1]) - sym.diff(
                     one_form_1[z[0]], self.coordinates[z[1] - 1])))
@@ -642,7 +642,7 @@ class PoissonGeometry:
         # d_P(alpha,beta) = d(<beta,P#(alpha)>), with <,> the pairing
         # Formula: d(<beta,P#(alpha)>) = d(P#(alpha)^i * beta_i)
         d_pairing_beta_sharp_alpha = sym.simplify(sym.derive_by_array(sum(
-            one_form_2[ky] * self.sharp_map(bivector, one_form_1)[ky] for ky
+            one_form_2[ky] * self.sharp_morphism(bivector, one_form_1)[ky] for ky
             in one_form_2), self.coordinates))
         # List for the coefficients of {alpha,beta}_P, P == 'bivector'
         one_forms_brack_aux = []
