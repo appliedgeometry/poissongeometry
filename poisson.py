@@ -382,7 +382,31 @@ class PoissonGeometry:
                         ky, sym.simplify(schouten_biv_mltv_1[ky]
                                         + schouten_biv_mltv_2[ky]))
                 # return a dictionary
-                return schouten_biv_mltv
+                return sym.latex(dict_to_symbol_exp(schouten_biv_mltv, self.dim ,self.coordinates)) if latex_syntax else schouten_biv_mltv
+
+
+    def jacobiator(self, bivector, latex_syntax=False):
+        """ Calculates de Schouten-Nijenhuis bracket of a given bivec-
+        tor field with himself.
+        
+        Remark:
+        Given a bivector field P on a smooth manifold M, the Jacobiator
+        of P is defined by
+            Jacobiator(P) = [P,P],
+        where [,] denote the Schouten bracket for multivector fields.
+
+        :param bivector: is a dictionary with integer type 'keys' and
+         string type 'values'. For example, on R^3,
+            {12: 'x3', 13: '-x2', 23: 'x1'}.
+         The 'keys' are the ordered indices of the given bivector field
+         P and the 'values' their coefficients. In this case,
+            P = x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3.
+
+        :return: a dictionary with integer type 'keys' and symbol type
+         'values'. For the previous example,
+            {123: 0}
+        """
+        return self.lichnerowicz_poisson_operator(bivector, bivector, latex_syntax=latex_syntax)
 
 
     def is_poisson(self, bivector):
