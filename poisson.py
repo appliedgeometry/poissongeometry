@@ -108,7 +108,7 @@ class PoissonGeometry:
         # Creates a dictionary which represents the vector field P#(alpha)
         p_sharp_dict = dict(zip(range(1, self.dim + 1), p_sharp_aux))
 
-        return p_sharp_dict
+        return sym.latex(dict_to_symbol_exp(p_sharp_dict, self.dim ,self.coordinates)) if latex_syntax else p_sharp_dict
 
 
     def is_in_kernel(self, bivector, one_form):
@@ -140,12 +140,12 @@ class PoissonGeometry:
         :return: a boolean variable.
         """
         # Check if the vector field bivector#(one_form) is zero or not
-        if all(val == 0 for val in self.sharp_map(bivector, one_form).values()):
+        if all(val == 0 for val in self.sharp_morphism(bivector, one_form).values()):
             return True
         return False
 
 
-    def hamiltonian_vector_field(self, bivector, hamiltonian_function):
+    def hamiltonian_vector_field(self, bivector, hamiltonian_function, latex_syntax=False):
         """ Calculates the Hamiltonian vector field of a function rela-
         tive to a (Poisson) bivector field.
 
@@ -178,10 +178,10 @@ class PoissonGeometry:
         # Calculates the differential of hamiltonian_function
         dh = sym.derive_by_array(sym.sympify(hamiltonian_function), self.coordinates)
         # Calculates the Hamiltonian vector field
-        ham_vector_field = self.sharp_map(bivector, dict(zip(range(1, self.dim + 1), dh)))
+        ham_vector_field = self.sharp_morphism(bivector, dict(zip(range(1, self.dim + 1), dh)))
 
         # return a dictionary
-        return ham_vector_field
+        return sym.latex(dict_to_symbol_exp(ham_vector_field, self.dim ,self.coordinates)) if latex_syntax else ham_vector_field
 
 
     def is_casimir(self, bivector, function):
@@ -253,13 +253,13 @@ class PoissonGeometry:
         df1 = dict(zip(range(1, self.dim + 1), sym.derive_by_array(f1, self.coordinates)))
         df2 = dict(zip(range(1, self.dim + 1), sym.derive_by_array(f2, self.coordinates)))
         # Calculates {f1,f2} = <df2,P#(df1)> = ∑_{i} (P#(df1))^i * (df2)_i
-        bracket_f1_f2 = sym.simplify(sum(self.sharp_map(bivector, df1)[index] * df2[index] for index in df1))
+        bracket_f1_f2 = sym.simplify(sum(self.sharp_morphism(bivector, df1)[index] * df2[index] for index in df1))
 
         # Return a symbolic type expression
         return sym.latex(bracket_f1_f2) if latex_syntax else bracket_f1_f2
 
 
-    def lichnerowicz_poisson_operator(self, bivector, multivector):
+    def lichnerowicz_poisson_operator(self, bivector, multivector, latex_syntax=False):
         """ Calculates the Schouten-Nijenhuis bracket between a given
         (Poisson) bivector field and a (arbitrary) multivector field.
 
@@ -470,7 +470,7 @@ class PoissonGeometry:
         return False
 
 
-    def modular_vector_field(self, bivector, function):
+    def modular_vector_field(self, bivector, function, latex_syntax=False):
         """ Calculates the modular vector field of a given Poisson bi-
         vector field relative to the volume form
             ('function')*Omega_0,
@@ -531,7 +531,8 @@ class PoissonGeometry:
         # Formula Z = [(Z0)^i - (1/g)*(X_g)^i]*Dxi
         for z in modular_vf_0:
             modular_vf_a.setdefault(z, sym.simplify(modular_vf_0[z] - 1/(sym.sympify(function)) * self.hamiltonian_vector_field(bivector, function)[z]))
-        return modular_vf_a  # Return a dictionary
+        # Return a dictionary
+        return sym.latex(dict_to_symbol_exp(modular_vf_a, self.dim ,self.coordinates)) if latex_syntax else modular_vf_a
 
 
     def is_homogeneous_unimodular(self, bivector):
@@ -557,7 +558,7 @@ class PoissonGeometry:
         return False
 
 
-    def one_forms_bracket(self, bivector, one_form_1, one_form_2):
+    def one_forms_bracket(self, bivector, one_form_1, one_form_2, latex_syntax=False):
         """ Calculates the Lie bracket of two differential 1-forms in-
         duced by a given Poisson bivector field.
 
@@ -653,7 +654,7 @@ class PoissonGeometry:
         # Converts one_forms_brack_aux to dictionary
         one_forms_brack = dict(zip(range(1, self.dim + 1),
                                    one_forms_brack_aux))
-        return one_forms_brack  # Return a dictionary
+        return sym.latex(dict_to_symbol_exp(one_forms_brack, self.dim ,self.coordinates, dx=True)) if latex_syntax else one_forms_brack  # Return a dictionary
 
 
     def linear_normal_form_R3(self, bivector):
