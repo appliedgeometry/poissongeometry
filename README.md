@@ -1,25 +1,10 @@
 # Poisson Geometry
 Es una clase de Python para hacer Cálculo Simbólico en Geometría de Poisson, algunas de sus funciones son:
- [] Obtener Estructuras de Poisson del tipo Flaska-Ratiu
- [] Calcular Corchete de Schouten
- [x] Calcular Corchete de Poisson
- [] Calcular Cohomología de Poisson
 
-## Pre-requisitos 📋
- * **[Python 3.7.x](https://www.python.org/)**
- * Dependencias
-    * Sympy [Docs](https://docs.sympy.org/latest/index.html) & [Git-hub](https://github.com/sympy/sympy)
-    * Galgebra [Docs](https://galgebra.readthedocs.io/en/latest/) & [Git-hub](https://github.com/pygae/galgebra)
-
-## Instalación 🔧
-Abre la terminal en la dirección donde vayas a guardar el proyecto (por ejemplo tu escritorio) y ejecuta lo siguiente:   
-```
-C:Users/dekstop/poisson$ git clone https://github.com/mevangelista-alvarado/poisson_geometry.git
-```
-Después crea un entorno virtual (¿Cómo hacerlo?)[Da click acá](https://gist.github.com/mevangelista-alvarado/8ee2fd663e7446e543fc04eacce0f303), para instalar las dependencias necesarias, ejecutando lo siguiente. 
-```
-C:Users/dekstop/poisson$ sudo python -m pip install -r requirements.txt
-```
+ - [x] Obtener Estructuras de Poisson del tipo Flaska-Ratiu
+ - [ ] Calcular Corchete de Schouten
+ - [ ] Calcular Corchete de Poisson
+ - [ ] Calcular Cohomología de Poisson
 
 ## Comenzando 🚀
 #### Desde las consola.
