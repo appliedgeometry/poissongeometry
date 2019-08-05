@@ -849,7 +849,7 @@ class PoissonGeometry:
                 d_casimir = d_casimir ^ element if index != 0 else d_casimir
     
             if d_casimir.is_zero():
-            return "Tu bivector es cero :("
+                return "Tu bivector es cero :("
 
             # This blocks obtains Poisson coefficients
             bivector_coeff_dict = {}
