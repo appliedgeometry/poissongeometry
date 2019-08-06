@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 import sympy as sym
 from galgebra.ga import Ga
-from errors import DimensionError
 
 
 def symbolic_expression(dict, dim, coordinates, variable, dx=False):
@@ -47,6 +46,11 @@ def show_coordinates(coordinates):
         return f'({self.coordinates[0]},...,{self.coordinates[-1]})'
     else:
         return f'Dimension do not sufficient'
+
+
+class DimensionError(Exception):
+    """Clase base para excepciones en el módulo."""
+    pass
 
 
 def validate_dimension(dimension):
