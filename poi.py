@@ -1,20 +1,23 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import sympy as sym
 import itertools as itools
-from utils import validate_dimension
+from utils import validate_dimension, symbolic_expression, is_dicctionary, show_coordinates
+
 
 class PoissonGeometry:
     """ This class provides some useful tools for Poisson-Nijenhuis calculus on Poisson manifolds."""
 
-    def __init__(self, dimension, variable='x', variables_complex=False):
+    def __init__(self, dimension, variable='x'):
         # Obtains the dimension
         self.dim = validate_dimension(dimension)
+        # Define what variables the class will work with
         self.variable = variable
         # Create the symbolics symbols
         self.coordinates = sym.symbols(f'{self.variable}1:{self.dim + 1}')
         # Show the coordinates with that will the class works
-        self.coords = f'({self.coordinates[0]},...,{self.coordinates[-1]})'
-
+        self.coords = show_coordinates(self.coordinates)
 
     def bivector_to_matrix(self, bivector, latex_syntax=False):
         """ Constructs the matrix of a 2-contravariant tensor field or bivector field.
@@ -28,13 +31,21 @@ class PoissonGeometry:
         The 'keys' are the ordered indices of the given bivector field P and the 'values' their coefficients.
         In this case,
             P = x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3.
-        :return: a symbolic skew-symmetric matrix of dimension (dim)x(dim). For the previous example,
+        :param latex_syntax: is a boleean value, the default value is False
+        :return: a symbolic skew-symmetric matrix of dimension (dim)x(dim), if latex_syntax is False
+        and if latex_syntax is True return a string value in syntax valid for latex.
+        For the previous example return,
             Matrix([[0, x3, -x2], [-x3, 0, x1], [x2, -x1, 0]]).
+        or
+            '\\left[\\begin{array}{ccc}0 & x_{3} & - x_{2}\\\\- x_{3} & 0 & x_{1}\\\\x_{2} & - x_{1} &
+            0\\end{array}\\right]'
+        respectively each case.
         """
-        # Check if bivector is Poisson
-        if not is_poisson(bivector):
-            print("Your bivector is not Poisson")
-            return None
+        # Validate the params
+        try:
+            bivector = is_dicctionary(bivector)
+        except Exception as e:
+            print(F"[Error bivector_to_matrix] \n Error: {e}, Type: {type(e)}")
 
         # Creates a symbolic Matrix
         bivector_matrix = sym.MatrixSymbol('P', self.dim, self.dim)
@@ -42,8 +53,8 @@ class PoissonGeometry:
 
         # Assigns the corresponding coefficients of the bivector field
         for ij in itools.combinations_with_replacement(range(1, self.dim + 1), 2):
-            i , j = ij[0], ij[1]
-            # Makes the Poisson Matrix
+            i, j = ij[0], ij[1]
+            # Makes the Poisson Matrix
             bivector_matrix[i - 1, j - 1] = 0 if i == j else sym.sympify(bivector[int(''.join(str(i) for i in ij))])
             bivector_matrix[j - 1, i - 1] = (-1) * bivector_matrix[i - 1, j - 1]
 
