@@ -1,58 +1,59 @@
 # Poisson Geometry
-Es una clase de Python para hacer Cálculo Simbólico en Geometría de Poisson, algunas de sus funciones son:
+Is this a Python class to make symbolic calculus in Poisson Geometry, some of its functions are:
 
- - [x] Obtener Estructuras de Poisson del tipo Flaska-Ratiu
- - [ ] Calcular Corchete de Schouten
- - [ ] Calcular Corchete de Poisson
- - [ ] Calcular Cohomología de Poisson
+ - [x] Get Poisson structures from Flaska-Ratio formula
+ - [x] Calculate Schouten Bracket
+ - [x] Calculate Poisson Bracket
 
-## Comenzando 🚀
-#### Desde las consola.
-Abre la terminal con direccion en la carpeta donde esta el archivo __poisson.py__ y ejecuta lo siguiente:
-```
-C:Users/dekstop/poisson$ python 
->>> from poisson import PoissonGeometry as ps 
->>> import sympy
-# Instanciamos la clase Poisson
->>> p = ps()
-# variables 
->>> x1,x2,x3 = sympy.symbols('x1 x2 x3')
->>> M = sympy.Matrix([[0,x3,x2],[-x3,0,x1],[-x2,-x1,0]])
-```
-Probando las funciones
- * poisson_bracket
+## Starting 🚀
+#### You only have an interest in trying:
+ * __On the cloud__
+   __TODO__ add link to codelab
+ * __On local machine__
+   * Clone this repository in you local machine.
+   * Open a terminal with the path where you clone this repository.
+   * Create a virtual environment, you can see the following [link](https://gist.github.com/mevangelista-alvarado/8ee2fd663e7446e543fc04eacce0f303) to know, how creates a virtual environment step by step.
+   * Install the requirements, as follows:
+      ```
+      (venv_name) C:Users/dekstop/poisson$ pip install -r requirements.txt
+      ```
+   * We open the python terminal to start testing, as follows:
+      ```
+      (venv_name) C:Users/dekstop/poisson$ python
+      ```
+
+## Testing the class.
+ * __Bivector to matrix function__
+   We want convert to matrix the bivector $$\pi = x_{3}\partial x_{1}\wedge\partial x_2 - x_{2}\partial x_{1}\wedge\partial x_3 + x_{1}\partial x_{2}\wedge\partial x_2$$
+   for this goal we use the `bivector_to_matrix` function
    ```
-   >>> f = ['x1**2 + x3', 'x1 + x2 + x3'] # funciones para aplicar el corchete
-   >>> poisson_bracket = p.poisson_bracket(M, f)
-   >>> poisson_bracket # resultado
-   >>> 2*x1*x3 - x1 + x2*(2*x1 - 1)
+   >>> from poisson import PoissonGeometry
+   >>> # We instantiate the Poisson class for dimension 3
+   >>> poisson = ps(3)
+   >>> poisson.bivector_to_matrix({12: 'x3', 13: '-x2', 23: 'x1'})
+   Matrix([
+   [  0,  x3, -x2],
+   [-x3,   0,  x1],
+   [ x2, -x1,   0]])
    ```
-* hamiltonian_vector_field
+   Where the result is a Sympy Matrix type.
+This function has an option for output is in latex syntax string, for this, we change flag `latex_syntax` to True, because its default value is False, as shown below.
    ```
-   >>> f = 'x1**2 + x3'
-   >>> hamiltonian_vector_field = p.hamiltonian_vector_field(M, f)
-   >>> hamiltonian_vector_field # Resultado 
-   >>> -x2*Dx1 + x1*(2*x3 - 1)*Dx2 + 2*x1*x2*Dx3
-   ```
-* pi_sharp_morphism
-   ```
-   >>> w = ['x1','x2','x3**2']
-   >>> pi_sharp_morphism = p.pi_sharp_morphism(M, w)
-   >>> pi_sharp_morphism # resultado
-   >>> -x2*x3*(x3 + 1)*dx1 + x1*x3*(1 - x3)*dx2 + 2*x1*x2*dx3
+   >>> print(poisson.bivector_to_matrix({12: 'x3', 13: '-x2', 23: 'x1'}, latex_syntax=True))
+   \left[\begin{array}{ccc}0 & x_{3} & - x_{2}\\- x_{3} & 0 & x_{1}\\x_{2} & - x_{1} & 0\end{array}\right]
    ```
 
-## Autores ✒️
-Este trabajo es desarrollado y mantenido por:
+## Authors ✒️
+This work is developed and maintained by:
  * **Pablo Suárez Serrato** - [@psuarezserrato](https://github.com/psuarezserrato)
- * **Jose Ruíz** - [@jcrpanta](https://github.com/jcrpanta)
- * **Miguel Evangelista** - [@mevangelista-alvarado](https://github.com/mevangelista-alvarado)
+ * **Jose Ruíz Pantaleón** - [@jcrpanta](https://github.com/jcrpanta)
+ * **Miguel Evangelista Alvarado** - [@mevangelista-alvarado](https://github.com/mevangelista-alvarado)
 
-## Licencia 📄
-Próximamente
+## Licence 📄
+__TODO__ Add licence
 
-## No Olvides.
-* Comentar a otros sobre este proyecto 📢
-* Citar este proyecto si lo utilizas 🤓 (Próximamente referencia en formato Bibtex).
-* Por último, si conoces a uno de los autores invitale una cerveza 🍺.
+## Do not forget.
+* Comment to others about this project 📢
+* Cite this project if you use it 🤓 (__TODO__ add reference in Bibtex).
+* Finally, if you know one of the authors, invite him a beer🍺.
 ---
