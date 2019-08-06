@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import sympy as sym
 from galgebra.ga import Ga
 from errors import DimensionError
 
-def dict_to_symbol_exp(dict, dimension, coordinates, dx=False):
+
+def symbolic_expression(dict, dim, coordinates, variable, dx=False):
     """This method converts a dictionary with symbolic values ​​in a symbolic expression
     """
 
-    variables = variable_string(dim, symbol='Dx')
+    variables = variable_string(dim, symbol=F'D{variable}')
     if dx:
-        variables = variable_string(dim, symbol='dx')
+        variables = variable_string(dim, symbol=F'd{variable}')
 
     basis = Ga(variables, g=sym.eye(dim), coords=coordinates)
     # return a type multivector list g.mv()
@@ -24,26 +26,51 @@ def dict_to_symbol_exp(dict, dimension, coordinates, dx=False):
 
     return symbolic_expresion
 
-def variable_string(dimension, symbol):
-            '''This method generate dinamic variables
-                from a number (dimension) in a string
-            '''
-            iteration = 1
-            variable = ""
 
-            while iteration <= dimension:
-                # create symbols variables
-                variable = variable + "{}{} ".format(symbol, iteration)
-                iteration = iteration + 1
-            # return a type symbolic list
-            return variable[0:len(variable) - 1]
+def variable_string(dimension, symbol):
+    '''This method generate dinamic variables
+        from a number (dimension) in a string
+    '''
+    iteration = 1
+    variable = ""
+
+    while iteration <= dimension:
+        # create symbols variables
+        variable = variable + "{}{} ".format(symbol, iteration)
+        iteration = iteration + 1
+    # return a type symbolic list
+    return variable[0:len(variable) - 1]
+
+def show_coordinates(coordinates):
+    ''''''
+    if len(coordinates) > 2:
+        return f'({self.coordinates[0]},...,{self.coordinates[-1]})'
+    else:
+        return f'Dimension do not sufficient'
+
 
 def validate_dimension(dimension):
     """This method check if the dimension variable is valid for the this class"""
     if not isinstance(dimension, int):
-        raise TypeError(F"Your variable is not a type int")
+        raise TypeError(F"Your variable is not a int type")
 
     if dimension < 2:
         raise DimensionError(F"Your dimension is not greater than two")
     else:
         return dimension
+
+
+def is_dicctionary(dicctionary):
+    """This method check if the dimension variable is valid for the this class"""
+    if not isinstance(dicctionary, dict):
+        raise TypeError(F"Your variable is not a dictionary type")
+
+    return dicctionary
+
+
+def is_string(dicctionary):
+    """This method check if the dimension variable is valid for the this class"""
+    if not isinstance(dicctionary, str):
+        raise TypeError(F"Your variable is not a dictionary type")
+
+    return dicctionary
