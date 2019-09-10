@@ -1,13 +1,11 @@
 
 # Poisson Geometry
 Is a Python class to calculate classical methods in Poisson Geometry with symbolic calculus some of its function are:
- - [x]  Poisson structures from Flaska-Ratiu method
- - [x]  Schouten-Nijenhuis Bracket:
-        <a href="https://www.codecogs.com/eqnedit.php?latex=[\pi,X]" target="_blank"><img src="https://latex.codecogs.com/gif.latex?[\pi,X]" title="[\pi,X]" /></a> 
-	for <a href="https://www.codecogs.com/eqnedit.php?latex=$X&space;\in\mathcal{X}^{n}(M)$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$X&space;\in\mathcal{X}^{n}(M)$" title="$X \in\mathcal{X}^{n}(M)$" /></a> and <a href="https://www.codecogs.com/eqnedit.php?latex=$n&space;\in\mathbb{Z}$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$n&space;\in\mathbb{Z}$" title="$n \in\mathbb{Z}$" /></a> with <a href="https://www.codecogs.com/eqnedit.php?latex=$0\leq&space;n\leq&space;dim(M)$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$0\leq&space;n\leq&space;dim(M)$" title="$0\leq n\leq dim(M)$" /></a>.   
- - [x] Poisson Bracket: $$\{f,g\}_{\pi}=\pi(df,dg)$$ for $f, g: M\to \mathbb{R}$
- - [x] The morphism sharp: $$\pi^{\#}(\alpha) := i_{\alpha}\pi$$ for $\alpha\in\Omega^{1}(M)$ and $i$ the interior product of multivector fileds and differential forms. 
- - [x] Hamiltonian vector filed of $h$ respect to $\pi$: $$X_{h}=\pi^{\#}(dh)$$ for $h\in C^{\infty}(M)$
+ - [x] Poisson structures from Flaska-Ratiu method
+ - [x] Schouten-Nijenhuis Bracket      
+ - [x] Poisson Bracket
+ - [x] The morphism sharp 
+ - [x] Hamiltonian vector filed of a function respect to Poisson structure.
 
 For more information you can read the [wiki](https://github.com/mevangelista-alvarado/poisson_geometry/wiki) this project. or the our [documentation]()
 
@@ -36,8 +34,8 @@ This project results from the need to have somethings to take calculus in the Po
       (venv_name) C:Users/dekstop/poisson$ python
       ```
 	* Testing the class.
-	   For example we want convert to matriz the bivector $$\pi=x_{3}\frac{\partial}{\partial x_{1}}\wedge\frac{\partial}{\partial x_{2}} - x_{2}\frac{\partial}{\partial x_{1}}\wedge\frac{\partial}{\partial x_{3}} + x_{1}\frac{\partial}{\partial x_{2}}\wedge\frac{\partial}{\partial x_{3}}$$ 
-	   then $\pi$ is equivalent to ```{12: 'x3', 13: '-x2', 23: 'x1'}``` in this class.
+	   For example we want convert to matriz the bivector <a href="https://www.codecogs.com/eqnedit.php?latex=$$\pi=x_{3}\frac{\partial}{\partial&space;x_{1}}\wedge\frac{\partial}{\partial&space;x_{2}}&space;-&space;x_{2}\frac{\partial}{\partial&space;x_{1}}\wedge\frac{\partial}{\partial&space;x_{3}}&space;&plus;&space;x_{1}\frac{\partial}{\partial&space;x_{2}}\wedge\frac{\partial}{\partial&space;x_{3}}$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$\pi=x_{3}\frac{\partial}{\partial&space;x_{1}}\wedge\frac{\partial}{\partial&space;x_{2}}&space;-&space;x_{2}\frac{\partial}{\partial&space;x_{1}}\wedge\frac{\partial}{\partial&space;x_{3}}&space;&plus;&space;x_{1}\frac{\partial}{\partial&space;x_{2}}\wedge\frac{\partial}{\partial&space;x_{3}}$$" title="$$\pi=x_{3}\frac{\partial}{\partial x_{1}}\wedge\frac{\partial}{\partial x_{2}} - x_{2}\frac{\partial}{\partial x_{1}}\wedge\frac{\partial}{\partial x_{3}} + x_{1}\frac{\partial}{\partial x_{2}}\wedge\frac{\partial}{\partial x_{3}}$$" /></a>  
+	   then <a href="https://www.codecogs.com/eqnedit.php?latex=\pi" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\pi" title="\pi" /></a> is equivalent to ```{12: 'x3', 13: '-x2', 23: 'x1'}``` in this class.
 	   ```
 	   >>> from poisson import PoissonGeometry
 	   >>> # We instantiate the Poisson class for dimension 3
