@@ -3,7 +3,9 @@ from __future__ import unicode_literals
 
 import sympy as sym
 import itertools as itools
-from utils import validate_dimension, symbolic_expression, is_dicctionary, show_coordinates
+from utils import (validate_dimension, symbolic_expression,
+                   is_dicctionary, show_coordinates,
+                   two_tensor_form_to_matrix, bivector_to_matrix)
 
 
 class PoissonGeometry:
