@@ -19,83 +19,51 @@ class PoissonGeometry:
         # Show the coordinates with that will the class works
         self.coords = show_coordinates(self.coordinates)
 
-    def bivector_to_matrix(self, bivector, latex_syntax=False):
-        """ Constructs the matrix of a 2-contravariant tensor field or bivector field.
-        Remark:
-        The associated matrix of a bivector field
-            P = Pij*Dxi^Dxj, 1 <= i < j <= dim,
-        is defined by [Pij].
-        :param bivector: is a dictionary with integer type 'keys' and string type 'values'.
-        For example, on R^3,
-            {12: 'x3', 13: '-x2', 23: 'x1'}.
-        The 'keys' are the ordered indices of the given bivector field P and the 'values' their coefficients.
-        In this case,
-            P = x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3.
-        :param latex_syntax: is a boleean value, the default value is False
-        :return: a symbolic skew-symmetric matrix of dimension (dim)x(dim), if latex_syntax is False
-        and if latex_syntax is True return a string value in syntax valid for latex.
-        For the previous example return,
-            Matrix([[0, x3, -x2], [-x3, 0, x1], [x2, -x1, 0]]).
-        or
-            '\\left[\\begin{array}{ccc}0 & x_{3} & - x_{2}\\\\- x_{3} & 0 & x_{1}\\\\x_{2} & - x_{1} &
-            0\\end{array}\\right]'
-        respectively each case.
+    def sharp_morphism(self, bivector, one_form, latex_format=False):
+        """ Calculates the image of a differential 1-form under the vector bundle morphism 'sharp' P#: T*M -> TM
+        defined by P#(alpha) := i_(alpha)P, where P is a Poisson bivector field on a manifold M, alpha a 1-form on M
+        and i the interior product of alpha and P.
+
+        Parameters
+        ==========
+        :bivector:
+            Is a Poisson bivector in a dictionary format with integer type 'keys' and string type 'values'.
+        :one_form:
+            Is a 1-form differential in a dictionary format with integer type 'keys' and string type 'values'.
+        :latex_format:
+            Is a boolean flag to indicates if the result is given in latex format or not, its default value is False
+
+        Returns
+        =======
+            The result is the image of a differential 1-form alpha under the vector bundle morphism 'sharp' in a
+            dictionary format with integer type 'keys' and symbol type 'values'
+
+        Example
+        ========
+            >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
+            >>> bivector = {12: 'x3', 13: '-x2', 23: 'x1'}
+            >>> # For one form a1*x1*dx1 + a2*x2*dx2 + a3*x3*dx3.
+            >>> one_form = {1: 'a1*x1', 2: 'a2*x2', 3: 'a3*x3'}
+            >>> # P#(one_form) = x2*(-a2*x3 + a3*x3x)*Dx1 + x1*(a1*x3 - a3*x3x)*Dx2 + x1*x2*(-a1 + a2)*Dx3.
+            >>> sharp_morphism(bivector, one_form, latex_format=False)
+            >>> {1: x2*(-a2*x3 + a3*x3x), 2: x1*(a1*x3 - a3*x3x), 3: x1*x2*(-a1 + a2)}
+            >>> print(sharp_morphism(bivector, one_form, latex_format=True))
+            >>> 'x_{2} x_{3} \\left(- a_{2} + a_{3}\\right) \\boldsymbol{Dx}_{1} + x_{1} x_{3} \\left(a_{1}
+            - a_{3}\\right) \\boldsymbol{Dx}_{2} + x_{1} x_{2} \\left(- a_{1} + a_{2}\\right) \\boldsymbol{Dx}_{3}'
         """
+
         # Validate the params
         try:
             bivector = is_dicctionary(bivector)
+            one_form = is_dicctionary(one_form)
         except Exception as e:
-            print(F"[Error bivector_to_matrix] \n Error: {e}, Type: {type(e)}")
+            print(F"[Error sharp_morphism] \n Error: {e}, Type: {type(e)}")
 
-        # Creates a symbolic Matrix
-        bivector_matrix = sym.MatrixSymbol('P', self.dim, self.dim)
-        bivector_matrix = sym.Matrix(bivector_matrix)
-
-        # Assigns the corresponding coefficients of the bivector field
-        for ij in itools.combinations_with_replacement(range(1, self.dim + 1), 2):
-            i, j = ij[0], ij[1]
-            # Makes the Poisson Matrix
-            bivector_matrix[i - 1, j - 1] = 0 if i == j else sym.sympify(bivector[int(''.join(str(i) for i in ij))])
-            bivector_matrix[j - 1, i - 1] = (-1) * bivector_matrix[i - 1, j - 1]
-
-        # Return a symbolic Poisson matrix or Poisson matrix in LaTeX syntax
-        return sym.latex(bivector_matrix) if latex_syntax else bivector_matrix
-
-
-    def sharp_morphism(self, bivector, one_form, latex_syntax=False):
-        """ Calculates the image of a differential 1-form under the
-        vector bundle morphism 'sharp' induced by a (Poisson) bivector
-        field.
-        Remark:
-        The morphism 'sharp', P#: T*M -> TM,
-        is defined by
-            P#(alpha) := i_(alpha)P,
-        where P is a (Poisson) bivector field on a manifold M, alpha a 1-form on M and
-        i the interior product of alpha and P.
-        :param bivector: is a dictionary with integer type 'keys' and
-         string type 'values'. For example, on R^3,
-            {12: 'x3', 13: '-x2', 23: 'x1'}.
-         The 'keys' are the ordered indices of the given bivector field
-         P and the 'values' their coefficients. In this case,
-            P = x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3.
-        :param one_form: is a dictionary with integer type 'keys' and
-         string type 'values'. For example, on R^3,
-            {1: 'a1*x1', 2: 'a2*x2', 3: 'a3*x3'}.
-         The 'keys' are the indices of the coefficients of a given
-         differential 1-form alpha and the 'values' their coefficients.
-         In this case,
-            alpha = a1*x1*dx1 + a2*x2*dx2 + a3*x3*dx3.
-        :return: a dictionary with integer type 'keys' and symbol type
-         'values'. For the previous example,
-            {1: x2*(-a2*x3 + a3*x3x), 2: x1*(a1*x3 - a3*x3x), 3: x1*x2*(-a1 + a2)},
-         which represents the vector field
-            P#(alpha) = x2*(-a2*x3 + a3*x3x)*Dx1 + x1*(a1*x3 - a3*x3x)*Dx2 + x1*x2*(-a1 + a2)*Dx3.
-        """
         # Converts strings to symbolic variables
-        for key in one_form.keys():
-            one_form[key] = sym.sympify(one_form[key])
-        for key in bivector.keys():
-            bivector[key] = sym.sympify(bivector[key])
+        for i, coeff_i in one_form.items():
+            one_form.update({i: sym.sympify(coeff_i)})
+        for ij, coeff_ij in bivector.items():
+            bivector.update({ij: sym.sympify(coeff_ij)})
 
         """
             Calculation of the vector field bivector^#(one_form) as
@@ -103,50 +71,51 @@ class PoissonGeometry:
             where i < j.
         """
         p_sharp_aux = [0] * self.dim
-        for ij in bivector.keys():
-            # Converts the key in a tuple
-            tuple_ij = tuple(map(int, str(ij)))
-            # Calculates one_form_i*Pij*Dxj
-            p_sharp_aux[tuple_ij[1] - 1] = sym.simplify(
-                p_sharp_aux[tuple_ij[1] - 1] + one_form[tuple_ij[0]] * bivector[ij])
-            # Calculates one_form_j*Pji*Dxi
-            p_sharp_aux[tuple_ij[0] - 1] = sym.simplify(
-                p_sharp_aux[tuple_ij[0] - 1] - one_form[tuple_ij[1]] * bivector[ij])
+        for ij, bivector_ij in bivector.items():
+            # Get the values i and j from bivector index ij
+            i, j = int(str(ij)[0]), int(str(ij)[1])
+            # Calculates one form i*Pij*Dxj
+            p_sharp_aux[j - 1] = sym.simplify(p_sharp_aux[j - 1] + one_form[i] * bivector_ij)
+            # Calculates one form j*Pji*Dxi
+            p_sharp_aux[i - 1] = sym.simplify(p_sharp_aux[i - 1] - one_form[j] * bivector_ij)
         # Creates a dictionary which represents the vector field P#(alpha)
-        p_sharp_dict = dict(zip(range(1, self.dim + 1), p_sharp_aux))
+        p_sharp = dict(zip(range(1, self.dim + 1), p_sharp_aux))
 
-        return sym.latex(dict_to_symbol_exp(p_sharp_dict, self.dim ,self.coordinates)) if latex_syntax else p_sharp_dict
-
+        # Return a vector field expression in LaTeX format
+        if latex_format:
+            # For copy and paste this result in a latex editor, do not forget make "print()" in the result.
+            return symbolic_expression(p_sharp, self.dim, self.coordinates, self.variable).Mv_latex_str()
+        # Return a symbolic dictionary.
+        return p_sharp
 
     def is_in_kernel(self, bivector, one_form):
-        """ Check if a differential 1-form belongs to the kernel of a
-        given (Poisson) bivector field.
-        Remark:
-        A diferencial 1-form alpha on a Poisson manifold (M,P) belong to the kernel of P if
-            P#(alpha) = 0,
-        where P#: T*M -> TM is the vector bundle morphism defined by
-            P#(alpha) := i_(alpha)P,
-        with i the interior product of alpha and P.
-        :param bivector: is a dictionary with integer type 'keys' and
-         string type 'values'. For example, on R^3,
-            {12: 'x3', 13: '-x2', 23: 'x1'}.
-         The 'keys' are the ordered indices of the given bivector field
-         P and the 'values' their coefficients. In this case,
-            P = x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3.
-        :param one_form: is a dictionary with integer type 'keys' and
-         string type 'values'. For example, on R^3,
-            {1: 'x1', 2: 'x2', 3: 'x3'}.
-         The 'keys' are the indices of the coefficients of a given
-         differential 1-form alpha and the 'values' their coefficients.
-         In this case,
-            alpha = x1*dx1 + x2*dx2 + x3*dx3.
-        :return: a boolean variable.
-        """
-        # Check if the vector field bivector#(one_form) is zero or not
-        if all(val == 0 for val in self.sharp_morphism(bivector, one_form).values()):
-            return True
-        return False
+        """ Check if a differential 1-form alpha belongs to the kernel of a given Poisson bivector field,
+            that is check if P#(alpha) = 0
 
+        Parameters
+        ==========
+        :bivector:
+            Is a Poisson bivector in a dictionary format with integer type 'keys' and string type 'values'.
+        :one_form:
+            Is a 1-form differential in a dictionary format with integer type 'keys' and string type 'values'.
+
+        Returns
+        =======
+            The result is True if P#(alpha) = 0, in other case is False.
+
+        Example
+        ========
+            >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
+            >>> bivector = {12: 'x3', 13: '-x2', 23: 'x1'}
+            >>> # For one form x1*dx1 + x2*dx2 + x3*dx3.
+            >>> one_form = {1: 'x1', 2: 'x2', 3: 'x3'}.
+            >>> # P#(one_form) = x2*(-a2*x3 + a3*x3x)*Dx1 + x1*(a1*x3 - a3*x3x)*Dx2 + x1*x2*(-a1 + a2)*Dx3.
+            >>> is_in_kernel(bivector, one_form)
+            >>> True
+        """
+        p_sharp = self.sharp_morphism(bivector, one_form)
+        # Converts a dictionary symbolic to a symbolic expression and verify is zero with a sympy method
+        return True if symbolic_expression(p_sharp, self.dim, self.coordinates, self.variable).is_zero() else False
 
     def hamiltonian_vector_field(self, bivector, hamiltonian_function, latex_syntax=False):
         """ Calculates the Hamiltonian vector field of a function rela-
