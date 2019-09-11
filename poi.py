@@ -119,40 +119,60 @@ class PoissonGeometry:
         # Converts a dictionary symbolic to a symbolic expression and verify is zero with a sympy method
         return True if symbolic_expression(p_sharp, self.dim, self.coordinates, self.variable).is_zero() else False
 
-    def hamiltonian_vector_field(self, bivector, hamiltonian_function, latex_syntax=False):
-        """ Calculates the Hamiltonian vector field of a function rela-
-        tive to a (Poisson) bivector field.
-        Remark:
-        The Hamiltonian vector field of a scalar function h on a Poisson manifold (M,P),
-        relative to the Poisson bivector field P, is given by
-            X_h = P#(dh),
-        where dh is the exterior derivative (differential) of h and P#: T*M -> TM is the
-        vector bundle morphism defined by
-            P#(alpha) := i_(alpha)P,
-        with i is the interior product of alpha and P.
-        :param bivector: is a dictionary with integer type 'keys' and
-         string type 'values'. For example, on R^3,
-            {12: 'x3', 13: '-x2', 23: 'x1'}.
-         The 'keys' are the ordered indices of the given bivector field
-         P and the 'values' their coefficients. In this case,
-            P = x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3.
-        :param hamiltonian_function: is a string type variable. For example, on
-         R^3,
-            'x1 + x2 + x3'.
-        :return: a dictionary with integer type 'keys' and symbol type
-         'values'. For the previous example,
-            {1: x2 - x3, 2: -x1 + x3, 3: x1 - x2},
-         which represents the Hamiltonian vector field
-            X_h = (x2 - x3)*Dx1 + (-x1 + x3)*Dx2 + (x1 - x2)*Dx3.
+    def hamiltonian_vector_field(self, bivector, hamiltonian_function, latex_format=False):
+        """ Calculates the Hamiltonian vector field of a function relative to a Poisson bivector field as follows:
+            X_h = P#(dh), where d is the exterior derivative of h and P#: T*M -> TM is the vector bundle morphism
+        defined by P#(alpha) := i_(alpha)P, with i is the interior product of alpha and P.
+
+        Parameters
+        ==========
+        :bivector:
+            Is a Poisson bivector in a dictionary format with integer type 'keys' and string type 'values'.
+        :hamiltonian_function:
+            Is a function scalar h: M --> R that is a string type.
+        :latex_format:
+            Is a boolean flag to indicates if the result is given in latex format or not, its default value is False
+
+        Returns
+        =======
+            The result is the hamiltonian vector field relative to a Poisson in a dictionary format with integer type
+            'keys' and symbol type 'values'
+
+        Example
+        ========
+            >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
+            >>> bivector = {12: 'x3', 13: '-x2', 23: 'x1'}
+            >>> # For hamiltonian_function h(x1,x2,x3) = x1 + x2 + x3.
+            >>> hamiltonian_function = 'x1 + x2 + x3'.
+            >>> # X_h = P#(dh) = (x2 - x3)*Dx1 + (-x1 + x3)*Dx2 + (x1 - x2)*Dx3.
+            >>> hamiltonian_vector_field(bivector, hamiltonian_function, latex_format=False)
+            >>> {1: x2 - x3, 2: -x1 + x3, 3: x1 - x2}
+            >>> hamiltonian_vector_field(bivector, hamiltonian_function, latex_format=True)
+            >>> '\\left ( x_{2} - x_{3}\\right ) \\boldsymbol{Dx}_{1} + \\left ( - x_{1} + x_{3} \\right )
+                 \\boldsymbol{Dx}_{2} + \\left ( x_{1} - x_{2}\\right ) \\boldsymbol{Dx}_{3}'
         """
+
+        # Validate the params
+        try:
+            bivector = is_dicctionary(bivector)
+            hamiltonian_function = is_string(hamiltonian_function)
+        except Exception as e:
+            print(F"[Error hamiltonian_vector_field] \n Error: {e}, Type: {type(e)}")
+
+        # Converts a string to symbolic expression
+        h = sym.sympify(hamiltonian_function)
         # Calculates the differential of hamiltonian_function
-        dh = sym.derive_by_array(sym.sympify(hamiltonian_function), self.coordinates)
+        dh = sym.derive_by_array(h, self.coordinates)
         # Calculates the Hamiltonian vector field
-        ham_vector_field = self.sharp_morphism(bivector, dict(zip(range(1, self.dim + 1), dh)))
+        hamiltonian_vector_field = self.sharp_morphism(bivector, dict(zip(range(1, self.dim + 1), dh)))
 
-        # return a dictionary
-        return sym.latex(dict_to_symbol_exp(ham_vector_field, self.dim ,self.coordinates)) if latex_syntax else ham_vector_field
-
+        if latex_format:
+            # return to symbolic expression in LaTeX format
+            return symbolic_expression(hamiltonian_vector_field, self.dim,
+                                       self.coordinates, self.variable).Mv_latex_str()
+        else:
+            # return a symbolic dictionary
+            return hamiltonian_vector_field
 
     def is_casimir(self, bivector, function):
         """ Check if a function is a Casimir function of a given (Poisson) bivector field.
