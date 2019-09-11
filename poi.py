@@ -23,8 +23,8 @@ class PoissonGeometry:
 
     def sharp_morphism(self, bivector, one_form, latex_format=False):
         """ Calculates the image of a differential 1-form under the vector bundle morphism 'sharp' P#: T*M -> TM
-        defined by P#(alpha) := i_(alpha)P, where P is a Poisson bivector field on a manifold M, alpha a 1-form on M
-        and i the interior product of alpha and P.
+            defined by P#(alpha) := i_(alpha)P, where P is a Poisson bivector field on a manifold M, alpha a 1-form on M
+            and i the interior product of alpha and P.
 
         Parameters
         ==========
@@ -122,7 +122,7 @@ class PoissonGeometry:
     def hamiltonian_vector_field(self, bivector, hamiltonian_function, latex_format=False):
         """ Calculates the Hamiltonian vector field of a function relative to a Poisson bivector field as follows:
             X_h = P#(dh), where d is the exterior derivative of h and P#: T*M -> TM is the vector bundle morphism
-        defined by P#(alpha) := i_(alpha)P, with i is the interior product of alpha and P.
+            defined by P#(alpha) := i_(alpha)P, with i is the interior product of alpha and P.
 
         Parameters
         ==========
@@ -175,30 +175,36 @@ class PoissonGeometry:
             return hamiltonian_vector_field
 
     def is_casimir(self, bivector, function):
-        """ Check if a function is a Casimir function of a given (Poisson) bivector field.
-        Remark:
-        A function K on a Poisson manifold (M,P) is said to be a Casimir function of the
-        Poisson bivector field P if
-            P#(dK) = 0,
-        where dK is the exterior derivative (differential) of K and P#: T*M -> TM is the
-        vector bundle morphism defined by
-            P#(alpha) := i_(alpha)P,
-        with i the interior product of alpha and P.
-        :param bivector: is a dictionary with integer type 'keys' and
-         string type 'values'. For example, on R^3,
-            {12: 'x3', 13: '-x2', 23: 'x1'}.
-         The 'keys' are the ordered indices of the given bivector field
-         P and the 'values' their coefficients. In this case,
-            P = x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3.
-        :param function: is a string type variable. For example, on R^3,
-            'x1**2 + x2**2 + x3**2'.
-        :return: a boolean type variable.
-        """
-        # Check if the Hamiltonian vector field of K is zero or not
-        if all(val == 0 for val in self.hamiltonian_vector_field(bivector, function).values()):
-            return True
-        return False
+        """ Check if a function is a Casimir function of a given (Poisson) bivector field, that is
+            P#(dK) = 0, where dK is the exterior derivative (differential) of K and P#: T*M -> TM is the
+            vector bundle morphism defined by P#(alpha) := i_(alpha)P, with i the interior product of alpha and P.
 
+        Parameters
+        ==========
+        :bivector:
+            Is a Poisson bivector in a dictionary format with integer type 'keys' and string type 'values'.
+        :function:
+            Is a function scalar f: M --> R that is a string type.
+
+        Returns
+        =======
+            The result is True if P#(df) = 0, in other case is False.
+
+        Example
+        ========
+            >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
+            >>> bivector = {12: 'x3', 13: '-x2', 23: 'x1'}
+            >>> # For function f(x1,x2,x3) = x1^2 + x2^2 + x32.
+            >>> function = 'x1**2 + x2**2 + x3**2'.
+            >>> is_casimir(bivector, function)
+            >>> False
+        """
+
+        # Calculates the Hamiltonian vector field
+        hamiltonian_vector_field = self.hamiltonian_vector_field(bivector, function)
+        # Converts a dictionary symbolic to a symbolic expression and verify is zero with a method of sympy
+        return True if symbolic_expression(hamiltonian_vector_field, self.dim,
+                                           self.coordinates, self.variable).is_zero() else False
 
     def poisson_bracket(self, bivector, function_1, function_2, latex_syntax=False):
         """ Calculates the poisson bracket of two functions induced by
