@@ -206,84 +206,97 @@ class PoissonGeometry:
         return True if symbolic_expression(hamiltonian_vector_field, self.dim,
                                            self.coordinates, self.variable).is_zero() else False
 
-    def poisson_bracket(self, bivector, function_1, function_2, latex_syntax=False):
-        """ Calculates the poisson bracket of two functions induced by
-        a given Poisson bivector field.
-        Remark:
-        The Poisson bracket of two functions f and g on a Poisson manifold (M,P) is given by
-            {f,g} = π(df,dg) = ⟨dg,π#(df)⟩,
-        where df and dg are the exterior derivatives (differentials) of f and g respectively,
-        and P#: T*M -> TM is the vector bundle morphism defined by
-            P#(alpha) := i_(alpha)P,
-        with i the interior product of alpha and P. Also ⟨,⟩ denote the natural pairing between
-        differential forms and vector fields.
-        :param bivector: is a dictionary with integer type 'keys' and
-         string type 'values'. For example, on R^3,
-            {12: 'x3', 13: '-x2', 23: 'x1'}.
-         The 'keys' are the ordered indices of the given bivector field
-         P and the 'values' their coefficients. In this case,
-            P = x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3.
-        :param function_1: is a string type variable. For example, on
-         R^3,
-            'x1 + x2 + x3'.
-        :param function_2: is a string type variable. For example, on
-         R^3
-            'a1*x1 + a2*x2 + a3*x3'.
-        :return: a symbolic type expression. For the previous example,
-            a1*(x2 - x3) - a2*(x1 - x3) + a3*(x1 - x2)
+    def poisson_bracket(self, bivector, f, g, latex_format=False):
+        """ Calculates the poisson bracket {f,g} = π(df,dg) = ⟨dg,π#(df)⟩ of two functions
+            f and g on a Poisson manifold (M,P), where d is the exterior derivatives and P#: T*M -> TM is the
+            vector bundle morphism defined by P#(alpha) := i_(alpha)P, with i the interior product of alpha and P.
+
+        Parameters
+        ==========
+        :bivector:
+            Is a Poisson bivector in a dictionary format with integer type 'keys' and string type 'values'.
+        :f / g:
+            Is a function scalar f/g: M --> R that is a string type.
+
+        Returns
+        =======
+            The result is the poisson bracket from f with g in a dictionary format with integer type 'keys' and
+            symbol type 'values'.
+
+        Example
+        ========
+            >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
+            >>> bivector = {12: 'x3', 13: '-x2', 23: 'x1'}
+            >>> # For f(x1,x2,x3) = x1 + x2 + x3.
+            >>> f = 'x1 + x2 + x3'
+            >>> # For g(x1,x2,x3) = 'a1*x1 + a2*x2 + a3*x3'.
+            >>> g = 'a1*x1 + a2*x2 + a3*x3'
+            >>> # {f, g} = a1*(x2 - x3) - a2*(x1 - x3) + a3*(x1 - x2)
+            >>> poisson_bracket(bivector, f, g, latex_format=False)
+            >>> a1*(x2 - x3) - a2*(x1 - x3) + a3*(x1 - x2)
+            >>> poisson_bracket(self, bivector, f, g, latex_format=True)
+            >>> 'a_{1} \\left(x_{2} - x_{3}\\right) - a_{2} \\left(x_{1} - x_{3}\\right) + a_{3} \\left(x_{1}
+                - x_{2}\\right)'
         """
-        f1, f2 = sym.sympify(function_1), sym.sympify(function_2)
-        if f1 - f2 == 0:
-            # {f1,f2} = 0 for f1=f2
+
+        # Validate the params
+        try:
+            bivector = is_dicctionary(bivector)
+            f = is_string(f)
+            g = is_string(g)
+        except Exception as e:
+            print(F"[Error poisson_bracket] \n Error: {e}, Type: {type(e)}")
+
+        # Convert from string to sympy value
+        f, g = sym.sympify(f), sym.sympify(g)
+        if f == g:
+            # {f,g} = 0 if f=g
             return 0
-        # Calculates the differentials of function_1 and function_2
-        df1 = dict(zip(range(1, self.dim + 1), sym.derive_by_array(f1, self.coordinates)))
-        df2 = dict(zip(range(1, self.dim + 1), sym.derive_by_array(f2, self.coordinates)))
-        # Calculates {f1,f2} = <df2,P#(df1)> = ∑_{i} (P#(df1))^i * (df2)_i
-        bracket_f1_f2 = sym.simplify(sum(self.sharp_morphism(bivector, df1)[index] * df2[index] for index in df1))
+        # Calculates the differentials of f and g
+        df = dict(zip(range(1, self.dim + 1), sym.derive_by_array(f, self.coordinates)))
+        dg = dict(zip(range(1, self.dim + 1), sym.derive_by_array(g, self.coordinates)))
+        # Calculates {f,g} = <g,P#(df)> = ∑_{i} (P#(df))^i * (dg)_i
+        bracket_f_g = sym.simplify(sum(self.sharp_morphism(bivector, df)[index] * dg[index] for index in df))
 
         # Return a symbolic type expression
-        return sym.latex(bracket_f1_f2) if latex_syntax else bracket_f1_f2
+        return sym.latex(bracket_f_g) if latex_syntax else bracket_f_g
 
-
-    def lichnerowicz_poisson_operator(self, bivector, multivector, latex_syntax=False):
-        """ Calculates the Schouten-Nijenhuis bracket between a given
-        (Poisson) bivector field and a (arbitrary) multivector field.
-        Recall that the Lichnerowicz-Poisson operator on a Poisson ma-
-        nifold (M,P) is defined as the adjoint operator of P, ad_P,
-        respect to the Schouten bracket for multivector fields on M:
+    def lichnerowicz_poisson_operator(self, bivector, multivector, latex_format=False):
+        """ Calculates the Schouten-Nijenhuis bracket between a given (Poisson) bivector field and a (arbitrary)
+        multivector field.
+        Recall that the Lichnerowicz-Poisson operator on a Poisson manifold (M,P) is defined as the adjoint operator
+        of P, ad_P, respect to the Schouten bracket for multivector fields on M:
             ad_P(A) := [P,A],
-        for any multivector field A on M. Here [,] denote the Schouten-
-        Nijenhuis bracket.
-        Let P = Pij*Dxi^Dxj (i < j) and A = A^J*Dxj_1^Dxj_2^...^Dxj_a.
-        Here, we use the multi-index notation A^J := A^j_1j_2...j_a,
-        for j_1 < j_2 <...< j_a. Then,
-        [P,A](df1,...,df(a+1))
-                =
-        sum_(i=1)^(a+1) (-1)**(i)*{fi,A(df1,...,î,...,df(a+1))}_P
-        + sum(1<=i<j<=a+1) (-1)**(i+j)*A(d{fi,fj}_P,..î..^j..,df(a+1)),
-        for any smooth functions fi on M. Where {,}_P is the Poisson
-        bracket induced by P. Here ^ denotes the absence of the corres-
-        ponding index and dfi is the differential of fi.
-        :param bivector: is a dictionary with integer type 'keys' and
-         string type 'values'. For example, on R^3,
+        for any multivector field A on M. Here [,] denote the Schouten-Nijenhuis bracket.
+        Let P = Pij*Dxi^Dxj (i < j) and A = A^J*Dxj_1^Dxj_2^...^Dxj_a. Here, we use the multi-index notation
+        A^J := A^j_1j_2...j_a for j_1 < j_2 <...< j_a.
+        Then,
+            [P,A](df1,...,df(a+1)) = sum_(i=1)^(a+1) (-1)**(i)*{fi,A(df1,...,î,...,df(a+1))}_P
+                                     + sum(1<=i<j<=a+1) (-1)**(i+j)*A(d{fi,fj}_P,..î..^j..,df(a+1)),
+        for any smooth functions fi on M. Where {,}_P is the Poisson bracket induced by P. Here ^ denotes the absence
+        of the corresponding index and dfi is the differential of fi.
+        :param bivector: is a dictionary with integer type 'keys' and string type 'values'. For example, on R^3,
             {12: 'x3', 13: '-x2', 23: 'x1'}.
-         The 'keys' are the ordered indices of the given bivector field
-         P and the 'values' their coefficients. In this case,
-            P = x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3.
-        :param multivector: is a dictionary with integer type 'keys' and
-         string type 'values'. For example, on R^3,
+        The 'keys' are the ordered indices of the given bivector field P and the 'values' their coefficients.
+        In this case, P = x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3.
+        :param multivector: is a dictionary with integer type 'keys' and string type 'values'. For example, on R^3,
             {123: 'x1*x2*x3'}.
-         The 'keys' are the ordered indices of a given multivector field
-         A and the 'values' their coefficients. In this case,
-            A = x1*x2*x3*Dx1^Dx2*Dx3.
-        :return: a dictionary with integer type 'keys' and symbol type
-         'values' or the zero value. For the previous example,
-            0,
-         which says that any 4-multivector field on R^3 is zero.
+        The 'keys' are the ordered indices of a given multivector field A and the 'values' their coefficients.
+        In this case, A = x1*x2*x3*Dx1^Dx2*Dx3.
+        :return: a dictionary with integer type 'keys' and symbol type 'values' or the zero value.
+        For the previous example, if latex_format is False is zero and if latex_format is True is '0' which says that
+        any 4-multivector field on R^3 is zero.
         """
+         # Validate the params
+        try:
+            bivector = is_dicctionary(bivector)
+            multivector = is_dicctionary(multivector)
+        except Exception as e:
+            print(F"[Error lichnerowicz_poisson_operator] \n Error: {e}, Type: {type(e)}")
+
         mltv = multivector
-        deg_mltv = len(tuple(str(next(iter(mltv)))))  # Degree of multivector
+        # Degree of multivector
+        deg_mltv = len(tuple(str(next(iter(mltv)))))
         if deg_mltv + 1 > self.dim:
             return 0
         else:
@@ -325,9 +338,12 @@ class PoissonGeometry:
                         for i in range(1, self.dim + 1):
                             # List of indices for A without the indices in y
                             nw_idx_mltv = [e for e in z if e not in y]
-                            nw_idx_mltv.append(i)  # Add the index i
-                            nw_idx_mltv.sort()  # Sort the indices
-                            if nw_idx_mltv.count(i) != 2:  # Ignore repet. indx
+                            # Add the index i
+                            nw_idx_mltv.append(i)
+                            # Sort the indices
+                            nw_idx_mltv.sort()
+                            # Ignore index repetition
+                            if nw_idx_mltv.count(i) != 2:
                                 sum_i_aux = sym.simplify(
                                     (-1)**(z.index(y[0]) + z.index(y[1])
                                            + nw_idx_mltv.index(i))
@@ -343,67 +359,73 @@ class PoissonGeometry:
                         sum_y = sym.simplify(sum_y + sum_y_aux)
                         sum_i = 0
                         sum_i_aux = 0
-                    # Add the terms Dxk(P^iris)*A^((J+k)\iris)) in the list
-                    # schouten_biv_mltv_2
+                    # Add the terms Dxk(P^iris)*A^((J+k)\iris)) in the list schouten_biv_mltv_2
                     schouten_biv_mltv_2.setdefault(
                         int(''.join(str(j) for j in z)), sum_y)
                     sum_y = 0
                     sum_y_aux = 0
                 # A dictionary for the the Schouten bracket [P,A]
                 schouten_biv_mltv = {}
-                # Sum and add the terms in
-                # schouten_biv_mltv_1 and schouten_biv_mltv_2
+                # Sum and add the terms in schouten_biv_mltv_1 and schouten_biv_mltv_2
                 for ky in schouten_biv_mltv_1:
                     schouten_biv_mltv.setdefault(
                         ky, sym.simplify(schouten_biv_mltv_1[ky]
                                         + schouten_biv_mltv_2[ky]))
-                # return a dictionary
-                return sym.latex(dict_to_symbol_exp(schouten_biv_mltv, self.dim ,self.coordinates)) if latex_syntax else schouten_biv_mltv
+                # return a dictionary or latex format.
+                if latex_syntax:
+                    return symbolic_expression(schouten_biv_mltv, self.dim ,self.coordinates).Mv_latex_str()
+                else:
+                    return schouten_biv_mltv
 
+    def jacobiator(self, bivector, latex_format=False):
+        """ Calculates de Schouten-Nijenhuis bracket of a given bivector field with himself, that is [P,P]
+            where [,] denote the Schouten bracket for multivector fields.
 
-    def jacobiator(self, bivector, latex_syntax=False):
-        """ Calculates de Schouten-Nijenhuis bracket of a given bivec-
-        tor field with himself.
-        
-        Remark:
-        Given a bivector field P on a smooth manifold M, the Jacobiator
-        of P is defined by
-            Jacobiator(P) = [P,P],
-        where [,] denote the Schouten bracket for multivector fields.
-        :param bivector: is a dictionary with integer type 'keys' and
-         string type 'values'. For example, on R^3,
-            {12: 'x3', 13: '-x2', 23: 'x1'}.
-         The 'keys' are the ordered indices of the given bivector field
-         P and the 'values' their coefficients. In this case,
-            P = x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3.
-        :return: a dictionary with integer type 'keys' and symbol type
-         'values'. For the previous example,
-            {123: 0}
+        Parameters
+        ==========
+        :bivector:
+            Is a Poisson bivector in a dictionary format with integer type 'keys' and string type 'values'.
+
+        Returns
+        =======
+            The result is the jacobiator of P with P in a dictionary format with integer type 'keys' and
+            symbol type 'values'.
+
+        Example
+        ========
+            >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
+            >>> bivector = {12: 'x3', 13: '-x2', 23: 'x1'}
+            >>> # [P, P]
+            >>> jacobiator(bivector, latex_format=False):
+            >>> {123: 0}
+            >>> jacobiator(self, bivector, latex_format=True):
+            >>> ''
         """
-        return self.lichnerowicz_poisson_operator(bivector, bivector, latex_syntax=latex_syntax)
+        return self.lichnerowicz_poisson_operator(bivector, bivector, latex_format=latex_format)
 
+    def is_poisson_bivector(self, bivector):
+        """ Calculates de Schouten-Nijenhuis bracket of a given bivector field with himself,
+            that is calculates [P,P]_SN.
 
-    def is_poisson(self, bivector):
-        """ Calculates de Schouten-Nijenhuis bracket of a given bivec-
-        tor field with himself.
-        Remark:
-        A bivector field P is said to be a Poisson tensor,
-        or Poisson bivector field, if (and only if)
-            [P,P] = 0,
-        where [,] denote the Schouten bracket for multivector fields.
-        :param bivector: is a dictionary with integer type 'keys' and
-         string type 'values'. For example, on R^3,
-            {12: 'x3', 13: '-x2', 23: 'x1'}.
-         The 'keys' are the ordered indices of the given bivector field
-         P and the 'values' their coefficients. In this case,
-            P = x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3.
-        :return: a string type variable. For the previous example,
-            'Is a Poisson tensor.'
+        Parameters
+        ==========
+        :bivector:
+            Is a Poisson bivector in a dictionary format with integer type 'keys' and string type 'values'.
+
+        Returns
+        =======
+            The result is True if [P,P] = 0, in other case is False.
+
+        Example
+        ========
+            >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
+            >>> bivector = {12: 'x3', 13: '-x2', 23: 'x1'}
+            >>> # [P, P]
+            >>> is_poisson_bivector(bivector):
+            >>> True
         """
-        if all(value == 0 for value in self.lichnerowicz_poisson_operator(bivector, bivector).values()):
-            return True
-        return False
-
+        bivector_result = self.lichnerowicz_poisson_operator(bivector, bivector)
+        return True if symbolic_expression(bivector_result, self.dim ,self.coordinates).is_zero() False
 
     def is_poisson_vector_field(self, bivector, vector_field):
         """ Check if a vector field is a Poisson vector field of a
