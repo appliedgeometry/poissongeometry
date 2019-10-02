@@ -63,7 +63,7 @@ Calculate Poisson Cohomology with linear coefficients.
 Our issue tracker is at https://github.com/mevangelista-alvarado/poisson_geometry/issues. Please report any bugs that you find. Or, even better, If you interesting the project you can fork the repository on GitHub and create a pull request. We welcome all changes, big or small
 
 ## Licence 📄
-MIT licence by authors + SymPy Development Team Licence +  BSD 3 license by Alan Bromborsky and GAlgebra Team 
+MIT licence
 
 ## Authors ✒️
 This work is developed and maintained by:
