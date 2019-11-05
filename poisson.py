@@ -867,7 +867,7 @@ class PoissonGeometry:
             gauge_biv.setdefault(int(''.join(str(i) for i in z)), gauge_mtx[z[0]-1, z[1]-1])
         return gauge_biv, sym.sympify(det_I_minus_BP)
 
-    def flashka_ratiu(self, casimirs, structure_symplectic=False, latex_format=False):
+    def flaschka_ratiu(self, casimirs, structure_symplectic=False, latex_format=False):
         """"""
         if self.dim - len(casimirs) == 2:
             casimir_list = []
