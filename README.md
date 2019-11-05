@@ -11,7 +11,7 @@ For more information you can read the [wiki](https://github.com/mevangelista-alv
 
 ## Motivation 
 This project results from the need to have somethings to take calculus in the Poisson Geometry, the following articles: 
- * [Poisson Structures on Smooth 4-Manifolds](https://www.researchgate.net/publication/263506998_Poisson_Structures_on_Smooth_4-Manifolds) by P. Suárez-Serrato, L.G. Naranjo & R. Vera, 
+ * [Poisson Structures on Smooth 4-Manifolds](https://link.springer.com/article/10.1007/s11005-015-0792-8) by P. Suárez-Serrato, L.G. Naranjo & R. Vera, 
  * [Poisson structures on wrinkled fibrations](https://link.springer.com/article/10.1007/s40590-015-0072-8) by P. Suárez-Serrato & J. Torres Orozco, 
  * [Poisson and near-symplectic structures on generalized wrinkled fibrations in dimension 6](https://link.springer.com/article/10.1007/s10455-019-09651-2) by  P. Suárez-Serrato, J Torres Orozco & R. Vera
  * [On Bott-Morse Foliations and their Poisson Structures in Dimension 3](http://journalofsingularities.org/volume19/article2.html) by P. Suárez-Serrato, J Torres Orozco, R. Vera & M. Evangelista-Alvarado 
@@ -19,7 +19,7 @@ This project results from the need to have somethings to take calculus in the Po
 ## Starting 🚀
 #### You only have an interest in trying:
  * __On the cloud (without install nothing)__
-   Please enter to us [codelab](https://colab.research.google.com/drive/1T2PG-vWaTrZ3Z5KK1U6-pK8uXQS7YdJu) 
+   Please enter to us codelab [in Spanish](https://colab.research.google.com/drive/1SN6PS0auO-h3aCXIenblnwJIV-YpowtZ#scrollTo=saL1uA-cmGtx)/[in English](https://colab.research.google.com/drive/1T2PG-vWaTrZ3Z5KK1U6-pK8uXQS7YdJu#scrollTo=ueazalvBSxVJ) 
    
  * __On local machine__
    * Clone this repository in you local machine.
