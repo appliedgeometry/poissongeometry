@@ -15,7 +15,7 @@ def two_tensor_form_to_matrix(dictionary, dim):
     for ij in itools.combinations_with_replacement(range(1, dim + 1), 2):
         i, j = ij[0], ij[1]
         # Makes the Poisson Matrix
-        bivector_matrix[i - 1, j - 1] = 0 if i == j else sym.sympify(dictionary[int(''.join(str(i) for i in ij))])
+        bivector_matrix[i - 1, j - 1] = 0 if i == j else sym.sympify(dictionary[(i,j)])
         bivector_matrix[j - 1, i - 1] = (-1) * bivector_matrix[i - 1, j - 1]
 
     # Return a symbolic Poisson matrix or Poisson matrix in LaTeX syntax
@@ -36,10 +36,13 @@ def symbolic_expression(dictionary, dim, coordinates, variable, dx=False):
 
     symbolic_expresion = 0
     for index in dictionary.keys():
-        element_basis = basis[int(str(index)[0])-1]
-        for i in str(index):
-            element_basis = element_basis ^ basis[int(i)-1] if i != str(index)[0] else element_basis
-        symbolic_expresion = symbolic_expresion + element_basis * dictionary[index]
+        if type(index) == int:
+            symbolic_expresion = symbolic_expresion + basis[index-1] * dictionary[index]
+        else:
+            element_basis = basis[index[0]-1]
+            for i in index:
+                element_basis = element_basis ^ basis[i-1] if i != index[0] else element_basis
+            symbolic_expresion = symbolic_expresion + element_basis * dictionary[index]
 
     return symbolic_expresion
 
@@ -100,14 +103,15 @@ def derivate_formal(bivector, index):
     bivector = {0: sym.sympify(bivector)} if isinstance(bivector, str) else bivector
     derivate_formal = {}
     for bivector_key in bivector.keys():
-        len_key = len(str(bivector_key))
-        for position, value in enumerate(str(bivector_key)):
+        len_key = len(bivector_key)
+        for position, value in enumerate(bivector_key):
             if str(index) == value:
-                if len(str(bivector_key)) == 1:
-                    derivate_formal.update({0: bivector[bivector_key]})
+                if len(bivector_key) == 1:
+                    derivate_formal.update({(): bivector[bivector_key]})
                 else:
                     factor = -1 if (len_key - position) % 2 == 0 else 1
-                    derivate_formal.update({int(str(bivector_key).strip(value)): factor * bivector[bivector_key]})
+                    derivate_formal_key = bivector_key.copy()
+                    derivate_formal.update({tuple(list(derivate_formal_key).remove(value)): factor * bivector[bivector_key]})
     return derivate_formal
 
 
