@@ -397,7 +397,7 @@ class PoissonGeometry:
                     for y in itools.combinations(z, 2):
                         for i in range_list:
                             # List of indices for A without the indices in y
-                            nw_idx_mltv = [e for e in z if e != y]
+                            nw_idx_mltv = [e for e in z if e not in y]
                             # Add the index i
                             nw_idx_mltv.append(i)
                             # Sort the indices
