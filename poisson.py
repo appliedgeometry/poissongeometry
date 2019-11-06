@@ -74,7 +74,7 @@ class PoissonGeometry:
             bivector_matrix[j-1, i-1] = (-1) * bivector_matrix[i-1, j-1]
 
         # Return a symbolic Poisson matrix or the same expression in latex format
-        return bivector_matrix
+        return sym.latex(bivector_matrix) if latex_syntax else bivector_matrix
 
     def sharp_morphism(self, bivector, one_form, latex_format=False):
         """ Calculates the image of a differential 1-form under the vector bundle morphism 'sharp' P#: T*M -> TM
@@ -132,12 +132,14 @@ class PoissonGeometry:
         for ij, bivector_ij in bivector.items():
             # Get the values i and j from bivector index ij
             i, j = ij
-            p_sharp_aux_j = p_sharp.get((j), 0)
             p_sharp_aux_i = p_sharp.get((i), 0)
+            p_sharp_aux_j = p_sharp.get((j), 0)
+            one_form_i = one_form.get((i), 0)
+            one_form_j = one_form.get((j), 0)
             # Calculates one form i*Pij*Dxj
-            p_sharp[(j)] = sym.simplify(p_sharp_aux_j + one_form[(i)] * bivector_ij)
+            p_sharp[(j)] = sym.simplify(p_sharp_aux_j + one_form_i * bivector_ij)
             # Calculates one form j*Pji*Dxi
-            p_sharp[(i)] = sym.simplify(p_sharp_aux_i - one_form[(j)] * bivector_ij)
+            p_sharp[(i)] = sym.simplify(p_sharp_aux_i - one_form_j * bivector_ij)
 
         # Return a vector field expression in LaTeX format
         if latex_format:
