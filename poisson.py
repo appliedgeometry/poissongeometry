@@ -76,7 +76,6 @@ class PoissonGeometry:
         # Return a symbolic Poisson matrix or the same expression in latex format
         if latex_format:
             return sym.latex(bivector_matrix)
-        else:
         return bivector_matrix
 
     def sharp_morphism(self, bivector, one_form, latex_format=False):
