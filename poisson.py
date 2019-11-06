@@ -36,7 +36,7 @@ class PoissonGeometry:
         self.coords = show_coordinates(self.coordinates)
         self.Dx_basis = basis(self.dim, self.coordinates, self.variable)
 
-    def bivector_to_matrix(self, bivector):
+    def bivector_to_matrix(self, bivector, latex_format=False):
         """ Constructs the matrix of a 2-contravariant tensor field or bivector field.
 
         Parameters
@@ -74,7 +74,7 @@ class PoissonGeometry:
             bivector_matrix[j-1, i-1] = (-1) * bivector_matrix[i-1, j-1]
 
         # Return a symbolic Poisson matrix or the same expression in latex format
-        return sym.latex(bivector_matrix) if latex_syntax else bivector_matrix
+        return sym.latex(bivector_matrix) if latex_format else bivector_matrix
 
     def sharp_morphism(self, bivector, one_form, latex_format=False):
         """ Calculates the image of a differential 1-form under the vector bundle morphism 'sharp' P#: T*M -> TM
