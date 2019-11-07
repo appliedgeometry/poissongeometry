@@ -264,7 +264,7 @@ class PoissonGeometry:
         """
 
         # Calculates the Hamiltonian vector field
-        hamiltonian_vf = self.hamiltonian_vf(bivector, function)
+        hamiltonian_vf = self.hamiltonian_vf(bivector, function, remove_zeros=False)
         # Converts a dictionary symbolic to a symbolic expression and verify is zero with a method of sympy
         return True if symbolic_expression(hamiltonian_vf, self.dim,
                                            self.coords, self.variable).is_zero() else False
@@ -362,7 +362,11 @@ class PoissonGeometry:
 
         mltv = multivector
         # Degree of multivector
-        deg_mltv = len(list(multivector.keys())[0])
+        if isinstance(list(multivector.keys())[0], int):
+            deg_mltv = 1
+        else:
+            deg_mltv = len(list(multivector.keys())[0])
+
         if deg_mltv + 1 > self.dim:
             return 0
         else:
@@ -604,7 +608,7 @@ class PoissonGeometry:
         # Formula Z = [(Z0)^i - (1/g)*(X_g)^i]*Dxi
         for z in modular_vf_0:
             modular_vf_a.update({
-                (z): sym.simplify(modular_vf_0[z] - 1/(sym.sympify(function)) * self.hamiltonian_vf(bivector,function,remove_zeros=False).get((z), 0))})
+                (z): sym.simplify(modular_vf_0[z] - 1/(sym.sympify(function)) * self.hamiltonian_vf(bivector, function, remove_zeros=False).get((z), 0))})
         # Return a symbolic type expression or the same expression in latex format
         if latex_format:
             return symbolic_expression(modular_vf_a, self.dim, self.coords, self.variable).Mv_latex_str()
