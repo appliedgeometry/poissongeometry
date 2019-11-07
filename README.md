@@ -9,6 +9,7 @@ Is a Python class to calculate classical methods in Poisson Geometry with symbol
 | isomorphic_lie_poisson_R3  | linear_normal_form_R3          | gauge_transformation |
 |__flaschka_ratiu_bivector__ | __is_poisson_tensor__          |__is_in_kernel__      |
 |is_casimir                  |is_poisson_vf                   |is_poisson_par        |
+|__curl_operator__           |                                |                      |
 
 <!-- For more information you can read the [wiki](https://github.com/mevangelista-alvarado/poisson_geometry/wiki) this project. or the our [documentation]()-->
 
