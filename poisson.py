@@ -235,7 +235,7 @@ class PoissonGeometry:
                                        self.coords, self.variable).Mv_latex_str()
         else:
             # return a symbolic dictionary
-            return remove_values_zero(hamiltonian_vf) if remove_zeros else hamiltonian_vf
+            return remove_values_zero(hamiltonian_vf)
 
     def is_casimir(self, bivector, function):
         """ Check if a function is a Casimir function of a given (Poisson) bivector field, that is
