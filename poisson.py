@@ -61,10 +61,10 @@ class PoissonGeometry:
             >>> ''
         """
         # Validate the params
-        try:
-            bivector = is_dicctionary(bivector)
-        except Exception as e:
-            print(F"[Error bivector_to_matrix] \n Error: {e}, Type: {type(e)}")
+        # try:
+        #    bivector = is_dicctionary(bivector)
+        #except Exception as e:
+        #    print(F"[Error bivector_to_matrix] \n Error: {e}, Type: {type(e)}")
 
         # Creates a symbolic Matrix
         bivector_matrix = zeros(self.dim)
@@ -115,11 +115,11 @@ class PoissonGeometry:
         """
 
         # Validate the params
-        try:
-            bivector = is_dicctionary(bivector)
-            one_form = is_dicctionary(one_form)
-        except Exception as e:
-            print(F"[Error sharp_morphism] \n Error: {e}, Type: {type(e)}")
+        # try:
+        #    bivector = is_dicctionary(bivector)
+        #    one_form = is_dicctionary(one_form)
+        #except Exception as e:
+        #    print(F"[Error sharp_morphism] \n Error: {e}, Type: {type(e)}")
 
         # Converts strings to symbolic variables
         for i, coeff_i in one_form.items():
@@ -303,12 +303,12 @@ class PoissonGeometry:
         """
 
         # Validate the params
-        try:
-            bivector = is_dicctionary(bivector)
-            f = is_string(f)
-            g = is_string(g)
-        except Exception as e:
-            print(F"[Error poisson_bracket] \n Error: {e}, Type: {type(e)}")
+        #try:
+        #    bivector = is_dicctionary(bivector)
+        #    f = is_string(f)
+        #    g = is_string(g)
+        #except Exception as e:
+        #    print(F"[Error poisson_bracket] \n Error: {e}, Type: {type(e)}")
 
         # Convert from string to sympy value
         f, g = sym.sympify(f), sym.sympify(g)
@@ -354,11 +354,11 @@ class PoissonGeometry:
         any 4-multivector field on R^3 is zero.
         """
         # Validate the params
-        try:
-            bivector = is_dicctionary(bivector)
-            multivector = is_dicctionary(multivector)
-        except Exception as e:
-            print(F"[Error lichnerowicz_poisson_operator] \n Error: {e}, Type: {type(e)}")
+        #try:
+        #    bivector = is_dicctionary(bivector)
+        #    multivector = is_dicctionary(multivector)
+        #except Exception as e:
+        #    print(F"[Error lichnerowicz_poisson_operator] \n Error: {e}, Type: {type(e)}")
 
         mltv = multivector
         # Degree of multivector
@@ -581,11 +581,11 @@ class PoissonGeometry:
                 mbol{Dx}_{2} + \\left ( - x_{1} + x_{2}\\right ) \\boldsymbol{Dx}_{3}'
         """
         # Validate the params
-        try:
-            bivector = is_dicctionary(bivector)
-            function = is_string(function)
-        except Exception as e:
-            print(F"[Error modular_vf] \n Error: {e}, Type: {type(e)}")
+        #try:
+        #    bivector = is_dicctionary(bivector)
+        #    function = is_string(function)
+        #except Exception as e:
+        #   print(F"[Error modular_vf] \n Error: {e}, Type: {type(e)}")
 
         # Converts strings to symbolic variables
         for key in bivector:
@@ -678,12 +678,12 @@ class PoissonGeometry:
             >>> ''
         """
         # Validate the params
-        try:
-            bivector = is_dicctionary(bivector)
-            one_form_1 = is_dicctionary(one_form_1)
-            one_form_2 = is_dicctionary(one_form_2)
-        except Exception as e:
-            print(F"[Error one_forms_bracket] \n Error: {e}, Type: {type(e)}")
+        #try:
+        #    bivector = is_dicctionary(bivector)
+        #    one_form_1 = is_dicctionary(one_form_1)
+        #    one_form_2 = is_dicctionary(one_form_2)
+        #except Exception as e:
+        #    print(F"[Error one_forms_bracket] \n Error: {e}, Type: {type(e)}")
 
         # Defines as alpha = one_form_1, beta = one_form_2 and P = bivector.
         # This block converts strings to symbolic variables
@@ -766,10 +766,10 @@ class PoissonGeometry:
             >>> {(1,3): 4*a*x2 + x1, (2,3): 4*a*x1 + x2}
         """
         # Validate the params
-        try:
-            bivector = is_dicctionary(bivector)
-        except Exception as e:
-            print(F"[linear_normal_form_R3] \n Error: {e}, Type: {type(e)}")
+        #try:
+        #    bivector = is_dicctionary(bivector)
+        #except Exception as e:
+        #    print(F"[linear_normal_form_R3] \n Error: {e}, Type: {type(e)}")
 
         # Trivial case
         if all(vl == 0 for vl in bivector.values()):
@@ -885,11 +885,11 @@ class PoissonGeometry:
     def gauge_transformation(self, bivector, two_form):
         """"""
         # Validate the params
-        try:
-            bivector = is_dicctionary(bivector)
-            two_form = is_dicctionary(two_form)
-        except Exception as e:
-            print(F"[gauge_transformation] \n Error: {e}, Type: {type(e)}")
+        #try:
+        #    bivector = is_dicctionary(bivector)
+        #    two_form = is_dicctionary(two_form)
+        #except Exception as e:
+        #    print(F"[gauge_transformation] \n Error: {e}, Type: {type(e)}")
 
         two_form_B = two_tensor_form_to_matrix(two_form, self.dim)
         I_minus_BP = sym.Matrix(sym.simplify(sym.eye(self.dim) - two_form_B * self.bivector_to_matrix(bivector)))
@@ -973,6 +973,6 @@ class PoissonGeometry:
                 else:
                     return [bivector_coeff_dict, symplectic]
             else:
-                return sym.latex(symbolic_expression(bivector_coeff_dict, self.dim, self.coords)) if latex_format else bivector_coeff_dict # noqa
+                return sym.latex(symbolic_expression(bivector_coeff_dict, self.dim, self.coords)) if latex_format else remove_values_zero(bivector_coeff_dict) # noqa
         else:
             return {0: 0}
