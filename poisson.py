@@ -215,11 +215,11 @@ class PoissonGeometry:
         """
 
         # Validate the params
-        try:
-            bivector = is_dicctionary(bivector)
-            hamiltonian_function = is_string(hamiltonian_function)
-        except Exception as e:
-            print(F"[Error hamiltonian_vf] {e}, Type: {type(e)}")
+        #try:
+        #    bivector = is_dicctionary(bivector)
+        #    hamiltonian_function = is_string(hamiltonian_function)
+        #except Exception as e:
+        #    print(F"[Error hamiltonian_vf] {e}, Type: {type(e)}")
 
         # Converts a string to symbolic expression
         h = sym.sympify(hamiltonian_function)
@@ -631,7 +631,7 @@ class PoissonGeometry:
             >>> is_homogeneous_unimodular(bivector)
             >>> True
         """
-        modular_vf = self.self.modular_vf(bivector, 1)
+        modular_vf = self.modular_vf(bivector, 1)
         return True if symbolic_expression(modular_vf, self.dim, self.coords, self.variable).is_zero() else False
 
     def one_forms_bracket(self, bivector, one_form_1, one_form_2, latex_format=False):
@@ -697,22 +697,22 @@ class PoissonGeometry:
         for z in itools.combinations(range(1, self.dim + 1), 2):
             ii_sharp_alpha_d_beta[z[0] - 1] = sym.simplify(
                 ii_sharp_alpha_d_beta[z[0] - 1] + self.sharp_morphism(
-                    bivector, one_form_1)[z[1]] * (sym.diff(
+                    bivector, one_form_1, remove_zeros=False)[z[1]] * (sym.diff(
                         one_form_2[z[0]], self.coords[z[1] - 1]) - sym.diff(
                         one_form_2[z[1]], self.coords[z[0] - 1])))
             ii_sharp_alpha_d_beta[z[1] - 1] = sym.simplify(
                 ii_sharp_alpha_d_beta[z[1] - 1] + self.sharp_morphism(
-                    bivector, one_form_1)[z[0]] * (sym.diff(
+                    bivector, one_form_1, remove_zeros=False)[z[0]] * (sym.diff(
                         one_form_2[z[1]], self.coords[z[0] - 1]) - sym.diff(
                         one_form_2[z[0]], self.coords[z[1] - 1])))
             ii_sharp_beta_d_alpha[z[0] - 1] = sym.simplify(
                 ii_sharp_beta_d_alpha[z[0] - 1] + self.sharp_morphism(
-                    bivector, one_form_2)[z[1]] * (sym.diff(
+                    bivector, one_form_2, remove_zeros=False)[z[1]] * (sym.diff(
                         one_form_1[z[0]], self.coords[z[1] - 1]) - sym.diff(
                         one_form_1[z[1]], self.coords[z[0] - 1])))
             ii_sharp_beta_d_alpha[z[1] - 1] = sym.simplify(
                 ii_sharp_beta_d_alpha[z[1] - 1] + self.sharp_morphism(
-                    bivector, one_form_2)[z[0]] * (sym.diff(
+                    bivector, one_form_2, remove_zeros=False)[z[0]] * (sym.diff(
                         one_form_1[z[1]], self.coords[z[0] - 1]) - sym.diff(
                         one_form_1[z[0]], self.coords[z[1] - 1])))
 
@@ -720,7 +720,7 @@ class PoissonGeometry:
             d(<beta,P#(alpha)>) = d(P#(alpha)^i * beta_i)
         """
         d_pairing_beta_sharp_alpha = sym.simplify(sym.derive_by_array(sum(
-            one_form_2[ky] * self.sharp_morphism(bivector, one_form_1)[ky] for ky
+            one_form_2[ky] * self.sharp_morphism(bivector, one_form_1, remove_zeros=False)[ky] for ky
             in one_form_2), self.coords))
 
         # List for the coefficients of {alpha,beta}_P,
@@ -738,9 +738,9 @@ class PoissonGeometry:
         if latex_format:
             return sym.latex(symbolic_expression(one_forms_brack, self.dim, self.coords, dx=True))
         else:
-            remove_values_zero(one_forms_brack)
+            return remove_values_zero(one_forms_brack)
 
-    def linear_normal_form_R3(self, bivector):
+    def linear_normal_form_R3(self, bivector, latex_format=False):
         """ Calculates a normal form for Lie-Poisson bivector fields on R^3 modulo linear isomorphisms.
 
         Parameters
@@ -769,7 +769,10 @@ class PoissonGeometry:
 
         # Trivial case
         if all(vl == 0 for vl in bivector.values()):
-            return {0: 0}
+            if latex_format:
+                return symbolic_expression({0: 0}, self.dim, self.coords, self.variable).Mv_latex_str()
+            else:
+                return {0: 0}
         # Converts strings to symbolic variables
         for key in bivector:
             bivector[key] = sym.sympify(bivector[key])
@@ -790,42 +793,67 @@ class PoissonGeometry:
         """
         if all(vl == 0 for vl in self.modular_vf(bivector, 1).values()):
             if hess_pairing_E_P.rank() == 1:
-                return {(2,3): x_aux[0]}
+                if latex_format:
+                    return symbolic_expression({(2,3): x_aux[0]}, self.dim, self.coords, self.variable).Mv_latex_str()
+                else:
+                    return {(2,3): x_aux[0]}
             if hess_pairing_E_P.rank() == 2:
                 # Case: Hessian of <E,P> with index 2
                 if diag_hess[0, 0] * diag_hess[1, 1] > 0 or \
                    diag_hess[0, 0] * diag_hess[2, 2] > 0 or \
                    diag_hess[1, 1] * diag_hess[2, 2] > 0:
-                    return {(1,3): -x_aux[1], (2,3): x_aux[0]}
+                    if latex_format:
+                        return symbolic_expression({(1,3): -x_aux[1], (2,3): x_aux[0]}, self.dim, self.coords, self.variable).Mv_latex_str()
+                    else:
+                        return {(1,3): -x_aux[1], (2,3): x_aux[0]}
                 else:
-                    # Case: Hessian of <E,P> with index 1
-                    return {(1,3): x_aux[1], (2,3): x_aux[0]}
+                    if latex_format:
+                        return symbolic_expression({(1,3): x_aux[1], (2,3): x_aux[0]}, self.dim, self.coords, self.variable).Mv_latex_str()
+                    else:
+                        # Case: Hessian of <E,P> with index 1
+                        return {(1,3): x_aux[1], (2,3): x_aux[0]}
             if hess_pairing_E_P.rank() == 3:
                 # Distinguish indices of the Hessian of <E,P>
                 index_hess_sum = diag_hess[0, 0]/abs(diag_hess[0, 0]) \
                                  + diag_hess[1, 1]/abs(diag_hess[1, 1]) \
                                  + diag_hess[2, 2]/abs(diag_hess[2, 2])
                 if index_hess_sum == 3 or index_hess_sum == -3:
-                    return {(1,2): x_aux[2], (1,3): -x_aux[1], (2,3): x_aux[0]}
+                    if latex_format:
+                        return symbolic_expression({(1,2): x_aux[2], (1,3): -x_aux[1], (2,3): x_aux[0]}, self.dim, self.coords, self.variable).Mv_latex_str()
+                    else:
+                        return {(1,2): x_aux[2], (1,3): -x_aux[1], (2,3): x_aux[0]}
                 else:
-                    return {(1,2): -x_aux[2], (1,3): -x_aux[1], (2,3): x_aux[0]}
+                    if latex_format:
+                        return symbolic_expression({(1,2): -x_aux[2], (1,3): -x_aux[1], (2,3): x_aux[0]}, self.dim, self.coords, self.variable).Mv_latex_str()
+                    else:
+                        return {(1,2): -x_aux[2], (1,3): -x_aux[1], (2,3): x_aux[0]}
         # Non-unimodular case
         else:
             if hess_pairing_E_P.rank() == 0:
-                return {(1,3): x_aux[0], (2,3): x_aux[1]}
+                if latex_format:
+                    return symbolic_expression({(1,3): x_aux[0], (2,3): x_aux[1]}, self.dim, self.coords, self.variable).Mv_latex_str()
+                else:
+                    return {(1,3): x_aux[0], (2,3): x_aux[1]}
             if hess_pairing_E_P.rank() == 2:
                 # Case: Hessian of <E,P> with index 2
                 if diag_hess[0, 0] * diag_hess[1, 1] > 0 or \
                         diag_hess[0, 0] * diag_hess[2, 2] > 0 or \
                         diag_hess[1, 1] * diag_hess[2, 2] > 0:
-                    return {(1,3): x_aux[0] - 4*sym.sympify('a')*x_aux[1],
-                            (2,3): x_aux[1] + 4*sym.sympify('a')*x_aux[0]}
+                    if latex_format:
+                        return symbolic_expression({(1,3): x_aux[0] - 4*sym.sympify('a')*x_aux[1], (2,3): x_aux[1] + 4*sym.sympify('a')*x_aux[0]}, self.dim, self.coords, self.variable).Mv_latex_str()
+                    else:
+                        return {(1,3): x_aux[0] - 4*sym.sympify('a')*x_aux[1], (2,3): x_aux[1] + 4*sym.sympify('a')*x_aux[0]}
                 else:
-                    # Case: Hessian of <E,P> with index 1
-                    return {(1,3): x_aux[0] + 4*sym.sympify('a')*x_aux[1],
-                            (2,3): 4*sym.sympify('a')*x_aux[0] + x_aux[1]}
+                    if latex_format:
+                        return symbolic_expression({(1,3): x_aux[0] + 4*sym.sympify('a')*x_aux[1], (2,3): 4*sym.sympify('a')*x_aux[0] + x_aux[1]}, self.dim, self.coords, self.variable).Mv_latex_str()
+                    else:
+                        # Case: Hessian of <E,P> with index 1
+                        return {(1,3): x_aux[0] + 4*sym.sympify('a')*x_aux[1], (2,3): 4*sym.sympify('a')*x_aux[0] + x_aux[1]}
             if hess_pairing_E_P.rank() == 1:
-                return {(1,3): x_aux[0], (2,3): 4*x_aux[0] + x_aux[1]}
+                if latex_format:
+                    return symbolic_expression({(1,3): x_aux[0], (2,3): 4*x_aux[0] + x_aux[1]}, self.dim, self.coords, self.variable).Mv_latex_str()
+                else:
+                    return {(1,3): x_aux[0], (2,3): 4*x_aux[0] + x_aux[1]}
 
     def isomorphic_lie_poisson_R3(self, bivector_1, bivector_2):
         """ Determines if two Lie-Poisson bivector fields on R^3 are isomorphic or not.
