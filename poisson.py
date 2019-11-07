@@ -16,7 +16,7 @@ from sympy.matrices import zeros
 import itertools as itools
 from utils import (validate_dimension, symbolic_expression,
                    is_dicctionary, show_coordinates,
-                   two_tensor_form_to_matrix, remove_values_zero
+                   two_tensor_form_to_matrix, remove_values_zero,
                    is_string, basis, symbolic_expression_2,
                    values_to_kernel, derivate_formal,
                    derivate_standar, symbolic_multivector_to_dict,
