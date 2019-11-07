@@ -159,6 +159,17 @@ def values_to_kernel(multivector, variables, dimension, coordinates):
     values = sym.solve(equations, variables)
     return values
 
+def remove_values_zero(dictionary):
+    """"""
+    if all(value == 0 for value in dictionary.values()):
+        return {0: 0}
+    else:
+        clean_dict = {}
+        for key, value in dictionary.items():
+            if value != 0:
+                clean_dict.update({key: value})
+        return clean_dict
+
 
 class DimensionError(Exception):
     """Clase base para excepciones en el módulo."""

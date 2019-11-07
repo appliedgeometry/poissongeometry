@@ -18,7 +18,8 @@ from utils import (validate_dimension, symbolic_expression,
                    is_dicctionary, show_coordinates,
                    two_tensor_form_to_matrix,
                    is_string, basis, symbolic_expression_2, values_to_kernel,
-                   derivate_formal, derivate_standar, symbolic_multivector_to_dict)
+                   derivate_formal, derivate_standar, symbolic_multivector_to_dict
+                   remove_values_zero)
 
 
 class PoissonGeometry:
@@ -31,10 +32,10 @@ class PoissonGeometry:
         # Define what variables the class will work with
         self.variable = variable
         # Create the symbolics symbols
-        self.coordinates = sym.symbols(f'{self.variable}1:{self.dim + 1}')
+        self.coords = sym.symbols(f'{self.variable}1:{self.dim + 1}')
         # Show the coordinates with that will the class works
-        self.coords = show_coordinates(self.coordinates)
-        self.Dx_basis = basis(self.dim, self.coordinates, self.variable)
+        self.coordinates = show_coordinates(self.coords)
+        self.Dx_basis = basis(self.dim, self.coords, self.variable)
 
     def bivector_to_matrix(self, bivector, latex_format=False):
         """ Constructs the matrix of a 2-contravariant tensor field or bivector field.
@@ -146,9 +147,9 @@ class PoissonGeometry:
         # Return a vector field expression in LaTeX format
         if latex_format:
             # For copy and paste this result in a latex editor, do not forget make "print()" in the result.
-            return symbolic_expression(p_sharp, self.dim, self.coordinates, self.variable).Mv_latex_str()
+            return symbolic_expression(p_sharp, self.dim, self.coords, self.variable).Mv_latex_str()
         # Return a symbolic dictionary.
-        return p_sharp
+        return remove_values_zero(p_sharp)
 
     def is_in_kernel(self, bivector, one_form):
         """ Check if a differential 1-form alpha belongs to the kernel of a given Poisson bivector field,
@@ -177,9 +178,9 @@ class PoissonGeometry:
         """
         p_sharp = self.sharp_morphism(bivector, one_form)
         # Converts a dictionary symbolic to a symbolic expression and verify is zero with a sympy method
-        return True if symbolic_expression(p_sharp, self.dim, self.coordinates, self.variable).is_zero() else False
+        return True if symbolic_expression(p_sharp, self.dim, self.coords, self.variable).is_zero() else False
 
-    def hamiltonian_vector_field(self, bivector, hamiltonian_function, latex_format=False):
+    def hamiltonian_vf(self, bivector, hamiltonian_function, latex_format=False):
         """ Calculates the Hamiltonian vector field of a function relative to a Poisson bivector field as follows:
             X_h = P#(dh), where d is the exterior derivative of h and P#: T*M -> TM is the vector bundle morphism
             defined by P#(alpha) := i_(alpha)P, with i is the interior product of alpha and P.
@@ -205,9 +206,9 @@ class PoissonGeometry:
             >>> # For hamiltonian_function h(x1,x2,x3) = x1 + x2 + x3.
             >>> hamiltonian_function = 'x1 + x2 + x3'
             >>> # X_h = P#(dh) = (x2 - x3)*Dx1 + (-x1 + x3)*Dx2 + (x1 - x2)*Dx3.
-            >>> hamiltonian_vector_field(bivector, hamiltonian_function, latex_format=False)
+            >>> hamiltonian_vf(bivector, hamiltonian_function, latex_format=False)
             >>> {1: x2 - x3, 2: -x1 + x3, 3: x1 - x2}
-            >>> hamiltonian_vector_field(bivector, hamiltonian_function, latex_format=True)
+            >>> hamiltonian_vf(bivector, hamiltonian_function, latex_format=True)
             >>> \\left ( x_{2} - x_{3}\\right ) \\boldsymbol{Dx}_{1} + \\left ( - x_{1} + x_{3}\\right )
                 \\boldsymbol{Dx}_{2} + \\left ( x_{1} - x_{2}\\right ) \\boldsymbol{Dx}_{3}'
         """
@@ -217,23 +218,23 @@ class PoissonGeometry:
             bivector = is_dicctionary(bivector)
             hamiltonian_function = is_string(hamiltonian_function)
         except Exception as e:
-            print(F"[Error hamiltonian_vector_field] {e}, Type: {type(e)}")
+            print(F"[Error hamiltonian_vf] {e}, Type: {type(e)}")
 
         # Converts a string to symbolic expression
         h = sym.sympify(hamiltonian_function)
         # Calculates the differential of hamiltonian_function
-        dh = sym.derive_by_array(h, self.coordinates)
+        dh = sym.derive_by_array(h, self.coords)
         # Calculates the Hamiltonian vector field
         keys_list = [(index) for index in range(1,self.dim + 1)]
-        hamiltonian_vector_field = self.sharp_morphism(bivector, dict(zip(keys_list, dh)))
+        hamiltonian_vf = self.sharp_morphism(bivector, dict(zip(keys_list, dh)))
 
         if latex_format:
             # return to symbolic expression in LaTeX format
-            return symbolic_expression(hamiltonian_vector_field, self.dim,
-                                       self.coordinates, self.variable).Mv_latex_str()
+            return symbolic_expression(hamiltonian_vf, self.dim,
+                                       self.coords, self.variable).Mv_latex_str()
         else:
             # return a symbolic dictionary
-            return hamiltonian_vector_field
+            return remove_values_zero(hamiltonian_vf)
 
     def is_casimir(self, bivector, function):
         """ Check if a function is a Casimir function of a given (Poisson) bivector field, that is
@@ -262,10 +263,10 @@ class PoissonGeometry:
         """
 
         # Calculates the Hamiltonian vector field
-        hamiltonian_vector_field = self.hamiltonian_vector_field(bivector, function)
+        hamiltonian_vf = self.hamiltonian_vf(bivector, function)
         # Converts a dictionary symbolic to a symbolic expression and verify is zero with a method of sympy
-        return True if symbolic_expression(hamiltonian_vector_field, self.dim,
-                                           self.coordinates, self.variable).is_zero() else False
+        return True if symbolic_expression(hamiltonian_vf, self.dim,
+                                           self.coords, self.variable).is_zero() else False
 
     def poisson_bracket(self, bivector, f, g, latex_format=False):
         """ Calculates the poisson bracket {f,g} = π(df,dg) = ⟨dg,π#(df)⟩ of two functions
@@ -316,8 +317,8 @@ class PoissonGeometry:
             return 0
         # Calculates the differentials of f and g
         keys_list = [(index) for index in range(1,self.dim + 1)]
-        df = dict(zip(keys_list, sym.derive_by_array(f, self.coordinates)))
-        dg = dict(zip(keys_list, sym.derive_by_array(g, self.coordinates)))
+        df = dict(zip(keys_list, sym.derive_by_array(f, self.coords)))
+        dg = dict(zip(keys_list, sym.derive_by_array(g, self.coords)))
         # Calculates {f,g} = <g,P#(df)> = ∑_{i} (P#(df))^i * (dg)_i
         bracket_f_g = sym.simplify(sum(self.sharp_morphism(bivector, df)[index] * dg[index] for index in df))
 
@@ -367,7 +368,7 @@ class PoissonGeometry:
             # In this case, multivector is a function
             if isinstance(multivector, str):
                 # [P,f] = -X_f, for any function f.
-                return self.hamiltonian_vector_field(bivector, (-1)*sym.sympify(multivector))
+                return self.hamiltonian_vf(bivector, (-1)*sym.sympify(multivector))
             else:
                 # A dictionary for the first term of [P,A], A a multivector
                 schouten_biv_mltv_1 = {}
@@ -385,7 +386,7 @@ class PoissonGeometry:
                         lich_poiss_aux_11 = sym.simplify(
                             (-1)**(z.index(i)) * self.poisson_bracket(
                                 bivector,
-                                self.coordinates[i - 1],
+                                self.coords[i - 1],
                                 sym.sympify(mltv_nw_idx))
                         )
                         lich_poiss_aux_1 = sym.simplify(lich_poiss_aux_1 + lich_poiss_aux_11)
@@ -412,7 +413,7 @@ class PoissonGeometry:
                             if nw_idx_mltv.count(i) != 2:
                                 sum_i_aux = sym.simplify(
                                     (-1)**(z.index(y[0]) + z.index(y[1]) + nw_idx_mltv.index(i))
-                                    * sym.diff(sym.sympify(bivector_y), self.coordinates[i - 1])
+                                    * sym.diff(sym.sympify(bivector_y), self.coords[i - 1])
                                     * sym.sympify(mltv_nw_idx_mltv))
                                 sum_i = sym.simplify(sum_i + sum_i_aux)
                         sum_y_aux = sum_i
@@ -430,9 +431,9 @@ class PoissonGeometry:
                     schouten_biv_mltv.update({ky: sym.simplify(schouten_biv_mltv_1[ky] + schouten_biv_mltv_2[ky])})
                 # return a dictionary or latex format.
                 if latex_format:
-                    return symbolic_expression(schouten_biv_mltv, self.dim, self.coordinates, self.variable).Mv_latex_str()
+                    return symbolic_expression(schouten_biv_mltv, self.dim, self.coords, self.variable).Mv_latex_str()
                 else:
-                    return schouten_biv_mltv
+                    return remove_values_zero(schouten_biv_mltv)
 
     def jacobiator(self, bivector, latex_format=False):
         """ Calculates de Schouten-Nijenhuis bracket of a given bivector field with himself, that is [P,P]
@@ -482,9 +483,9 @@ class PoissonGeometry:
             >>> True
         """
         bivector_result = self.lichnerowicz_poisson_operator(bivector, bivector)
-        return True if symbolic_expression(bivector_result, self.dim, self.coordinates, self.variable).is_zero() else False
+        return True if symbolic_expression(bivector_result, self.dim, self.coords, self.variable).is_zero() else False
 
-    def is_poisson_vector_field(self, bivector, vector_field):
+    def is_poisson_vf(self, bivector, vector_field):
         """ Check if a vector field is a Poisson vector field of a given Poisson bivector field, that is calculate if
             [Z,P] = 0, where Z is vector_field variable and P is bivector variable.
 
@@ -506,11 +507,11 @@ class PoissonGeometry:
             >>> # For vector field x1*Dx1 + x2*Dx2 + x3*Dx
             >>> vector_field = {(1): 'x1', (2): 'x2', (3): 'x3'}
             >>> # [Z, P]
-            >>> is_poisson_vector_field(bivector, vector_field)
+            >>> is_poisson_vf(bivector, vector_field)
             >>> False
         """
         bivector_result = self.lichnerowicz_poisson_operator(bivector, vector_field)
-        return True if symbolic_expression(bivector_result, self.dim, self.coordinates, self.variable).is_zero() else False
+        return True if symbolic_expression(bivector_result, self.dim, self.coords, self.variable).is_zero() else False
 
     def is_poisson_pair(self, bivector_1, bivector_2):
         """ Check if the sum of two Poisson bivector fields P1 and P2 is a Poisson bivector field, that is
@@ -532,13 +533,13 @@ class PoissonGeometry:
             >>> # For vector field x1*Dx1 + x2*Dx2 + x3*Dx
             >>> vector_field = {(1): 'x1', (2): 'x2', (3): 'x3'}
             >>> # [Z, P]
-            >>> is_poisson_vector_field(bivector, vector_field)
+            >>> is_poisson_pair(bivector, vector_field)
             >>> False
         """
         bivector_result = self.lichnerowicz_poisson_operator(bivector_1, bivector_2)
-        return True if symbolic_expression(bivector_result, self.dim, self.coordinates, self.variable).is_zero() else False
+        return True if symbolic_expression(bivector_result, self.dim, self.coords, self.variable).is_zero() else False
 
-    def modular_vector_field(self, bivector, function, latex_format=False):
+    def modular_vf(self, bivector, function, latex_format=False):
         """ Calculates the modular vector field Z of a given Poisson bivector field P relative to the volume form
             f*Omega_0 defined as Z(g):= div(X_g) where Omega_0 = dx1^...^dx('dim'), f a non zero function and div(X_g)
             is the divergence respect to Omega of the Hamiltonian vector field
@@ -568,9 +569,9 @@ class PoissonGeometry:
             >>> # For the function exp:R^3 --> R
             >>> function = 'exp(x1 + x2 + x3)'
             >>> # Calculates Z' = Z - (1/h)*X_h that is (-x2 + x3)*Dx1 + (x1 - x3)*Dx2 + (-x1 + x2)*Dx3
-            >>> modular_vector_field(bivector, function)
+            >>> modular_vf(bivector, function)
             >>> {(1): -x2 + x3, (2): x1 - x3, (3): -x1 + x2}
-            >>> modular_vector_field(bivector, function, latex_format=True)
+            >>> modular_vf(bivector, function, latex_format=True)
             >>> '\\left ( - x_{2} + x_{3}\\right ) \\boldsymbol{Dx}_{1} + \\left ( x_{1} - x_{3}\\right ) \\boldsy
                 mbol{Dx}_{2} + \\left ( - x_{1} + x_{2}\\right ) \\boldsymbol{Dx}_{3}'
         """
@@ -579,7 +580,7 @@ class PoissonGeometry:
             bivector = is_dicctionary(bivector)
             function = is_string(function)
         except Exception as e:
-            print(F"[Error modular_vector_field] \n Error: {e}, Type: {type(e)}")
+            print(F"[Error modular_vf] \n Error: {e}, Type: {type(e)}")
 
         # Converts strings to symbolic variables
         for key in bivector:
@@ -594,22 +595,22 @@ class PoissonGeometry:
             i, j = ij
             modular_vf_0_i = modular_vf_0.get((i), 0)
             modular_vf_0_j = modular_vf_0.get((j), 0)
-            modular_vf_0[(i)] = sym.simplify(modular_vf_0_i + sym.diff(bivector[ij], self.coordinates[j - 1]))
-            modular_vf_0[(j)] = sym.simplify(modular_vf_0_j - sym.diff(bivector[ij], self.coordinates[i - 1]))
+            modular_vf_0[(i)] = sym.simplify(modular_vf_0_i + sym.diff(bivector[ij], self.coords[j - 1]))
+            modular_vf_0[(j)] = sym.simplify(modular_vf_0_j - sym.diff(bivector[ij], self.coords[i - 1]))
 
         # Creates a dictionary for the modular vector g(Z) relative to f*Omega_0
         modular_vf_a = {}
         # Formula Z = [(Z0)^i - (1/g)*(X_g)^i]*Dxi
         for z in modular_vf_0:
             modular_vf_a.update({
-                z: sym.simplify(modular_vf_0[z] - 1/(sym.sympify(function)) * self.hamiltonian_vector_field(bivector,
+                z: sym.simplify(modular_vf_0[z] - 1/(sym.sympify(function)) * self.hamiltonian_vf(bivector,
                                                                                                             function)[z])
             })
         # Return a symbolic type expression or the same expression in latex format
         if latex_format:
-            return symbolic_expression(modular_vf_a, self.dim, self.coordinates, self.variable).Mv_latex_str()
+            return symbolic_expression(modular_vf_a, self.dim, self.coords, self.variable).Mv_latex_str()
         else:
-            return modular_vf_a
+            return remove_values_zero(modular_vf_a)
 
     def is_homogeneous_unimodular(self, bivector):
         """ Check if a homogeneous Poisson bivector field is unimodular
@@ -631,8 +632,8 @@ class PoissonGeometry:
             >>> is_homogeneous_unimodular(bivector)
             >>> True
         """
-        modular_vector_field = self.self.modular_vector_field(bivector, 1)
-        return True if symbolic_expression(modular_vector_field, self.dim, self.coordinates, self.variable).is_zero() else False
+        modular_vf = self.self.modular_vf(bivector, 1)
+        return True if symbolic_expression(modular_vf, self.dim, self.coords, self.variable).is_zero() else False
 
     def one_forms_bracket(self, bivector, one_form_1, one_form_2, latex_format=False):
         """ Calculates the Lie bracket of two differential 1-forms induced by a given Poisson bivector field.
@@ -670,7 +671,7 @@ class PoissonGeometry:
             >>> {1: -x2*x3*(b1*(a2 - a3) - b2*(a1 - a3) + b3*(a1 - a2)),
                  2: -x1*x3*(b1*(a2 - a3) - b2*(a1 - a3) + b3*(a1 - a2)),
                  3: -x1*x2*(b1*(a2 - a3) - b2*(a1 - a3) + b3*(a1 - a2))}
-            >>> modular_vector_field(bivector, one_form_1, one_form_2, latex_format=True)
+            >>> modular_vf(bivector, one_form_1, one_form_2, latex_format=True)
             >>> ''
         """
         # Validate the params
@@ -698,30 +699,30 @@ class PoissonGeometry:
             ii_sharp_alpha_d_beta[z[0] - 1] = sym.simplify(
                 ii_sharp_alpha_d_beta[z[0] - 1] + self.sharp_morphism(
                     bivector, one_form_1)[z[1]] * (sym.diff(
-                        one_form_2[z[0]], self.coordinates[z[1] - 1]) - sym.diff(
-                        one_form_2[z[1]], self.coordinates[z[0] - 1])))
+                        one_form_2[z[0]], self.coords[z[1] - 1]) - sym.diff(
+                        one_form_2[z[1]], self.coords[z[0] - 1])))
             ii_sharp_alpha_d_beta[z[1] - 1] = sym.simplify(
                 ii_sharp_alpha_d_beta[z[1] - 1] + self.sharp_morphism(
                     bivector, one_form_1)[z[0]] * (sym.diff(
-                        one_form_2[z[1]], self.coordinates[z[0] - 1]) - sym.diff(
-                        one_form_2[z[0]], self.coordinates[z[1] - 1])))
+                        one_form_2[z[1]], self.coords[z[0] - 1]) - sym.diff(
+                        one_form_2[z[0]], self.coords[z[1] - 1])))
             ii_sharp_beta_d_alpha[z[0] - 1] = sym.simplify(
                 ii_sharp_beta_d_alpha[z[0] - 1] + self.sharp_morphism(
                     bivector, one_form_2)[z[1]] * (sym.diff(
-                        one_form_1[z[0]], self.coordinates[z[1] - 1]) - sym.diff(
-                        one_form_1[z[1]], self.coordinates[z[0] - 1])))
+                        one_form_1[z[0]], self.coords[z[1] - 1]) - sym.diff(
+                        one_form_1[z[1]], self.coords[z[0] - 1])))
             ii_sharp_beta_d_alpha[z[1] - 1] = sym.simplify(
                 ii_sharp_beta_d_alpha[z[1] - 1] + self.sharp_morphism(
                     bivector, one_form_2)[z[0]] * (sym.diff(
-                        one_form_1[z[1]], self.coordinates[z[0] - 1]) - sym.diff(
-                        one_form_1[z[0]], self.coordinates[z[1] - 1])))
+                        one_form_1[z[1]], self.coords[z[0] - 1]) - sym.diff(
+                        one_form_1[z[0]], self.coords[z[1] - 1])))
 
         """ This block calculate d_P(alpha,beta) that is the same to d(<beta,P#(alpha)>), where <,> the pairing and
             d(<beta,P#(alpha)>) = d(P#(alpha)^i * beta_i)
         """
         d_pairing_beta_sharp_alpha = sym.simplify(sym.derive_by_array(sum(
             one_form_2[ky] * self.sharp_morphism(bivector, one_form_1)[ky] for ky
-            in one_form_2), self.coordinates))
+            in one_form_2), self.coords))
 
         # List for the coefficients of {alpha,beta}_P,
         one_forms_brack_aux = []
@@ -736,9 +737,9 @@ class PoissonGeometry:
 
         # Return a symbolic type expression or the same expression in latex format
         if latex_format:
-            return sym.latex(symbolic_expression(one_forms_brack, self.dim, self.coordinates, dx=True))
+            return sym.latex(symbolic_expression(one_forms_brack, self.dim, self.coords, dx=True))
         else:
-            one_forms_brack
+            remove_values_zero(one_forms_brack)
 
     def linear_normal_form_R3(self, bivector):
         """ Calculates a normal form for Lie-Poisson bivector fields on R^3 modulo linear isomorphisms.
@@ -759,7 +760,7 @@ class PoissonGeometry:
             >>> bivector = {(1,2): 'x1'}
             >>> # Calculates a normal form
             >>> linear_normal_form_R3(bivector)
-            >>> {(1,2): 0, (1,3): 4*a*x2 + x1, (2,3): 4*a*x1 + x2}
+            >>> {(1,3): 4*a*x2 + x1, (2,3): 4*a*x1 + x2}
         """
         # Validate the params
         try:
@@ -769,11 +770,11 @@ class PoissonGeometry:
 
         # Trivial case
         if all(vl == 0 for vl in bivector.values()):
-            return {(1,2): 0, (1,3): 0, (2,3): 0}
+            return {0: 0}
         # Converts strings to symbolic variables
         for key in bivector:
             bivector[key] = sym.sympify(bivector[key])
-        # List for coordinates (x1,x2,x3) on R^3
+        # List for coords (x1,x2,x3) on R^3
         x_aux = sym.symbols(f'{self.variable}1:{4}')
         # Remember that E = x1*Dx1 + x2*Dx2 + x3*Dx3 (Euler vector field on R3) and P = bivector
         pairing_E_P = sym.simplify(x_aux[0] * bivector.get((2,3),0) + (-1) * x_aux[1]
@@ -788,18 +789,18 @@ class PoissonGeometry:
             Unimodular case. The modular vector field of P relative to the Euclid
             volume form on R^3 is zero.
         """
-        if all(vl == 0 for vl in self.modular_vector_field(bivector, 1).values()):
+        if all(vl == 0 for vl in self.modular_vf(bivector, 1).values()):
             if hess_pairing_E_P.rank() == 1:
-                return {(1,2): 0, (1,3): 0, (2,3): x_aux[0]}
+                return {(2,3): x_aux[0]}
             if hess_pairing_E_P.rank() == 2:
                 # Case: Hessian of <E,P> with index 2
                 if diag_hess[0, 0] * diag_hess[1, 1] > 0 or \
-                        diag_hess[0, 0] * diag_hess[2, 2] > 0 or \
-                        diag_hess[1, 1] * diag_hess[2, 2] > 0:
-                    return {(1,2): 0, (1,3): -x_aux[1], (2,3): x_aux[0]}
+                   diag_hess[0, 0] * diag_hess[2, 2] > 0 or \
+                   diag_hess[1, 1] * diag_hess[2, 2] > 0:
+                    return {(1,3): -x_aux[1], (2,3): x_aux[0]}
                 else:
                     # Case: Hessian of <E,P> with index 1
-                    return {(1,2): 0, (1,3): x_aux[1], (2,3): x_aux[0]}
+                    return {(1,3): x_aux[1], (2,3): x_aux[0]}
             if hess_pairing_E_P.rank() == 3:
                 # Distinguish indices of the Hessian of <E,P>
                 index_hess_sum = diag_hess[0, 0]/abs(diag_hess[0, 0]) \
@@ -812,20 +813,20 @@ class PoissonGeometry:
         # Non-unimodular case
         else:
             if hess_pairing_E_P.rank() == 0:
-                return {(1,2): 0, (1,3): x_aux[0], (2,3): x_aux[1]}
+                return {(1,3): x_aux[0], (2,3): x_aux[1]}
             if hess_pairing_E_P.rank() == 2:
                 # Case: Hessian of <E,P> with index 2
                 if diag_hess[0, 0] * diag_hess[1, 1] > 0 or \
                         diag_hess[0, 0] * diag_hess[2, 2] > 0 or \
                         diag_hess[1, 1] * diag_hess[2, 2] > 0:
-                    return {(1,2): 0, (1,3): x_aux[0] - 4*sym.sympify('a')*x_aux[1],
+                    return {(1,3): x_aux[0] - 4*sym.sympify('a')*x_aux[1],
                             (2,3): x_aux[1] + 4*sym.sympify('a')*x_aux[0]}
                 else:
                     # Case: Hessian of <E,P> with index 1
-                    return {(1,2): 0, (1,3): x_aux[0] + 4*sym.sympify('a')*x_aux[1],
+                    return {(1,3): x_aux[0] + 4*sym.sympify('a')*x_aux[1],
                             (2,3): 4*sym.sympify('a')*x_aux[0] + x_aux[1]}
             if hess_pairing_E_P.rank() == 1:
-                return {(1,2): 0, (1,3): x_aux[0], (2,3): 4*x_aux[0] + x_aux[1]}
+                return {(1,3): x_aux[0], (2,3): 4*x_aux[0] + x_aux[1]}
 
     def isomorphic_lie_poisson_R3(self, bivector_1, bivector_2):
         """ Determines if two Lie-Poisson bivector fields on R^3 are isomorphic or not.
@@ -871,7 +872,7 @@ class PoissonGeometry:
             gauge_biv.setdefault(int(''.join(str(i) for i in z)), gauge_mtx[z[0]-1, z[1]-1])
         return gauge_biv, sym.sympify(det_I_minus_BP)
 
-    def flaschka_ratiu(self, casimirs, structure_symplectic=False, latex_format=False):
+    def flaschka_ratiu_bivector(self, casimirs, structure_symplectic=False, latex_format=False):
         """"""
         if self.dim - len(casimirs) == 2:
             casimir_list = []
@@ -885,7 +886,7 @@ class PoissonGeometry:
             for casimir in casimir_list:
                 casimir_matrix = []
                 diff_casimir = 0
-                for i, variable in enumerate(self.coordinates):
+                for i, variable in enumerate(self.coords):
                     casimir_matrix.append(casimir.diff(variable))
                     diff_casimir = diff_casimir + (casimir.diff(variable) * self.Dx_basis[i])
                 diff_casimir_matrix.append(casimir_matrix)
@@ -897,7 +898,7 @@ class PoissonGeometry:
                 d_casimir = d_casimir ^ element if index != 0 else d_casimir
 
             if d_casimir.is_zero():
-                return {}
+                return {0:0}
 
             # This blocks obtains Poisson coefficients
             bivector_coeff_dict = {}
@@ -909,7 +910,7 @@ class PoissonGeometry:
                     casimir_matrix_without_combination.col_del(element - (i + 1))
 
                 # Makes a dictionary with Poisson coefficients
-                key = int(F'{combination[0]}{combination[1]}')
+                key = (combination[0],combination[1])
                 coeff = ((-1)**(combination[0] + combination[1]))
                 bivector_coeff_dict[key] = sym.simplify(coeff * casimir_matrix_without_combination.det())
 
@@ -939,8 +940,8 @@ class PoissonGeometry:
                     return [sym.latex(bivector),
                             sym.latex(symplectic)]
                 else:
-                    return [bivector, symplectic]
+                    return [bivector_coeff_dict, symplectic]
             else:
-                return sym.latex(symbolic_expression(bivector_coeff_dict, self.dim, self.coordinates)) if latex_format else bivector_coeff_dict # noqa
+                return sym.latex(symbolic_expression(bivector_coeff_dict, self.dim, self.coords)) if latex_format else bivector_coeff_dict # noqa
         else:
-            return {}
+            return {0: 0}
