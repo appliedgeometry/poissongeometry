@@ -604,10 +604,7 @@ class PoissonGeometry:
         # Formula Z = [(Z0)^i - (1/g)*(X_g)^i]*Dxi
         for z in modular_vf_0:
             modular_vf_a.update({
-                z: sym.simplify(modular_vf_0[z] - 1/(sym.sympify(function)) * self.hamiltonian_vf(bivector,
-                                                                                                  function,
-                                                                                                  remove_zeros=False)[z])
-            })
+                (z): sym.simplify(modular_vf_0[z] - 1/(sym.sympify(function)) * self.hamiltonian_vf(bivector,function,remove_zeros=False).get((z), 0))})
         # Return a symbolic type expression or the same expression in latex format
         if latex_format:
             return symbolic_expression(modular_vf_a, self.dim, self.coords, self.variable).Mv_latex_str()
