@@ -80,7 +80,7 @@ class PoissonGeometry:
             return sym.latex(bivector_matrix)
         return bivector_matrix
 
-    def sharp_morphism(self, bivector, one_form, latex_format=False):
+    def sharp_morphism(self, bivector, one_form, latex_format=False, remove_zeros=True):
         """ Calculates the image of a differential 1-form under the vector bundle morphism 'sharp' P#: T*M -> TM
             defined by P#(alpha) := i_(alpha)P, where P is a Poisson bivector field on a manifold M, alpha a 1-form
             on M and i the interior product of alpha and P.
@@ -150,7 +150,7 @@ class PoissonGeometry:
             # For copy and paste this result in a latex editor, do not forget make "print()" in the result.
             return symbolic_expression(p_sharp, self.dim, self.coords, self.variable).Mv_latex_str()
         # Return a symbolic dictionary.
-        return remove_values_zero(p_sharp)
+        return remove_values_zero(p_sharp) if remove_zeros else p_sharp
 
     def is_in_kernel(self, bivector, one_form):
         """ Check if a differential 1-form alpha belongs to the kernel of a given Poisson bivector field,
@@ -181,7 +181,7 @@ class PoissonGeometry:
         # Converts a dictionary symbolic to a symbolic expression and verify is zero with a sympy method
         return True if symbolic_expression(p_sharp, self.dim, self.coords, self.variable).is_zero() else False
 
-    def hamiltonian_vf(self, bivector, hamiltonian_function, latex_format=False, remove_zeros=True):
+    def hamiltonian_vf(self, bivector, hamiltonian_function, latex_format=False):
         """ Calculates the Hamiltonian vector field of a function relative to a Poisson bivector field as follows:
             X_h = P#(dh), where d is the exterior derivative of h and P#: T*M -> TM is the vector bundle morphism
             defined by P#(alpha) := i_(alpha)P, with i is the interior product of alpha and P.
