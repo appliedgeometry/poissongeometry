@@ -181,7 +181,7 @@ class PoissonGeometry:
         # Converts a dictionary symbolic to a symbolic expression and verify is zero with a sympy method
         return True if symbolic_expression(p_sharp, self.dim, self.coords, self.variable).is_zero() else False
 
-    def hamiltonian_vf(self, bivector, hamiltonian_function, latex_format=False):
+    def hamiltonian_vf(self, bivector, hamiltonian_function, latex_format=False, remove_zeros=True):
         """ Calculates the Hamiltonian vector field of a function relative to a Poisson bivector field as follows:
             X_h = P#(dh), where d is the exterior derivative of h and P#: T*M -> TM is the vector bundle morphism
             defined by P#(alpha) := i_(alpha)P, with i is the interior product of alpha and P.
@@ -235,7 +235,7 @@ class PoissonGeometry:
                                        self.coords, self.variable).Mv_latex_str()
         else:
             # return a symbolic dictionary
-            return remove_values_zero(hamiltonian_vf)
+            return remove_values_zero(hamiltonian_vf) if remove_zeros else hamiltonian_vf
 
     def is_casimir(self, bivector, function):
         """ Check if a function is a Casimir function of a given (Poisson) bivector field, that is
@@ -321,7 +321,7 @@ class PoissonGeometry:
         df = dict(zip(keys_list, sym.derive_by_array(f, self.coords)))
         dg = dict(zip(keys_list, sym.derive_by_array(g, self.coords)))
         # Calculates {f,g} = <g,P#(df)> = ∑_{i} (P#(df))^i * (dg)_i
-        bracket_f_g = sym.simplify(sum(self.sharp_morphism(bivector, df)[index] * dg[index] for index in df))
+        bracket_f_g = sym.simplify(sum(self.sharp_morphism(bivector, df, remove_zeros=False)[index] * dg[index] for index in df.keys()))
 
         # Return a symbolic type expression or the same expression in latex format
         return sym.latex(bracket_f_g) if latex_format else bracket_f_g
