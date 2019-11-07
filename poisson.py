@@ -973,6 +973,6 @@ class PoissonGeometry:
                 else:
                     return [bivector_coeff_dict, symplectic]
             else:
-                return sym.latex(symbolic_expression(bivector_coeff_dict, self.dim, self.coords)) if latex_format else remove_values_zero(bivector_coeff_dict) # noqa
+                return sym.latex(symbolic_expression(bivector_coeff_dict, self.dim, self.coords, self.variables)) if latex_format else remove_values_zero(bivector_coeff_dict) # noqa
         else:
             return {0: 0}
