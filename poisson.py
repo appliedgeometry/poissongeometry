@@ -961,9 +961,10 @@ class PoissonGeometry:
                 estructure_symplectic_num = 0
                 estructure_symplectic_dem = 0
                 for key in dx_ij_basis.keys():
-                    bivector = bivector + bivector_coeff_dict[key] * dx_ij_basis[key]
-                    estructure_symplectic_num = estructure_symplectic_num + bivector_coeff_dict[key] * dx_ij_basis[key]
-                    estructure_symplectic_dem = estructure_symplectic_dem + bivector_coeff_dict[key] * bivector_coeff_dict[key] # noqa
+                    i, j = int(str(key)[0]), int(str(key)[1])
+                    bivector = bivector + bivector_coeff_dict[(i,j)] * dx_ij_basis[key]
+                    estructure_symplectic_num = estructure_symplectic_num + bivector_coeff_dict[(i,j)] * dx_ij_basis[key]
+                    estructure_symplectic_dem = estructure_symplectic_dem + bivector_coeff_dict[(i,j)] * bivector_coeff_dict[(i,j)] # noqa
 
                 symplectic = estructure_symplectic_num * (-1 / estructure_symplectic_dem)
 
