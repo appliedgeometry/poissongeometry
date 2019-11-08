@@ -901,7 +901,7 @@ class PoissonGeometry:
             gauge_mtx = sym.Matrix(sym.simplify(self.bivector_to_matrix(bivector) * (I_minus_BP.inv())))
         gauge_biv = {}
         for z in itools.combinations(range(1, self.dim + 1), 2):
-            gauge_biv.setdefault(int(''.join(str(i) for i in z)), gauge_mtx[z[0]-1, z[1]-1])
+            gauge_biv.setdefault(z, gauge_mtx[z[0]-1, z[1]-1])
         return gauge_biv, sym.sympify(det_I_minus_BP)
 
     def flaschka_ratiu_bivector(self, casimirs, symplectic_form=False, latex_format=False):
