@@ -970,7 +970,7 @@ class PoissonGeometry:
                 symplectic = estructure_symplectic_num * (-1 / estructure_symplectic_dem)
 
                 if latex_format:
-                    return [sym.latex(bivector),
+                    return [sym.latex(symbolic_expression(bivector_coeff_dict, self.dim, self.coords, self.variable)),
                             sym.latex(symplectic)]
                 else:
                     return [bivector_coeff_dict, symplectic]
