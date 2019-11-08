@@ -741,7 +741,7 @@ class PoissonGeometry:
 
         # Return a symbolic type expression or the same expression in latex format
         if latex_format:
-            return sym.latex(symbolic_expression(one_forms_brack, self.dim, self.coords, self.variable, dx=True))
+            return symbolic_expression(one_forms_brack, self.dim, self.coords, self.variable, dx=True).Mv_latex_str()
         else:
             return remove_values_zero(one_forms_brack)
 
