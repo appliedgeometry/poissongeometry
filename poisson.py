@@ -20,6 +20,7 @@ from utils import (validate_dimension, symbolic_expression,
                    is_string, basis, symbolic_expression_2,
                    values_to_kernel, derivate_formal,
                    derivate_standar, symbolic_multivector_to_dict,
+                   tuple_to_int,
                    )
 
 
@@ -977,3 +978,21 @@ class PoissonGeometry:
                 return sym.latex(symbolic_expression(bivector_coeff_dict, self.dim, self.coords, self.variable)) if latex_format else remove_values_zero(bivector_coeff_dict) # noqa
         else:
             return {0: 0}
+
+
+    def curl_operator(self, multivector, function):
+       if isinstance(multivector, str):
+           return {0: 0}
+       else:
+           if isinstance(next(iter(multivector)), int):
+               return sym.simplify(sum(sym.diff(multivector[i], self.coords[i - 1]) for i in range(1, self.dim + 1)))
+           else:
+               deg_multivector = len(next(iter(multivector)))
+               curl_multivector = dict()
+               for z in itools.combinations(range(1, self.dim + 1), deg_multivector - 1):
+                   curl_multivector[z] = 0
+               for key in multivector:
+                   for j in range(1, deg_multivector + 1):
+                       index = tuple(k for l, k in enumerate(key) if l not in [j - 1])
+                       curl_multivector[index] = sym.simplify(curl_multivector[index] + (-1)**(j) * (sym.diff(sym.sympify(multivector[key]), self.coords[list(key).pop(j - 1) - 1]) + 1/(sym.sympify(function)) * sym.sympify(multivector[key]) * sym.diff(sym.sympify(function), self.coords[list(key).pop(j - 1) - 1])))
+               return remove_values_zero(tuple_to_int(curl_multivector))

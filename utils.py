@@ -170,6 +170,15 @@ def remove_values_zero(dictionary):
                 clean_dict.update({key: value})
         return clean_dict
 
+def tuple_to_int(dictionary):
+    """This method updates dictionary keys from (int, ) to int"""
+    dict_clean = {}
+    if all(len(key) == 1 for key in dictionary.keys()):
+        for key in dictionary.keys():
+            dict_clean.update({key[0]: dictionary[key]})
+        return dict_clean
+    else:
+        return dictionary
 
 class DimensionError(Exception):
     """Clase base para excepciones en el módulo."""
