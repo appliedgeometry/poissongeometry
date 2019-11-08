@@ -946,7 +946,7 @@ class PoissonGeometry:
                 coeff = ((-1)**(combination[0] + combination[1]))
                 bivector_coeff_dict[key] = sym.simplify(coeff * casimir_matrix_without_combination.det())
 
-            if structure_symplectic:
+            if symplectic_form:
                 # Makes a basis {dxi^dxj}_{i<j} and it save in a dictionary type variable
                 dx_ij_basis = {}
                 i = 0
