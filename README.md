@@ -23,7 +23,7 @@ This project results from the need to have somethings to take calculus in the Po
 ## Starting 🚀
 #### You only have an interest in trying:
  * __On the cloud (without install nothing)__
-   Please enter to us colab [in Spanish](https://colab.research.google.com/drive/1SN6PS0auO-h3aCXIenblnwJIV-YpowtZ#scrollTo=saL1uA-cmGtx)/ [in English](https://colab.research.google.com/drive/1T2PG-vWaTrZ3Z5KK1U6-pK8uXQS7YdJu#scrollTo=ueazalvBSxVJ)  
+   Please enter to us colab [in Spanish](https://colab.research.google.com/drive/1SN6PS0auO-h3aCXIenblnwJIV-YpowtZ)/ [in English](https://colab.research.google.com/drive/1T2PG-vWaTrZ3Z5KK1U6-pK8uXQS7YdJu#scrollTo=ueazalvBSxVJ)  
    
  * __On local machine__
    * Clone this repository in you local machine.
