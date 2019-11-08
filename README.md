@@ -1,6 +1,6 @@
 
 # Poisson Geometry
-Is a Python class to calculate classical methods in Poisson Geometry with symbolic calculus. This methdos are:
+Is a Python class to calculate classical methods in Poisson Geometry with symbolic calculus. This methods are:
 
 |  sharp_morphism            | lichnerowicz_poiison_operador  | modular_vf           |
 | :-------:                  | :------:                       | :-----:              |
