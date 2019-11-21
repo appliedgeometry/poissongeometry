@@ -1,6 +1,6 @@
 
 # `PoissonGeometry`
-Is a Python class for (local) Poisson-Nijenhuis calculus on manifolds:
+A Python class for (local) Poisson-Nijenhuis calculus on Poisson manifolds:
 
 |  sharp_morphism            | lichnerowicz_poiison_operador  | modular_vf           |
 | :-------:                  | :------:                       | :-----:              |
