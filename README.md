@@ -22,9 +22,8 @@ As of today, different programs that facilitate tensor calculus has been develop
  * M. Evangelista-Alvarado, P. Suárez-Serrato, J. Torres-Orozco and R. Vera. [On Bott-Morse Foliations and their Poisson Structures in Dimension 3](http://journalofsingularities.org/volume19/article2.html), Journal of Singularities 19, 19-33(2019)
 
 ## Starting 🚀
-#### You only have an interest in trying:
- * __On the cloud (without install nothing)__
-   Please enter to us colab [in Spanish](https://colab.research.google.com/drive/1SN6PS0auO-h3aCXIenblnwJIV-YpowtZ)/ [in English](https://colab.research.google.com/drive/1XYcaJQ29XwkblXQOYumT1s8_00bHUEKZ)  
+#### Trying:
+ * __On Colab__ [Spanish](https://colab.research.google.com/drive/1SN6PS0auO-h3aCXIenblnwJIV-YpowtZ)/ [English](https://colab.research.google.com/drive/1XYcaJQ29XwkblXQOYumT1s8_00bHUEKZ)
    
  * __On local machine__
    * Clone this repository in you local machine.
