@@ -72,9 +72,9 @@ MIT licence
 
 ## Authors ✒️
 This work is developed and maintained by:
- * **Pablo Suárez Serrato** - [@psuarezserrato](https://github.com/psuarezserrato)
- * **Jose Ruíz Pantaleón** - [@jcrpanta](https://github.com/jcrpanta)
  * **Miguel Evangelista Alvarado** - [@mevangelista-alvarado](https://github.com/mevangelista-alvarado)
+ * **Jose Ruíz Pantaleón** - [@jcrpanta](https://github.com/jcrpanta)
+ * **Pablo Suárez Serrato** - [@psuarezserrato](https://github.com/psuarezserrato)
 
 ## Thanks for citing our work if you use it! 🤓 ##
 
