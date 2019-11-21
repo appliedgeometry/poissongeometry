@@ -32,12 +32,12 @@ Some of the functions in this class have been used to obtain the results in the 
  * __Run on your local machine__
    * Clone this repository in you local machine.
    * Open a terminal with the path where you clone this repository.
-   * Create a virtual environment, you can see the following [link](https://gist.github.com/mevangelista-alvarado/8ee2fd663e7446e543fc04eacce0f303) to know, how creates a virtual environment step by step.
-   * Install the requirements, as follows:
+   * Create a virtual environment,(see this [link](https://gist.github.com/mevangelista-alvarado/8ee2fd663e7446e543fc04eacce0f303))
+   * Install the requirements:
       ```
       (venv_name) C:Users/dekstop/poisson$ pip install -r requirements.txt
       ```
-   * We open the python terminal to start testing, as follows:
+   * Open the python terminal to start:
       ```
       (venv_name) C:Users/dekstop/poisson$ python
       ```
