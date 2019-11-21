@@ -16,10 +16,14 @@ A Python class for (local) Poisson-Nijenhuis calculus on Poisson manifolds:
 ## Motivation 
 Some of the functions in this class have been used to obtain the results in the following publications.
 
- * L.  C.  Garcia-Naranjo,  P.  Suárez-Serrato & R.  Vera, [Poisson Structures on Smooth 4-Manifolds](https://link.springer.com/article/10.1007/s11005-015-0792-8), Lett. Math. Phys. 105, 1533-1550 (2015). 
- * P. Suárez-Serrato & J. Torres-Orozco. [Poisson structures on wrinkled fibrations](https://link.springer.com/article/10.1007/s40590-015-0072-8) Bol. Soc.Mat. Mex. 22, 263-280 (2016) 
- * P. Suárez-Serrato, J. Torres Orozco, & R. Vera,  [Poisson and near-symplectic structures on generalized wrinkled fibrations in dimension 6](https://link.springer.com/article/10.1007/s10455-019-09651-2) Ann Glob Anal Geom (2019) 55, 777-804 (2019)
- * M. Evangelista-Alvarado, P. Suárez-Serrato, J. Torres-Orozco & R. Vera. [On Bott-Morse Foliations and their Poisson Structures in Dimension 3](http://journalofsingularities.org/volume19/article2.html), Journal of Singularities 19, 19-33(2019)
+ * L.  C.  Garcia-Naranjo,  P.  Suárez-Serrato & R.  Vera, [Poisson Structures on Smooth 4-Manifolds](https://link.springer.com/article/10.1007/s11005-015-0792-8), 
+ Lett. Math. Phys. 105, 1533-1550 (2015). 
+ * P. Suárez-Serrato & J. Torres-Orozco. [Poisson structures on wrinkled fibrations](https://link.springer.com/article/10.1007/s40590-015-0072-8),
+ Bol. Soc.Mat. Mex. 22, 263-280 (2016) 
+ * P. Suárez-Serrato, J. Torres Orozco, & R. Vera,  [Poisson and near-symplectic structures on generalized wrinkled fibrations in dimension 6](https://link.springer.com/article/10.1007/s10455-019-09651-2),
+ Ann. Glob. Anal. Geom. (2019) 55, 777-804 (2019)
+ * M. Evangelista-Alvarado, P. Suárez-Serrato, J. Torres-Orozco & R. Vera. [On Bott-Morse Foliations and their Poisson Structures in Dimension 3](http://journalofsingularities.org/volume19/article2.html), 
+ Journal of Singularities 19, 19-33(2019)
 
 ## 🚀
 <!--- #### Testing: --->
