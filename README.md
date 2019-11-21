@@ -14,7 +14,8 @@ A Python class for (local) Poisson-Nijenhuis calculus on Poisson manifolds:
 <!-- For more information you can read the [wiki](https://github.com/mevangelista-alvarado/poisson_geometry/wiki) this project. or the our [documentation]()-->
 
 ## Motivation 
-This project results from the need to have somethings to take calculus in the Poisson Geometry, the following articles: 
+As of today, different programs that facilitate tensor calculus has been developed. Indeed, Python and some math softwares such as Maple, Mathematica, Maxima or Sage have implemented specialized modules in this kind of calculus. However, the literature and publicly available software packages for symbolic computations with Poisson structures is quite scarce.
+
  * L.  C.  Garcia-Naranjo,  P.  Suárez-Serrato  and  R.  Vera, [Poisson Structures on Smooth 4-Manifolds](https://link.springer.com/article/10.1007/s11005-015-0792-8), Lett. Math. Phys. 105, 1533-1550 (2015). 
  * P. Suárez-Serrato and J. Torres-Orozco. [Poisson structures on wrinkled fibrations](https://link.springer.com/article/10.1007/s40590-015-0072-8) Bol. Soc.Mat. Mex. 22, 263-280 (2016) 
  * Suárez-Serrato, P., Torres Orozco, J. & Vera, R.  [Poisson and near-symplectic structures on generalized wrinkled fibrations in dimension 6](https://link.springer.com/article/10.1007/s10455-019-09651-2) Ann Glob Anal Geom (2019) 55, 777-804 (2019)
