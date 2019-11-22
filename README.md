@@ -34,7 +34,7 @@ Some of the functions in this class have been used to obtain the results in the 
  * __Run on Colab__ [English](https://colab.research.google.com/drive/1XYcaJQ29XwkblXQOYumT1s8_00bHUEKZ) / [Spanish](https://colab.research.google.com/drive/1SN6PS0auO-h3aCXIenblnwJIV-YpowtZ)
    
  * __Run on your local machine__
-   * Clone this repository in you local machine.
+   * Clone this repository on your local machine.
    * Open a terminal with the path where you clone this repository.
    * Create a virtual environment,(see this [link](https://gist.github.com/mevangelista-alvarado/8ee2fd663e7446e543fc04eacce0f303))
    * Install the requirements:
