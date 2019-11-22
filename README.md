@@ -31,7 +31,7 @@ Some of the functions in this class have been used to obtain the results in the 
 
 ## 🚀
 <!--- #### Testing: --->
- * __Run on Colab__ [Spanish](https://colab.research.google.com/drive/1SN6PS0auO-h3aCXIenblnwJIV-YpowtZ)/ [English](https://colab.research.google.com/drive/1XYcaJQ29XwkblXQOYumT1s8_00bHUEKZ)
+ * __Run on Colab__ [Spanish](https://colab.research.google.com/drive/1SN6PS0auO-h3aCXIenblnwJIV-YpowtZ) / [English](https://colab.research.google.com/drive/1XYcaJQ29XwkblXQOYumT1s8_00bHUEKZ)
    
  * __Run on your local machine__
    * Clone this repository in you local machine.
