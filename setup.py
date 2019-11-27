@@ -14,7 +14,7 @@ setuptools.setup(
     description="A Python class for (local) Poisson-Nijenhuis calculus on Poisson manifolds",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/javatechy/dokr",
+    url="https://github.com/appliedgeometry/poisson_geometry",
     packages=setuptools.find_packages(),
     py_modules=['poisson'],
     install_requires=['sympy', 'galgebra'],
