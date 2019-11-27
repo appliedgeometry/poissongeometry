@@ -2,7 +2,7 @@
 # `PoissonGeometry`
 A Python class for (local) Poisson-Nijenhuis calculus on Poisson manifolds:
 
-|  sharp_morphism            | lichnerowicz_poiison_operador  | modular_vf           |
+|  sharp_morphism            | lichnerowicz_poisson_operador  | modular_vf           |
 | :-------:                  | :------:                       | :-----:              |
 | poisson_bracket            | bivector_to_matrix             | jacobiator           |
 | __hamiltonian_vf__         | __is_homogeneaos_unimodular__  | __one_forms_bracket__|
