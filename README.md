@@ -39,7 +39,7 @@ Some of the functions in this class have been used to obtain the results in the 
    * Create a virtual environment,(see this [link](https://gist.github.com/mevangelista-alvarado/8ee2fd663e7446e543fc04eacce0f303))
    * Install the requirements:
       ```
-      (venv_name) C:Users/dekstop/poisson$ pip install -r requirements.txt
+      (venv_name) C:Users/dekstop/poisson$ pip install PoissonGeometry
       ```
    * Open the python terminal to start:
       ```
