@@ -1,6 +1,6 @@
 """
  Copyright 2019 by P Suarez-Serrato, Jose Ruíz and M Evangelista-Alvarado.
- Instituto de Matematicas (UNAM-CU) Mexico
+ Instituto de Matemáticas (UNAM-CU) México
  This is free software; you can redistribute it and/or
  modify it under the terms of the MIT License,
  https://en.wikipedia.org/wiki/MIT_License.
@@ -10,16 +10,11 @@
 """
 from __future__ import unicode_literals
 
-import string
 import sympy as sym
 from sympy.matrices import zeros
 import itertools as itools
-from utils import (validate_dimension, symbolic_expression,
-                   is_dicctionary, show_coordinates,
-                   two_tensor_form_to_matrix, remove_values_zero,
-                   is_string, basis, symbolic_expression_2,
-                   values_to_kernel, derivate_formal,
-                   derivate_standar, symbolic_multivector_to_dict,
+from utils import (validate_dimension, symbolic_expression, show_coordinates,
+                   two_tensor_form_to_matrix, remove_values_zero, basis,
                    tuple_to_int,
                    )
 
@@ -28,7 +23,6 @@ class PoissonGeometry:
     """ This class provides some useful tools for Poisson-Nijenhuis calculus on Poisson manifolds."""
 
     def __init__(self, dimension, variable='x'):
-        # TODO coordinates cambiar por coords #
         # Obtains the dimension
         self.dim = validate_dimension(dimension)
         # Define what variables the class will work with
@@ -45,7 +39,9 @@ class PoissonGeometry:
         Parameters
         ==========
         :bivector:
-            Is a Poisson bivector in a dictionary format with integer type 'keys' and string type 'values'.
+            Is a Poisson bivector in a dictionary format with tuple type 'keys' and string type 'values'.
+        :latex_format:
+            Is a boolean flag to indicates if the result is given in latex format or not, its default value is False
 
         Returns
         =======
@@ -59,21 +55,16 @@ class PoissonGeometry:
             >>> bivector_to_matrix(bivector, latex_format=False)
             >>> Matrix([[0, x3, -x2], [-x3, 0, x1], [x2, -x1, 0]])
             >>> bivector_to_matrix(bivector, latex_format=True)
-            >>> ''
+            >>> '\\left[\\begin{matrix}0 & x_{3} & - x_{2}\\\\- x_{3} & 0 & x_{1}\\\\x_{2} &
+                - x_{1} & 0\\end{matrix}\\right]'
         """
-        # Validate the params
-        # try:
-        #    bivector = is_dicctionary(bivector)
-        #except Exception as e:
-        #    print(F"[Error bivector_to_matrix] \n Error: {e}, Type: {type(e)}")
-
         # Creates a symbolic Matrix
         bivector_matrix = zeros(self.dim)
         # Assigns the corresponding coefficients of the bivector field
         for index in bivector.keys():
             i, j = index
             # Makes the Poisson Matrix
-            bivector_matrix[i-1, j-1] = sym.sympify(bivector[(i,j)])
+            bivector_matrix[i-1, j-1] = sym.sympify(bivector[(i, j)])
             bivector_matrix[j-1, i-1] = (-1) * bivector_matrix[i-1, j-1]
 
         # Return a symbolic Poisson matrix or the same expression in latex format
@@ -89,16 +80,16 @@ class PoissonGeometry:
         Parameters
         ==========
         :bivector:
-            Is a Poisson bivector in a dictionary format with integer type 'keys' and string type 'values'.
+            Is a Poisson bivector in a dictionary format with tuple type 'keys' and string type 'values'.
         :one_form:
-            Is a 1-form differential in a dictionary format with integer type 'keys' and string type 'values'.
+            Is a 1-form differential in a dictionary format with tuple type 'keys' and string type 'values'.
         :latex_format:
             Is a boolean flag to indicates if the result is given in latex format or not, its default value is False
 
         Returns
         =======
             The result is the image of a differential 1-form alpha under the vector bundle morphism 'sharp' in a
-            dictionary format with integer type 'keys' and symbol type 'values'
+            dictionary format with tuple type 'keys' and symbol type 'values'
 
         Example
         ========
@@ -110,18 +101,10 @@ class PoissonGeometry:
             >>> sharp_morphism(bivector, one_form, latex_format=False)
             >>> {1: x2*(-a2*x3 + a3*x3), 2: x1*(a1*x3 - a3*x3), 3: x1*x2*(-a1 + a2)}
             >>> sharp_morphism(bivector, one_form, latex_format=True)
-            >>> x_{2} x_{3} \\left(- a_{2} + a_{3}\\right) \\boldsymbol{Dx}_{1} + x_{1} x_{3} \\left
+            >>> 'x_{2} x_{3} \\left(- a_{2} + a_{3}\\right) \\boldsymbol{Dx}_{1} + x_{1} x_{3} \\left
                 (a_{1} - a_{3}\\right) \\boldsymbol{Dx}_{2} + x_{1} x_{2} \\left(- a_{1} + a_{2}\right)
-                \\boldsymbol{Dx}_{3}
+                \\boldsymbol{Dx}_{3}'
         """
-
-        # Validate the params
-        # try:
-        #    bivector = is_dicctionary(bivector)
-        #    one_form = is_dicctionary(one_form)
-        #except Exception as e:
-        #    print(F"[Error sharp_morphism] \n Error: {e}, Type: {type(e)}")
-
         # Converts strings to symbolic variables
         for i, coeff_i in one_form.items():
             one_form.update({i: sym.sympify(coeff_i)})
@@ -160,9 +143,9 @@ class PoissonGeometry:
         Parameters
         ==========
         :bivector:
-            Is a Poisson bivector in a dictionary format with integer type 'keys' and string type 'values'.
+            Is a Poisson bivector in a dictionary format with tuple type 'keys' and string type 'values'.
         :one_form:
-            Is a 1-form differential in a dictionary format with integer type 'keys' and string type 'values'.
+            Is a 1-form differential in a dictionary format with tuple type 'keys' and string type 'values'.
 
         Returns
         =======
@@ -190,7 +173,7 @@ class PoissonGeometry:
         Parameters
         ==========
         :bivector:
-            Is a Poisson bivector in a dictionary format with integer type 'keys' and string type 'values'.
+            Is a Poisson bivector in a dictionary format with tuple type 'keys' and string type 'values'.
         :hamiltonian_function:
             Is a function scalar h: M --> R that is a string type.
         :latex_format:
@@ -198,7 +181,7 @@ class PoissonGeometry:
 
         Returns
         =======
-            The result is the hamiltonian vector field relative to a Poisson in a dictionary format with integer type
+            The result is the hamiltonian vector field relative to a Poisson in a dictionary format with tuple type
             'keys' and symbol type 'values'
 
         Example
@@ -214,20 +197,12 @@ class PoissonGeometry:
             >>> \\left ( x_{2} - x_{3}\\right ) \\boldsymbol{Dx}_{1} + \\left ( - x_{1} + x_{3}\\right )
                 \\boldsymbol{Dx}_{2} + \\left ( x_{1} - x_{2}\\right ) \\boldsymbol{Dx}_{3}'
         """
-
-        # Validate the params
-        #try:
-        #    bivector = is_dicctionary(bivector)
-        #    hamiltonian_function = is_string(hamiltonian_function)
-        #except Exception as e:
-        #    print(F"[Error hamiltonian_vf] {e}, Type: {type(e)}")
-
         # Converts a string to symbolic expression
         h = sym.sympify(hamiltonian_function)
         # Calculates the differential of hamiltonian_function
         dh = sym.derive_by_array(h, self.coords)
         # Calculates the Hamiltonian vector field
-        keys_list = [(index) for index in range(1,self.dim + 1)]
+        keys_list = [(index) for index in range(1, self.dim + 1)]
         hamiltonian_vf = self.sharp_morphism(bivector, dict(zip(keys_list, dh)))
 
         if latex_format:
@@ -246,7 +221,7 @@ class PoissonGeometry:
         Parameters
         ==========
         :bivector:
-            Is a Poisson bivector in a dictionary format with integer type 'keys' and string type 'values'.
+            Is a Poisson bivector in a dictionary format with tuple type 'keys' and string type 'values'.
         :function:
             Is a function scalar f: M --> R that is a string type.
 
@@ -278,13 +253,15 @@ class PoissonGeometry:
         Parameters
         ==========
         :bivector:
-            Is a Poisson bivector in a dictionary format with integer type 'keys' and string type 'values'.
+            Is a Poisson bivector in a dictionary format with tuple type 'keys' and string type 'values'.
         :f / g:
             Is a function scalar f/g: M --> R that is a string type.
+        :latex_format:
+            Is a boolean flag to indicates if the result is given in latex format or not, its default value is False
 
         Returns
         =======
-            The result is the poisson bracket from f with g in a dictionary format with integer type 'keys' and
+            The result is the poisson bracket from f with g in a dictionary format with tuple type 'keys' and
             symbol type 'values' if latex format is False or in otherwise is the same result but in latex format
 
         Example
@@ -302,64 +279,60 @@ class PoissonGeometry:
             >>> 'a_{1} \\left(x_{2} - x_{3}\\right) - a_{2} \\left(x_{1} - x_{3}\\right) + a_{3} \\left(x_{1}
                 - x_{2}\\right)'
         """
-
-        # Validate the params
-        #try:
-        #    bivector = is_dicctionary(bivector)
-        #    f = is_string(f)
-        #    g = is_string(g)
-        #except Exception as e:
-        #    print(F"[Error poisson_bracket] \n Error: {e}, Type: {type(e)}")
-
         # Convert from string to sympy value
         f, g = sym.sympify(f), sym.sympify(g)
 
         if f == g:
-            # {f,g} = 0 if f=g
-            return 0
+            return 0  # {f,g} = 0 if f=g
         # Calculates the differentials of f and g
-        keys_list = [(index) for index in range(1,self.dim + 1)]
+        keys_list = [(index) for index in range(1, self.dim + 1)]
         df = dict(zip(keys_list, sym.derive_by_array(f, self.coords)))
         dg = dict(zip(keys_list, sym.derive_by_array(g, self.coords)))
         # Calculates {f,g} = <g,P#(df)> = ∑_{i} (P#(df))^i * (dg)_i
-        bracket_f_g = sym.simplify(sum(self.sharp_morphism(bivector, df, remove_zeros=False)[index] * dg[index] for index in df.keys()))
+        bracket_f_g = sym.simplify(sum(self.sharp_morphism(
+                                                bivector,
+                                                df,
+                                                remove_zeros=False)[index] * dg[index] for index in df.keys()))
 
         # Return a symbolic type expression or the same expression in latex format
         return sym.latex(bracket_f_g) if latex_format else bracket_f_g
 
-
     def lichnerowicz_poisson_operator(self, bivector, multivector, latex_format=False):
         """ Calculates the Schouten-Nijenhuis bracket between a given (Poisson) bivector field and a (arbitrary)
-        multivector field.
-        Recall that the Lichnerowicz-Poisson operator on a Poisson manifold (M,P) is defined as the adjoint operator
-        of P, ad_P, respect to the Schouten bracket for multivector fields on M:
-            ad_P(A) := [P,A],
-        for any multivector field A on M. Here [,] denote the Schouten-Nijenhuis bracket.
-        Let P = Pij*Dxi^Dxj (i < j) and A = A^J*Dxj_1^Dxj_2^...^Dxj_a. Here, we use the multi-index notation
-        A^J := A^j_1j_2...j_a for j_1 < j_2 <...< j_a.
-        Then,
-            [P,A](df1,...,df(a+1)) = sum_(i=1)^(a+1) (-1)**(i)*{fi,A(df1,...,î,...,df(a+1))}_P
-                                     + sum(1<=i<j<=a+1) (-1)**(i+j)*A(d{fi,fj}_P,..î..^j..,df(a+1)),
-        for any smooth functions fi on M. Where {,}_P is the Poisson bracket induced by P. Here ^ denotes the absence
-        of the corresponding index and dfi is the differential of fi.
-        :param bivector: is a dictionary with integer type 'keys' and string type 'values'. For example, on R^3,
-            {(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'}.
-        The 'keys' are the ordered indices of the given bivector field P and the 'values' their coefficients.
-        In this case, P = x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3.
-        :param multivector: is a dictionary with integer type 'keys' and string type 'values'. For example, on R^3,
-            {(1,2,3): 'x1*x2*x3'}.
-        The 'keys' are the ordered indices of a given multivector field A and the 'values' their coefficients.
-        In this case, A = x1*x2*x3*Dx1^Dx2*Dx3.
-        :return: a dictionary with integer type 'keys' and symbol type 'values' or the zero value.
-        For the previous example, if latex_format is False is zero and if latex_format is True is '0' which says that
-        any 4-multivector field on R^3 is zero.
+            multivector field.
+            The Lichnerowicz-Poisson operator is defined as
+                [P,A](df1,...,df(a+1)) = sum_(i=1)^(a+1) (-1)**(i)*{fi,A(df1,...,î,...,df(a+1))}_P
+                                     + sum(1<=i<j<=a+1) (-1)**(i+j)*A(d{fi,fj}_P,..î..^j..,df(a+1))
+            where P = Pij*Dxi^Dxj (i < j), A = A^J*Dxj_1^Dxj_2^...^Dxj_a.
+
+        Parameters
+        ==========
+        :bivector:
+            Is a Poisson bivector in a dictionary format with tuple type 'keys' and string type 'values'.
+        :multivector:
+            Is a Poisson bivector in a dictionary format with tuple type 'keys' and string type 'values' if
+            dim(multivector) > 1 in other case is a string value.
+        :latex_format:
+            Is a boolean flag to indicates if the result is given in latex format or not, its default value is False
+
+        Returns
+        =======
+            The result is the Schouten-Nijenhuis bracket from bivector with multivector in a dictionary format with
+            tuple type 'keys' and symbol type 'values' if latex format is False or in otherwise is the same result
+            but in latex format
+
+        Example
+        ========
+            >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
+            >>> bivector = {(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'}
+            >>> # For multivector (x1*x2*x3)*Dx1^Dx2^Dx3
+            >>> multivector = {(1,2,3): 'x1*x2*x3'}
+            >>> # [bivector, multivector] = 0
+            >>> lichnerowicz_poisson_operator(bivector, multivector latex_format=False)
+            >>> 0
+            >>> lichnerowicz_poisson_operator(self, bivector, multivector latex_format=True)
+            >>> '0'
         """
-        # Validate the params
-        #try:
-        #    bivector = is_dicctionary(bivector)
-        #    multivector = is_dicctionary(multivector)
-        #except Exception as e:
-        #    print(F"[Error lichnerowicz_poisson_operator] \n Error: {e}, Type: {type(e)}")
 
         mltv = multivector
         # Degree of multivector
@@ -374,11 +347,10 @@ class PoissonGeometry:
             # In this case, multivector is a function
             if isinstance(multivector, str):
                 # [P,f] = -X_f, for any function f.
-                return self.hamiltonian_vf(bivector, (-1)*sym.sympify(multivector))
+                return self.hamiltonian_vf(bivector, (-1) * sym.sympify(multivector))
             else:
                 # A dictionary for the first term of [P,A], A a multivector
                 schouten_biv_mltv_1 = {}
-                #
                 lich_poiss_aux_1 = 0
                 # The first term of [P,A] is a sum of Poisson brackets {xi,A^J}
                 range_list = range(1, self.dim + 1)
@@ -388,7 +360,7 @@ class PoissonGeometry:
                         # nw_idx = [e for e in z if e not in [i]]
                         nw_idx = [e for e in z if e != i]
                         # Calculates the Poisson bracket {xi,A^J}, J == nw_idx
-                        mltv_nw_idx = mltv.get(tuple(nw_idx),0)
+                        mltv_nw_idx = mltv.get(tuple(nw_idx), 0)
                         lich_poiss_aux_11 = sym.simplify(
                             (-1)**(z.index(i)) * self.poisson_bracket(
                                 bivector,
@@ -415,7 +387,7 @@ class PoissonGeometry:
                             nw_idx_mltv.sort()
                             # Ignore index repetition ADD SET FUNCTION
                             bivector_y = bivector.get(y, 0)
-                            mltv_nw_idx_mltv = mltv.get(tuple(nw_idx_mltv),0)
+                            mltv_nw_idx_mltv = mltv.get(tuple(nw_idx_mltv), 0)
                             if nw_idx_mltv.count(i) != 2:
                                 sum_i_aux = sym.simplify(
                                     (-1)**(z.index(y[0]) + z.index(y[1]) + nw_idx_mltv.index(i))
@@ -448,11 +420,13 @@ class PoissonGeometry:
         Parameters
         ==========
         :bivector:
-            Is a Poisson bivector in a dictionary format with integer type 'keys' and string type 'values'.
+            Is a Poisson bivector in a dictionary format with tuple type 'keys' and string type 'values'.
+        :latex_format:
+            Is a boolean flag to indicates if the result is given in latex format or not, its default value is False
 
         Returns
         =======
-            The result is the jacobiator of P with P in a dictionary format with integer type 'keys' and
+            The result is the jacobiator of P with P in a dictionary format with tuple type 'keys' and
             symbol type 'values' if latex format is False or in otherwise is the same result but in latex format
 
         Example
@@ -474,7 +448,7 @@ class PoissonGeometry:
         Parameters
         ==========
         :bivector:
-            Is a Poisson bivector in a dictionary format with integer type 'keys' and string type 'values'.
+            Is a Poisson bivector in a dictionary format with tuple type 'keys' and string type 'values'.
 
         Returns
         =======
@@ -498,9 +472,9 @@ class PoissonGeometry:
         Parameters
         ==========
         :bivector:
-            Is a Poisson bivector in a dictionary format with integer type 'keys' and string type 'values'.
+            Is a Poisson bivector in a dictionary format with tuple type 'keys' and string type 'values'.
         :vector_field:
-            Is a vector field in a dictionary format with integer type 'keys' and string type 'values'.
+            Is a vector field in a dictionary format with tuple type 'keys' and string type 'values'.
 
         Returns
         =======
@@ -526,7 +500,7 @@ class PoissonGeometry:
         Parameters
         ==========
         :bivector_1 / bivector_2:
-            Is a Poisson bivector in a dictionary format with integer type 'keys' and string type 'values'.
+            Is a Poisson bivector in a dictionary format with tuple type 'keys' and string type 'values'.
 
         Returns
         =======
@@ -558,14 +532,16 @@ class PoissonGeometry:
         Parameters
         ==========
         :bivector:
-            Is a Poisson bivector in a dictionary format with integer type 'keys' and string type 'values'.
+            Is a Poisson bivector in a dictionary format with tuple type 'keys' and string type 'values'.
         :function:
             Is a function scalar h: M --> R that is a non zero and is a string type.
+        :latex_format:
+            Is a boolean flag to indicates if the result is given in latex format or not, its default value is False
 
         Returns
         =======
             The result is modular vector field Z of a given Poisson bivector field P relative to the volume form
-            in a dictionary format with integer type 'keys' and symbol type 'values' if latex format is False or
+            in a dictionary format with tuple type 'keys' and symbol type 'values' if latex format is False or
             in otherwise is the same result but in latex format
 
         Example
@@ -581,18 +557,10 @@ class PoissonGeometry:
             >>> '\\left ( - x_{2} + x_{3}\\right ) \\boldsymbol{Dx}_{1} + \\left ( x_{1} - x_{3}\\right ) \\boldsy
                 mbol{Dx}_{2} + \\left ( - x_{1} + x_{2}\\right ) \\boldsymbol{Dx}_{3}'
         """
-        # Validate the params
-        #try:
-        #    bivector = is_dicctionary(bivector)
-        #    function = is_string(function)
-        #except Exception as e:
-        #   print(F"[Error modular_vf] \n Error: {e}, Type: {type(e)}")
-
         # Converts strings to symbolic variables
         for key in bivector:
             bivector[key] = sym.sympify(bivector[key])
 
-        # List with 'dim' zeros
         modular_vf_0 = {}
         """ This block calculates the modular vector field Z_0 of a bivector P relative to Omega_0 = dx1^...^dx('dim')
             with the formula: Z0 = -Dxi(Pij)*Dxj + Dxj(Pij)*Dxi, i < j """
@@ -609,7 +577,10 @@ class PoissonGeometry:
         # Formula Z = [(Z0)^i - (1/g)*(X_g)^i]*Dxi
         for z in modular_vf_0:
             modular_vf_a.update({
-                (z): sym.simplify(modular_vf_0[z] - 1/(sym.sympify(function)) * self.hamiltonian_vf(bivector, function, remove_zeros=False).get((z), 0))})
+                (z): sym.simplify(modular_vf_0[z] - 1/(sym.sympify(function)) * self.hamiltonian_vf(
+                                                                                    bivector,
+                                                                                    function,
+                                                                                    remove_zeros=False).get((z), 0))})
         # Return a symbolic type expression or the same expression in latex format
         if latex_format:
             return symbolic_expression(modular_vf_a, self.dim, self.coords, self.variable).Mv_latex_str()
@@ -651,14 +622,16 @@ class PoissonGeometry:
         Parameters
         ==========
         :bivector:
-            Is a Poisson bivector in a dictionary format with integer type 'keys' and string type 'values'.
+            Is a Poisson bivector in a dictionary format with tuple type 'keys' and string type 'values'.
         :one_form_1/one_form_2:
-            Is a one form differential defined on M in a dictionary format with integer type 'keys' and string
+            Is a one form differential defined on M in a dictionary format with tuple type 'keys' and string
             type 'values'.
+        :latex_format:
+            Is a boolean flag to indicates if the result is given in latex format or not, its default value is False
 
         Returns
         =======
-            The result from calculate {alpha,beta}_P in a dictionary format with integer type 'keys' and symbol
+            The result from calculate {alpha,beta}_P in a dictionary format with tuple type 'keys' and symbol
             type 'values' if latex format is False or in otherwise is the same result but in latex format
 
         Example
@@ -678,14 +651,6 @@ class PoissonGeometry:
             >>> modular_vf(bivector, one_form_1, one_form_2, latex_format=True)
             >>> ''
         """
-        # Validate the params
-        #try:
-        #    bivector = is_dicctionary(bivector)
-        #    one_form_1 = is_dicctionary(one_form_1)
-        #    one_form_2 = is_dicctionary(one_form_2)
-        #except Exception as e:
-        #    print(F"[Error one_forms_bracket] \n Error: {e}, Type: {type(e)}")
-
         # Defines as alpha = one_form_1, beta = one_form_2 and P = bivector.
         # This block converts strings to symbolic variables
         for i in range(1, self.dim + 1):
@@ -752,6 +717,8 @@ class PoissonGeometry:
         ==========
         :bivector:
             Is a Lie-Poisson bivector in a dictionary format with integer type 'keys' and string type 'values'.
+        :latex_format:
+            Is a boolean flag to indicates if the result is given in latex format or not, its default value is False
 
         Returns
         =======
@@ -765,13 +732,10 @@ class PoissonGeometry:
             >>> # Calculates a normal form
             >>> linear_normal_form_R3(bivector)
             >>> {(1,3): 4*a*x2 + x1, (2,3): 4*a*x1 + x2}
+            >>> linear_normal_form_R3(bivector, latex_format=True)
+            >>> '\\left ( 4 a x_{2} + x_{1}\\right ) \\boldsymbol{Dx}_{1}\\wedge \\boldsymbol{Dx}_{3} +
+                \\left ( 4 a x_{1} + x_{2}\\right ) \\boldsymbol{Dx}_{2}\\wedge \\boldsymbol{Dx}_{3}'
         """
-        # Validate the params
-        #try:
-        #    bivector = is_dicctionary(bivector)
-        #except Exception as e:
-        #    print(F"[linear_normal_form_R3] \n Error: {e}, Type: {type(e)}")
-
         # Trivial case
         if all(vl == 0 for vl in bivector.values()):
             if latex_format:
@@ -784,8 +748,8 @@ class PoissonGeometry:
         # List for coords (x1,x2,x3) on R^3
         x_aux = sym.symbols(f'{self.variable}1:{4}')
         # Remember that E = x1*Dx1 + x2*Dx2 + x3*Dx3 (Euler vector field on R3) and P = bivector
-        pairing_E_P = sym.simplify(x_aux[0] * bivector.get((2,3),0) + (-1) * x_aux[1]
-                                   * bivector.get((1,3),0) + x_aux[2] * bivector.get((1,2),0))
+        pairing_E_P = sym.simplify(x_aux[0] * bivector.get((2, 3), 0) + (-1) * x_aux[1]
+                                   * bivector.get((1, 3), 0) + x_aux[2] * bivector.get((1, 2), 0))
         # Calculates the Hessian matrix of the pairing <E,P>
         hess_pairing_E_P = sym.simplify(sym.derive_by_array(sym.derive_by_array(
             pairing_E_P, x_aux), x_aux)).tomatrix()
@@ -799,24 +763,30 @@ class PoissonGeometry:
         if all(vl == 0 for vl in self.modular_vf(bivector, 1).values()):
             if hess_pairing_E_P.rank() == 1:
                 if latex_format:
-                    return symbolic_expression({(2,3): x_aux[0]}, self.dim, self.coords, self.variable).Mv_latex_str()
+                    return symbolic_expression({(2, 3): x_aux[0]}, self.dim, self.coords, self.variable).Mv_latex_str()
                 else:
-                    return {(2,3): x_aux[0]}
+                    return {(2, 3): x_aux[0]}
             if hess_pairing_E_P.rank() == 2:
                 # Case: Hessian of <E,P> with index 2
                 if diag_hess[0, 0] * diag_hess[1, 1] > 0 or \
                    diag_hess[0, 0] * diag_hess[2, 2] > 0 or \
                    diag_hess[1, 1] * diag_hess[2, 2] > 0:
                     if latex_format:
-                        return symbolic_expression({(1,3): -x_aux[1], (2,3): x_aux[0]}, self.dim, self.coords, self.variable).Mv_latex_str()
+                        return symbolic_expression({(1, 3): -x_aux[1], (2, 3): x_aux[0]},
+                                                   self.dim,
+                                                   self.coords,
+                                                   self.variable).Mv_latex_str()
                     else:
-                        return {(1,3): -x_aux[1], (2,3): x_aux[0]}
+                        return {(1, 3): -x_aux[1], (2, 3): x_aux[0]}
                 else:
                     if latex_format:
-                        return symbolic_expression({(1,3): x_aux[1], (2,3): x_aux[0]}, self.dim, self.coords, self.variable).Mv_latex_str()
+                        return symbolic_expression({(1, 3): x_aux[1], (2, 3): x_aux[0]},
+                                                   self.dim,
+                                                   self.coords,
+                                                   self.variable).Mv_latex_str()
                     else:
                         # Case: Hessian of <E,P> with index 1
-                        return {(1,3): x_aux[1], (2,3): x_aux[0]}
+                        return {(1, 3): x_aux[1], (2, 3): x_aux[0]}
             if hess_pairing_E_P.rank() == 3:
                 # Distinguish indices of the Hessian of <E,P>
                 index_hess_sum = diag_hess[0, 0]/abs(diag_hess[0, 0]) \
@@ -824,41 +794,63 @@ class PoissonGeometry:
                                  + diag_hess[2, 2]/abs(diag_hess[2, 2])
                 if index_hess_sum == 3 or index_hess_sum == -3:
                     if latex_format:
-                        return symbolic_expression({(1,2): x_aux[2], (1,3): -x_aux[1], (2,3): x_aux[0]}, self.dim, self.coords, self.variable).Mv_latex_str()
+                        return symbolic_expression({(1, 2): x_aux[2], (1, 3): -x_aux[1], (2, 3): x_aux[0]},
+                                                   self.dim,
+                                                   self.coords,
+                                                   self.variable).Mv_latex_str()
                     else:
-                        return {(1,2): x_aux[2], (1,3): -x_aux[1], (2,3): x_aux[0]}
+                        return {(1, 2): x_aux[2], (1, 3): -x_aux[1], (2, 3): x_aux[0]}
                 else:
                     if latex_format:
-                        return symbolic_expression({(1,2): -x_aux[2], (1,3): -x_aux[1], (2,3): x_aux[0]}, self.dim, self.coords, self.variable).Mv_latex_str()
+                        return symbolic_expression({(1, 2): -x_aux[2], (1, 3): -x_aux[1], (2, 3): x_aux[0]},
+                                                   self.dim,
+                                                   self.coords,
+                                                   self.variable).Mv_latex_str()
                     else:
-                        return {(1,2): -x_aux[2], (1,3): -x_aux[1], (2,3): x_aux[0]}
+                        return {(1, 2): -x_aux[2], (1, 3): -x_aux[1], (2, 3): x_aux[0]}
         # Non-unimodular case
         else:
             if hess_pairing_E_P.rank() == 0:
                 if latex_format:
-                    return symbolic_expression({(1,3): x_aux[0], (2,3): x_aux[1]}, self.dim, self.coords, self.variable).Mv_latex_str()
+                    return symbolic_expression({(1, 3): x_aux[0], (2, 3): x_aux[1]},
+                                               self.dim,
+                                               self.coords,
+                                               self.variable).Mv_latex_str()
                 else:
-                    return {(1,3): x_aux[0], (2,3): x_aux[1]}
+                    return {(1, 3): x_aux[0], (2, 3): x_aux[1]}
             if hess_pairing_E_P.rank() == 2:
                 # Case: Hessian of <E,P> with index 2
                 if diag_hess[0, 0] * diag_hess[1, 1] > 0 or \
                         diag_hess[0, 0] * diag_hess[2, 2] > 0 or \
                         diag_hess[1, 1] * diag_hess[2, 2] > 0:
                     if latex_format:
-                        return symbolic_expression({(1,3): x_aux[0] - 4*sym.sympify('a')*x_aux[1], (2,3): x_aux[1] + 4*sym.sympify('a')*x_aux[0]}, self.dim, self.coords, self.variable).Mv_latex_str()
+                        return symbolic_expression({(1, 3): x_aux[0] - 4 * sym.sympify('a') * x_aux[1],
+                                                    (2, 3): x_aux[1] + 4 * sym.sympify('a') * x_aux[0]},
+                                                   self.dim,
+                                                   self.coords,
+                                                   self.variable).Mv_latex_str()
                     else:
-                        return {(1,3): x_aux[0] - 4*sym.sympify('a')*x_aux[1], (2,3): x_aux[1] + 4*sym.sympify('a')*x_aux[0]}
+                        return {(1, 3): x_aux[0] - 4 * sym.sympify('a') * x_aux[1],
+                                (2, 3): x_aux[1] + 4 * sym.sympify('a') * x_aux[0]}
                 else:
                     if latex_format:
-                        return symbolic_expression({(1,3): x_aux[0] + 4*sym.sympify('a')*x_aux[1], (2,3): 4*sym.sympify('a')*x_aux[0] + x_aux[1]}, self.dim, self.coords, self.variable).Mv_latex_str()
+                        return symbolic_expression({(1, 3): x_aux[0] + 4 * sym.sympify('a') * x_aux[1],
+                                                    (2, 3): 4 * sym.sympify('a') * x_aux[0] + x_aux[1]},
+                                                   self.dim,
+                                                   self.coords,
+                                                   self.variable).Mv_latex_str()
                     else:
                         # Case: Hessian of <E,P> with index 1
-                        return {(1,3): x_aux[0] + 4*sym.sympify('a')*x_aux[1], (2,3): 4*sym.sympify('a')*x_aux[0] + x_aux[1]}
+                        return {(1, 3): x_aux[0] + 4 * sym.sympify('a') * x_aux[1],
+                                (2, 3): 4 * sym.sympify('a') * x_aux[0] + x_aux[1]}
             if hess_pairing_E_P.rank() == 1:
                 if latex_format:
-                    return symbolic_expression({(1,3): x_aux[0], (2,3): 4*x_aux[0] + x_aux[1]}, self.dim, self.coords, self.variable).Mv_latex_str()
+                    return symbolic_expression({(1, 3): x_aux[0], (2, 3): 4 * x_aux[0] + x_aux[1]},
+                                               self.dim,
+                                               self.coords,
+                                               self.variable).Mv_latex_str()
                 else:
-                    return {(1,3): x_aux[0], (2,3): 4*x_aux[0] + x_aux[1]}
+                    return {(1, 3): x_aux[0], (2, 3): 4 * x_aux[0] + x_aux[1]}
 
     def isomorphic_lie_poisson_R3(self, bivector_1, bivector_2):
         """ Determines if two Lie-Poisson bivector fields on R^3 are isomorphic or not.
@@ -878,20 +870,13 @@ class PoissonGeometry:
             >>> bivector_1 = {(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'}
             >>> # For bivector x1*Dx2^Dx3
             >>> bivector_2 = {(1,2): 'x1', (1,3): '0', (2,3): '0'}
-            >>> is_homogeneous_unimodular(bivector)
+            >>> isomorphic_lie_poisson_R3(bivector_1, bivector_2)
             >>> False
         """
         return True if self.linear_normal_form_R3(bivector_1) == self.linear_normal_form_R3(bivector_2) else False
 
     def gauge_transformation(self, bivector, two_form):
         """"""
-        # Validate the params
-        #try:
-        #    bivector = is_dicctionary(bivector)
-        #    two_form = is_dicctionary(two_form)
-        #except Exception as e:
-        #    print(F"[gauge_transformation] \n Error: {e}, Type: {type(e)}")
-
         two_form_B = two_tensor_form_to_matrix(two_form, self.dim)
         I_minus_BP = sym.Matrix(sym.simplify(sym.eye(self.dim) - two_form_B * self.bivector_to_matrix(bivector)))
         det_I_minus_BP = sym.factor(sym.simplify(I_minus_BP.det()))
@@ -930,7 +915,7 @@ class PoissonGeometry:
                 d_casimir = d_casimir ^ element if index != 0 else d_casimir
 
             if d_casimir.is_zero():
-                return {0:0}
+                return {0: 0}
 
             # This blocks obtains Poisson coefficients
             bivector_coeff_dict = {}
@@ -942,7 +927,7 @@ class PoissonGeometry:
                     casimir_matrix_without_combination.col_del(element - (i + 1))
 
                 # Makes a dictionary with Poisson coefficients
-                key = (combination[0],combination[1])
+                key = (combination[0], combination[1])
                 coeff = ((-1)**(combination[0] + combination[1]))
                 bivector_coeff_dict[key] = sym.simplify(coeff * casimir_matrix_without_combination.det())
 
@@ -963,14 +948,17 @@ class PoissonGeometry:
                 estructure_symplectic_dem = 0
                 for key in dx_ij_basis.keys():
                     i, j = int(str(key)[0]), int(str(key)[1])
-                    bivector = bivector + bivector_coeff_dict[(i,j)] * dx_ij_basis[key]
-                    estructure_symplectic_num = estructure_symplectic_num + bivector_coeff_dict[(i,j)] * dx_ij_basis[key]
-                    estructure_symplectic_dem = estructure_symplectic_dem + bivector_coeff_dict[(i,j)] * bivector_coeff_dict[(i,j)] # noqa
+                    bivector = bivector + bivector_coeff_dict[(i, j)] * dx_ij_basis[key]
+                    estructure_symplectic_num = estructure_symplectic_num + bivector_coeff_dict[(i, j)] * dx_ij_basis[key] # noqa
+                    estructure_symplectic_dem = estructure_symplectic_dem + bivector_coeff_dict[(i, j)] * bivector_coeff_dict[(i,j)] # noqa
 
                 symplectic = estructure_symplectic_num * (-1 / estructure_symplectic_dem)
 
                 if latex_format:
-                    return [symbolic_expression(bivector_coeff_dict, self.dim, self.coords, self.variable).Mv_latex_str(),
+                    return [symbolic_expression(bivector_coeff_dict,
+                                                self.dim,
+                                                self.coords,
+                                                self.variable).Mv_latex_str(),
                             symplectic.Mv_latex_str()]
                 else:
                     return [bivector_coeff_dict, symplectic]
@@ -979,20 +967,20 @@ class PoissonGeometry:
         else:
             return {0: 0}
 
-
     def curl_operator(self, multivector, function):
-       if isinstance(multivector, str):
-           return {0: 0}
-       else:
-           if isinstance(next(iter(multivector)), int):
-               return sym.simplify(sum(sym.diff(multivector[i], self.coords[i - 1]) for i in range(1, self.dim + 1)))
-           else:
-               deg_multivector = len(next(iter(multivector)))
-               curl_multivector = dict()
-               for z in itools.combinations(range(1, self.dim + 1), deg_multivector - 1):
-                   curl_multivector[z] = 0
-               for key in multivector:
-                   for j in range(1, deg_multivector + 1):
-                       index = tuple(k for l, k in enumerate(key) if l not in [j - 1])
-                       curl_multivector[index] = sym.simplify(curl_multivector[index] + (-1)**(j) * (sym.diff(sym.sympify(multivector[key]), self.coords[list(key).pop(j - 1) - 1]) + 1/(sym.sympify(function)) * sym.sympify(multivector[key]) * sym.diff(sym.sympify(function), self.coords[list(key).pop(j - 1) - 1])))
-               return remove_values_zero(tuple_to_int(curl_multivector))
+        """"""
+        if isinstance(multivector, str):
+            return {0: 0}
+        else:
+            if isinstance(next(iter(multivector)), int):
+                return sym.simplify(sum(sym.diff(multivector[i], self.coords[i - 1]) for i in range(1, self.dim + 1)))
+            else:
+                deg_multivector = len(next(iter(multivector)))
+                curl_multivector = dict()
+                for z in itools.combinations(range(1, self.dim + 1), deg_multivector - 1):
+                    curl_multivector[z] = 0
+                for key in multivector:
+                    for j in range(1, deg_multivector + 1):
+                        index = tuple(k for l, k in enumerate(key) if l not in [j - 1])
+                        curl_multivector[index] = sym.simplify(curl_multivector[index] + (-1)**(j) * (sym.diff(sym.sympify(multivector[key]), self.coords[list(key).pop(j - 1) - 1]) + 1/(sym.sympify(function)) * sym.sympify(multivector[key]) * sym.diff(sym.sympify(function), self.coords[list(key).pop(j - 1) - 1]))) # noqa
+                return remove_values_zero(tuple_to_int(curl_multivector))
