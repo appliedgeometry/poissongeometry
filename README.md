@@ -27,7 +27,7 @@ Some of the functions in this class have been used to obtain the results in the 
 
 ## 🚀
 <!--- #### Testing: --->
- * __Run on Colab__ [English](https://colab.research.google.com/drive/1XYcaJQ29XwkblXQOYumT1s8_00bHUEKZ) / [Spanish](https://colab.research.google.com/drive/1F9I2TcrhSz0zRZSuALEWldxgw-AL6pOK#scrollTo=2NMNAK80N2W-)
+ * __Run on Colab__ [English](https://colab.research.google.com/drive/1XYcaJQ29XwkblXQOYumT1s8_00bHUEKZ) / [Spanish](https://colab.research.google.com/drive/1F9I2TcrhSz0zRZSuALEWldxgw-AL6pOK)
    
  * __Run on your local machine__
    * Clone this repository on your local machine.
