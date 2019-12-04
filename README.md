@@ -2,32 +2,29 @@
 # `PoissonGeometry`
 A Python class for (local) Poisson-Nijenhuis calculus on Poisson manifolds:
 
-|  sharp_morphism            | lichnerowicz_poisson_operador  | modular_vf           |
-| :-------:                  | :------:                       | :-----:              |
-| poisson_bracket            | bivector_to_matrix             | jacobiator           |
-| __hamiltonian_vf__         | __is_homogeneaos_unimodular__  | __one_forms_bracket__|
-| isomorphic_lie_poisson_R3  | linear_normal_form_R3          | gauge_transformation |
-|__flaschka_ratiu_bivector__ | __is_poisson_tensor__          |__is_in_kernel__      |
-|is_casimir                  |is_poisson_vf                   |is_poisson_par        |
-|__curl_operator__           |                                |                      |
+|                       | Functions                 |                               |
+|:---------------------:|:-------------------------:|:-----------------------------:|
+| poisson_bracket       | hamiltonian_vf            | lichnerowicz_poisson_operator |
+| modular_vf            | curl_operator             | flaschka_ratiu_bivector       |
+| sharp_morphism        | bivector_to_matrix        | jacobiator                    |
+| one_forms_bracket     | gauge_transformation      | is_homogeneous_unimodular     |
+| linear_normal_form_R3 | isomorphic_lie_poisson_R3 | is_in_kernel                  |
+| is_poisson_tensor     | is_casimir                | is_poisson_vf                 | 
+|                       | is_poisson_pair           |                               |
 
 <!-- For more information you can read the [wiki](https://github.com/mevangelista-alvarado/poisson_geometry/wiki) this project. or the our [documentation]()-->
 
 ## Motivation 
 Some of the functions in this class have been used to obtain the results in the following publications.
 
- * L.  C.  Garcia-Naranjo,  P.  Suárez-Serrato & R.  Vera, [Poisson Structures on Smooth 4-Manifolds](https://link.springer.com/article/10.1007/s11005-015-0792-8), 
- 
- Lett. Math. Phys. 105, 1533-1550 (2015). 
- * P. Suárez-Serrato & J. Torres-Orozco. [Poisson structures on wrinkled fibrations](https://link.springer.com/article/10.1007/s40590-015-0072-8),
- 
- Bol. Soc.Mat. Mex. 22, 263-280 (2016) 
- * P. Suárez-Serrato, J. Torres Orozco, & R. Vera,  [Poisson and near-symplectic structures on generalized wrinkled fibrations in dimension 6](https://link.springer.com/article/10.1007/s10455-019-09651-2),
- 
- Ann. Glob. Anal. Geom. (2019) 55, 777-804 (2019)
- * M. Evangelista-Alvarado, P. Suárez-Serrato, J. Torres-Orozco & R. Vera. [On Bott-Morse Foliations and their Poisson Structures in Dimension 3](http://journalofsingularities.org/volume19/article2.html), 
- 
- Journal of Singularities 19, 19-33(2019)
+ * L.  C.  Garcia-Naranjo,  P.  Suárez-Serrato & R.  Vera, [Poisson Structures on Smooth 4-Manifolds](https://link.springer.com/article/10.1007/s11005-015-0792-8),  
+   Lett. Math. Phys. 105, 1533-1550 (2015)
+ * P. Suárez-Serrato & J. Torres-Orozco. [Poisson Structures on Wrinkled Fibrations](https://link.springer.com/article/10.1007/s40590-015-0072-8),  
+   Bol. Soc.Mat. Mex. 22, 263-280 (2016)
+ * P. Suárez-Serrato, J. Torres Orozco, & R. Vera,  [Poisson and Near-Symplectic Structures on Generalized Wrinkled Fibrations in Dimension 6](https://link.springer.com/article/10.1007/s10455-019-09651-2),  
+   Ann. Glob. Anal. Geom. (2019) 55, 777-804 (2019)
+ * M. Evangelista-Alvarado, P. Suárez-Serrato, J. Torres-Orozco & R. Vera. [On Bott-Morse Foliations and their Poisson Structures in Dimension 3](http://journalofsingularities.org/volume19/article2.html),  
+   Journal of Singularities 19, 19-33 (2019)
 
 ## 🚀
 <!--- #### Testing: --->
