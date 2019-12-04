@@ -2,15 +2,14 @@
 # `PoissonGeometry`
 A Python class for (local) Poisson-Nijenhuis calculus on Poisson manifolds:
 
-|                       |                           |                               |
-|:---------------------:|:-------------------------:|:-----------------------------:|
-| poisson_bracket       | hamiltonian_vf            | lichnerowicz_poisson_operator |
-| modular_vf            | curl_operator             | flaschka_ratiu_bivector       |
-| sharp_morphism        | bivector_to_matrix        | jacobiator                    |
-| one_forms_bracket     | gauge_transformation      | is_homogeneous_unimodular     |
-| linear_normal_form_R3 | isomorphic_lie_poisson_R3 | is_in_kernel                  |
-| is_poisson_tensor     | is_casimir                | is_poisson_vf                 | 
-|                       | is_poisson_pair           |                               |
+| **poisson_bracket**       | **hamiltonian_vf**            | **lichnerowicz_poisson_operator** |
+|:-------------------------:|:-----------------------------:|:---------------------------------:|
+| **modular_vf**            | **curl_operator**             | **flaschka_ratiu_bivector**       |
+| **sharp_morphism**        | **bivector_to_matrix**        | **jacobiator**                    |
+| **one_forms_bracket**     | **gauge_transformation**      | **is_homogeneous_unimodular**     |
+| **linear_normal_form_R3** | **isomorphic_lie_poisson_R3** | **is_in_kernel**                  |
+| **is_poisson_tensor**     | **is_casimir**                | **is_poisson_vf**                 | 
+|                           | **is_poisson_pair**           |                                   |
 
 <!-- For more information you can read the [wiki](https://github.com/mevangelista-alvarado/poisson_geometry/wiki) this project. or the our [documentation]()-->
 
