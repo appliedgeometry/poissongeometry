@@ -2,7 +2,7 @@
 # `PoissonGeometry`
 A Python class for (local) Poisson-Nijenhuis calculus on Poisson manifolds:
 
-|                       | Functions                 |                               |
+|                       |                           |                               |
 |:---------------------:|:-------------------------:|:-----------------------------:|
 | poisson_bracket       | hamiltonian_vf            | lichnerowicz_poisson_operator |
 | modular_vf            | curl_operator             | flaschka_ratiu_bivector       |
