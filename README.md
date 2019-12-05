@@ -93,10 +93,10 @@ This work is developed and maintained by:
 
 @misc{evangelistaalvarado2019computational,<br/>
     title={On Computational Poisson Geometry I: Symbolic Foundations},<br/>
-    author={M. A. Evangelista-Alvarado and J. C. Ruíz-Pantaleón and P. Suárez-Serrato}, <br/>    
+    author={M. A. Evangelista-Alvarado and J. C. Ruíz-Pantaleón and P. Suárez-Serrato},<br/>
     year={2019},<br/>
-    eprint={1912.01746},<br/> 
-    archivePrefix={arXiv},<br/>    
+    eprint={1912.01746},<br/>
+    archivePrefix={arXiv},<br/>
     primaryClass={math.DG}<br/>
 }
 
