@@ -18,13 +18,17 @@ This repository accompanies our paper ['On Computational Poisson Geometry I: Sym
 ## Motivation 
 Some of the functions in this module have been used to obtain the results in these articles:
 
- * L.  C.  Garcia-Naranjo,  P.  Suárez-Serrato & R.  Vera, [Poisson Structures on Smooth 4-Manifolds](https://link.springer.com/article/10.1007/s11005-015-0792-8),  
+ * L.  C.  Garcia-Naranjo,  P.  Suárez-Serrato & R.  Vera, 
+ [Poisson Structures on Smooth 4-Manifolds](https://link.springer.com/article/10.1007/s11005-015-0792-8),  
    Lett. Math. Phys. 105, 1533-1550 (2015)
- * P. Suárez-Serrato & J. Torres-Orozco. [Poisson Structures on Wrinkled Fibrations](https://link.springer.com/article/10.1007/s40590-015-0072-8),  
+ * P. Suárez-Serrato & J. Torres-Orozco. 
+ [Poisson Structures on Wrinkled Fibrations](https://link.springer.com/article/10.1007/s40590-015-0072-8),  
    Bol. Soc.Mat. Mex. 22, 263-280 (2016)
- * P. Suárez-Serrato, J. Torres Orozco, & R. Vera,  [Poisson and Near-Symplectic Structures on Generalized Wrinkled Fibrations in Dimension 6](https://link.springer.com/article/10.1007/s10455-019-09651-2),  
+ * P. Suárez-Serrato, J. Torres Orozco, & R. Vera, 
+ [Poisson and Near-Symplectic Structures on Generalized Wrinkled Fibrations in Dimension 6](https://link.springer.com/article/10.1007/s10455-019-09651-2),  
    Ann. Glob. Anal. Geom. (2019) 55, 777-804 (2019)
- * M. Evangelista-Alvarado, P. Suárez-Serrato, J. Torres-Orozco & R. Vera. [On Bott-Morse Foliations and their Poisson Structures in Dimension 3](http://journalofsingularities.org/volume19/article2.html),  
+ * M. Evangelista-Alvarado, P. Suárez-Serrato, J. Torres-Orozco & R. Vera.
+ [On Bott-Morse Foliations and their Poisson Structures in Dimension 3](http://journalofsingularities.org/volume19/article2.html),  
    Journal of Singularities 19, 19-33 (2019)
 
 ## 🚀
@@ -85,11 +89,17 @@ This work is developed and maintained by:
 ## Thanks for citing our work if you use it! 🤓 ##
 
 @misc{evangelistaalvarado2019computational,
+
     title={On Computational Poisson Geometry I: Symbolic Foundations},
+    
     author={M. A. Evangelista-Alvarado and J. C. Ruíz-Pantaleón and P. Suárez-Serrato},
+    
     year={2019},
+    
     eprint={1912.01746},
+    
     archivePrefix={arXiv},
+    
     primaryClass={math.DG}
 }
 
