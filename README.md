@@ -1,6 +1,6 @@
 
 # `PoissonGeometry`
-A Python class for (local) Poisson-Nijenhuis calculus on Poisson manifolds:
+A Python module for (local) Poisson-Nijenhuis calculus on Poisson manifolds, with the following functions:
 
 | **poisson_bracket**       | **hamiltonian_vf**            | **lichnerowicz_poisson_operator** |
 |:-------------------------:|:-----------------------------:|:---------------------------------:|
@@ -14,7 +14,7 @@ A Python class for (local) Poisson-Nijenhuis calculus on Poisson manifolds:
 <!-- For more information you can read the [wiki](https://github.com/mevangelista-alvarado/poisson_geometry/wiki) this project. or the our [documentation]()-->
 
 ## Motivation 
-Some of the functions in this class have been used to obtain the results in the following publications.
+Some of the functions in this module have been used to obtain the results in these articles:
 
  * L.  C.  Garcia-Naranjo,  P.  Suárez-Serrato & R.  Vera, [Poisson Structures on Smooth 4-Manifolds](https://link.springer.com/article/10.1007/s11005-015-0792-8),  
    Lett. Math. Phys. 105, 1533-1550 (2015)
@@ -81,6 +81,9 @@ This work is developed and maintained by:
  * **Pablo Suárez Serrato** - [@psuarezserrato](https://github.com/psuarezserrato)
 
 ## Thanks for citing our work if you use it! 🤓 ##
+
+This work was partially supported by CONACyT, “Programa para un Avance
+Global e Integrado de la Matemática Mexicana” FORDECYT 265667 and UNAM-DGAPA-PAPIIT-IN104819
 
 <!-- 
 ## Do not forget.
