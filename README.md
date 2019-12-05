@@ -21,19 +21,22 @@ Some of the functions in this module have been used to obtain the results in the
  * L.  C.  Garcia-Naranjo,  P.  Suárez-Serrato & R.  Vera, <br/>
  [Poisson Structures on Smooth 4-Manifolds](https://link.springer.com/article/10.1007/s11005-015-0792-8), <br/> 
    Lett. Math. Phys. 105, 1533-1550 (2015)
+   
  * P. Suárez-Serrato & J. Torres-Orozco, <br/>
  [Poisson Structures on Wrinkled Fibrations](https://link.springer.com/article/10.1007/s40590-015-0072-8),  <br/>
    Bol. Soc.Mat. Mex. 22, 263-280 (2016)
+   
  * P. Suárez-Serrato, J. Torres Orozco, & R. Vera, <br/>
  [Poisson and Near-Symplectic Structures on Generalized Wrinkled Fibrations in Dimension 6](https://link.springer.com/article/10.1007/s10455-019-09651-2),  <br/>
    Ann. Glob. Anal. Geom. (2019) 55, 777-804 (2019)
+   
  * M. Evangelista-Alvarado, P. Suárez-Serrato, J. Torres-Orozco & R. Vera, <br/>
  [On Bott-Morse Foliations and their Poisson Structures in Dimension 3](http://journalofsingularities.org/volume19/article2.html),  <br/>
    Journal of Singularities 19, 19-33 (2019)
 
 ## 🚀
 <!--- #### Testing: --->
- * __Run on Colab__ [English](https://colab.research.google.com/drive/1XYcaJQ29XwkblXQOYumT1s8_00bHUEKZ) / [Spanish](https://colab.research.google.com/drive/1F9I2TcrhSz0zRZSuALEWldxgw-AL6pOK)
+ * __Run our tutorial on Colab__ [English](https://colab.research.google.com/drive/1XYcaJQ29XwkblXQOYumT1s8_00bHUEKZ) / [Castellano](https://colab.research.google.com/drive/1F9I2TcrhSz0zRZSuALEWldxgw-AL6pOK)
    
  * __Run on your local machine__
    * Clone this repository on your local machine.
