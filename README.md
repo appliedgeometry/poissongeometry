@@ -11,6 +11,8 @@ A Python module for (local) Poisson-Nijenhuis calculus on Poisson manifolds, wit
 | **is_poisson_tensor**     | **is_casimir**                | **is_poisson_vf**                 | 
 |                           | **is_poisson_pair**           |                                   |
 
+This repository accompanies our paper ['On Computational Poisson Geometry I: Symbolic Foundations'](https://arxiv.org/abs/1912.01746).
+
 <!-- For more information you can read the [wiki](https://github.com/mevangelista-alvarado/poisson_geometry/wiki) this project. or the our [documentation]()-->
 
 ## Motivation 
@@ -81,6 +83,15 @@ This work is developed and maintained by:
  * **Pablo Suárez Serrato** - [@psuarezserrato](https://github.com/psuarezserrato)
 
 ## Thanks for citing our work if you use it! 🤓 ##
+
+@misc{evangelistaalvarado2019computational,
+    title={On Computational Poisson Geometry I: Symbolic Foundations},
+    author={M. A. Evangelista-Alvarado and J. C. Ruíz-Pantaleón and P. Suárez-Serrato},
+    year={2019},
+    eprint={1912.01746},
+    archivePrefix={arXiv},
+    primaryClass={math.DG}
+}
 
 This work was partially supported by CONACyT, “Programa para un Avance
 Global e Integrado de la Matemática Mexicana” FORDECYT 265667 and UNAM-DGAPA-PAPIIT-IN104819
