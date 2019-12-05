@@ -91,23 +91,17 @@ This work is developed and maintained by:
 
 ## Thanks for citing our work if you use it! 🤓 ##
 
-@misc{evangelistaalvarado2019computational,
-
-    title={On Computational Poisson Geometry I: Symbolic Foundations},
-    
-    author={M. A. Evangelista-Alvarado and J. C. Ruíz-Pantaleón and P. Suárez-Serrato},
-    
-    year={2019},
-    
-    eprint={1912.01746},
-    
-    archivePrefix={arXiv},
-    
-    primaryClass={math.DG}
+@misc{evangelistaalvarado2019computational,<br/>
+    title={On Computational Poisson Geometry I: Symbolic Foundations},<br/>
+    author={M. A. Evangelista-Alvarado and J. C. Ruíz-Pantaleón and P. Suárez-Serrato}, <br/>    
+    year={2019},<br/>
+    eprint={1912.01746},<br/> 
+    archivePrefix={arXiv},<br/>    
+    primaryClass={math.DG}<br/>
 }
 
 This work was partially supported by the grants “Programa para un Avance
-Global e Integrado de la Matemática Mexicana” CONACyT FORDECYT 265667 and "Aprendizaje Geométrico Profundo" UNAM-DGAPA-PAPIIT-IN104819.
+Global e Integrado de la Matemática Mexicana” CONACyT FORDECYT 26566 and "Aprendizaje Geométrico Profundo" UNAM-DGAPA-PAPIIT-IN104819.
 
 <!-- 
 ## Do not forget.
