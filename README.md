@@ -106,8 +106,8 @@ This work is developed and maintained by:
     primaryClass={math.DG}
 }
 
-This work was partially supported by CONACyT, “Programa para un Avance
-Global e Integrado de la Matemática Mexicana” FORDECYT 265667 and UNAM-DGAPA-PAPIIT-IN104819
+This work was partially supported by the grants “Programa para un Avance
+Global e Integrado de la Matemática Mexicana” CONACyT FORDECYT 265667 and "Aprendizaje Geométrico Profundo" UNAM-DGAPA-PAPIIT-IN104819.
 
 <!-- 
 ## Do not forget.
