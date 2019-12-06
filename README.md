@@ -15,7 +15,7 @@ This repository accompanies our paper ['On Computational Poisson Geometry I: Sym
 
 <!-- For more information you can read the [wiki](https://github.com/mevangelista-alvarado/poisson_geometry/wiki) this project. or the our [documentation]()-->
 
-## Motivation 
+## Motivation
 Some of the functions in this module have been used to obtain the results in these articles:
 
  * L.  C.  Garcia-Naranjo,  P.  Suárez-Serrato & R.  Vera, <br/>
@@ -44,7 +44,7 @@ Some of the functions in this module have been used to obtain the results in the
    * Create a virtual environment,(see this [link](https://gist.github.com/mevangelista-alvarado/8ee2fd663e7446e543fc04eacce0f303))
    * Install the requirements:
       ```
-      (venv_name) C:Users/dekstop/poisson$ pip install PoissonGeometry
+      (venv_name) C:Users/dekstop/poisson$ pip install poissongeometry
       ```
   <!-- * Open the python terminal to start:
       ```
@@ -78,7 +78,7 @@ Some of the functions in this module have been used to obtain the results in the
 Calculate Poisson Cohomology with linear coefficients.-->
 
 ## Bugs & Contributions
-Our issue tracker is at https://github.com/mevangelista-alvarado/poisson_geometry/issues. Please report any bugs that you find. Or, even better, if you are interested in our project you can fork the repository on GitHub and create a pull request. 
+Our issue tracker is at https://github.com/appliedgeometry/poissongeometry/issues. Please report any bugs that you find. Or, even better, if you are interested in our project you can fork the repository on GitHub and create a pull request. 
 
 ## Licence 📄
 MIT licence
@@ -100,8 +100,8 @@ This work is developed and maintained by:
     primaryClass={math.DG}<br/>
 }
 
-This work was partially supported by the grants “Programa para un Avance
-Global e Integrado de la Matemática Mexicana” CONACyT FORDECYT 26566 and "Aprendizaje Geométrico Profundo" UNAM-DGAPA-PAPIIT-IN104819.
+## Acknowledgments ##
+This work was partially supported by the grants “Programa para un Avance Global e Integrado de la Matemática Mexicana” CONACyT FORDECYT 26566 and "Aprendizaje Geométrico Profundo" UNAM-DGAPA-PAPIIT-IN104819.
 
 <!-- 
 ## Do not forget.
