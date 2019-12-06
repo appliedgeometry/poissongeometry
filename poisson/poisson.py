@@ -13,7 +13,7 @@ from __future__ import unicode_literals
 import sympy as sym
 from sympy.matrices import zeros
 import itertools as itools
-from utils import (validate_dimension, symbolic_expression, show_coordinates,
+from poisson.utils import (validate_dimension, symbolic_expression, show_coordinates,
                    two_tensor_form_to_matrix, remove_values_zero, basis,
                    tuple_to_int,
                    )
