@@ -1,4 +1,2 @@
-# Sympy
 sympy
-# Galgebra
 galgebra
