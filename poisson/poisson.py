@@ -27,8 +27,7 @@ import sympy as sym
 from sympy.matrices import zeros
 import itertools as itools
 from poisson.utils import (validate_dimension, symbolic_expression, show_coordinates,
-                           two_tensor_form_to_matrix, remove_values_zero, basis,
-                           tuple_to_int,
+                           two_tensor_form_to_matrix, remove_values_zero, basis
                            )
 
 
@@ -63,11 +62,13 @@ class PoissonGeometry:
 
         Example
         ========
+            >>> # Instance the class to dimension 3
+            >>> pg = PoissonGeometry(3)
             >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
             >>> bivector = {(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'}
-            >>> bivector_to_matrix(bivector, latex_format=False)
+            >>> pg.bivector_to_matrix(bivector, latex_format=False)
             >>> Matrix([[0, x3, -x2], [-x3, 0, x1], [x2, -x1, 0]])
-            >>> bivector_to_matrix(bivector, latex_format=True)
+            >>> pg.bivector_to_matrix(bivector, latex_format=True)
             >>> '\\left[\\begin{matrix}0 & x_{3} & - x_{2}\\\\- x_{3} & 0 & x_{1}\\\\x_{2} &
                 - x_{1} & 0\\end{matrix}\\right]'
         """
@@ -112,17 +113,15 @@ class PoissonGeometry:
             >>> one_form = {(1,): 'a1*x1', (2,): 'a2*x2', (3,): 'a3*x3'}
             >>> # P#(one_form) = x2*(-a2*x3 + a3*x3x)*Dx1 + x1*(a1*x3 - a3*x3x)*Dx2 + x1*x2*(-a1 + a2)*Dx3.
             >>> sharp_morphism(bivector, one_form, latex_format=False)
-            >>> {1: x2*(-a2*x3 + a3*x3), 2: x1*(a1*x3 - a3*x3), 3: x1*x2*(-a1 + a2)}
+            >>> {(1,): x2*(-a2*x3 + a3*x3), (2,): x1*(a1*x3 - a3*x3), (3,): x1*x2*(-a1 + a2)}
             >>> sharp_morphism(bivector, one_form, latex_format=True)
             >>> 'x_{2} x_{3} \\left(- a_{2} + a_{3}\\right) \\boldsymbol{Dx}_{1} + x_{1} x_{3} \\left
                 (a_{1} - a_{3}\\right) \\boldsymbol{Dx}_{2} + x_{1} x_{2} \\left(- a_{1} + a_{2}\right)
                 \\boldsymbol{Dx}_{3}'
         """
         # Converts strings to symbolic variables
-        for i, coeff_i in one_form.items():
-            one_form.update({i: sym.sympify(coeff_i)})
-        for ij, coeff_ij in bivector.items():
-            bivector.update({ij: sym.sympify(coeff_ij)})
+        one_form = {i: sym.sympify(coeff_i) for i, coeff_i in one_form.items()}
+        bivector = {ij: sym.sympify(coeff_ij) for ij, coeff_ij in bivector.items()}
 
         """
             Calculation of the vector field bivector^#(one_form) as
@@ -133,14 +132,14 @@ class PoissonGeometry:
         for ij, bivector_ij in bivector.items():
             # Get the values i and j from bivector index ij
             i, j = ij
-            p_sharp_aux_i = p_sharp.get((i), 0)
-            p_sharp_aux_j = p_sharp.get((j), 0)
+            p_sharp_aux_i = p_sharp.get((i,), 0)
+            p_sharp_aux_j = p_sharp.get((j,), 0)
             one_form_i = one_form.get((i,), 0)
             one_form_j = one_form.get((j,), 0)
             # Calculates one form i*Pij*Dxj
-            p_sharp[(j)] = sym.simplify(p_sharp_aux_j + one_form_i * bivector_ij)
+            p_sharp[(j,)] = sym.simplify(p_sharp_aux_j + one_form_i * bivector_ij)
             # Calculates one form j*Pji*Dxi
-            p_sharp[(i)] = sym.simplify(p_sharp_aux_i - one_form_j * bivector_ij)
+            p_sharp[(i,)] = sym.simplify(p_sharp_aux_i - one_form_j * bivector_ij)
 
         # Return a vector field expression in LaTeX format
         if latex_format:
@@ -166,12 +165,14 @@ class PoissonGeometry:
 
         Example
         ========
+            >>> # Instance the class to dimension 3
+            >>> pg = PoissonGeometry(3)
             >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
             >>> bivector = {(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'}
             >>> # For one form x1*dx1 + x2*dx2 + x3*dx3.
             >>> one_form = {(1): 'x1', (2): 'x2', (3): 'x3'}
             >>> # P#(one_form) = x2*(-a2*x3 + a3*x3x)*Dx1 + x1*(a1*x3 - a3*x3x)*Dx2 + x1*x2*(-a1 + a2)*Dx3.
-            >>> is_in_kernel(bivector, one_form)
+            >>> pg.is_in_kernel(bivector, one_form)
             >>> True
         """
         p_sharp = self.sharp_morphism(bivector, one_form)
@@ -199,14 +200,16 @@ class PoissonGeometry:
 
         Example
         ========
+            >>> # Instance the class to dimension 3
+            >>> pg = PoissonGeometry(3)
             >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
             >>> bivector = {(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'}
             >>> # For hamiltonian_function h(x1,x2,x3) = x1 + x2 + x3.
             >>> hamiltonian_function = 'x1 + x2 + x3'
             >>> # X_h = P#(dh) = (x2 - x3)*Dx1 + (-x1 + x3)*Dx2 + (x1 - x2)*Dx3.
-            >>> hamiltonian_vf(bivector, hamiltonian_function, latex_format=False)
-            >>> {1: x2 - x3, 2: -x1 + x3, 3: x1 - x2}
-            >>> hamiltonian_vf(bivector, hamiltonian_function, latex_format=True)
+            >>> pg.hamiltonian_vf(bivector, hamiltonian_function, latex_format=False)
+            >>> {(1,): x2 - x3, (2,): -x1 + x3, (3,): x1 - x2}
+            >>> pg.hamiltonian_vf(bivector, hamiltonian_function, latex_format=True)
             >>> \\left ( x_{2} - x_{3}\\right ) \\boldsymbol{Dx}_{1} + \\left ( - x_{1} + x_{3}\\right )
                 \\boldsymbol{Dx}_{2} + \\left ( x_{1} - x_{2}\\right ) \\boldsymbol{Dx}_{3}'
         """
@@ -215,7 +218,7 @@ class PoissonGeometry:
         # Calculates the differential of hamiltonian_function
         dh = sym.derive_by_array(h, self.coords)
         # Calculates the Hamiltonian vector field
-        keys_list = [(index) for index in range(1, self.dim + 1)]
+        keys_list = [(index,) for index in range(1, self.dim + 1)]
         hamiltonian_vf = self.sharp_morphism(bivector, dict(zip(keys_list, dh)))
 
         if latex_format:
@@ -244,11 +247,13 @@ class PoissonGeometry:
 
         Example
         ========
+            >>> # Instance the class to dimension 3
+            >>> pg = PoissonGeometry(3)
             >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
             >>> bivector = {(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'}
             >>> # For function f(x1,x2,x3) = x1^2 + x2^2 + x3^2.
             >>> function = 'x1**2 + x2**2 + x3**2'
-            >>> is_casimir(bivector, function)
+            >>> pg.is_casimir(bivector, function)
             >>> True
         """
 
@@ -279,6 +284,8 @@ class PoissonGeometry:
 
         Example
         ========
+            >>> # Instance the class to dimension 3
+            >>> pg = PoissonGeometry(3)
             >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
             >>> bivector = {(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'}
             >>> # For f(x1,x2,x3) = x1 + x2 + x3.
@@ -286,9 +293,9 @@ class PoissonGeometry:
             >>> # For g(x1,x2,x3) = 'a1*x1 + a2*x2 + a3*x3'.
             >>> g = 'a1*x1 + a2*x2 + a3*x3'
             >>> # {f, g} = a1*(x2 - x3) - a2*(x1 - x3) + a3*(x1 - x2)
-            >>> poisson_bracket(bivector, f, g, latex_format=False)
+            >>> pg.poisson_bracket(bivector, f, g, latex_format=False)
             >>> a1*(x2 - x3) - a2*(x1 - x3) + a3*(x1 - x2)
-            >>> poisson_bracket(self, bivector, f, g, latex_format=True)
+            >>> pg.poisson_bracket(bivector, f, g, latex_format=True)
             >>> 'a_{1} \\left(x_{2} - x_{3}\\right) - a_{2} \\left(x_{1} - x_{3}\\right) + a_{3} \\left(x_{1}
                 - x_{2}\\right)'
         """
@@ -298,7 +305,7 @@ class PoissonGeometry:
         if f == g:
             return 0  # {f,g} = 0 if f=g
         # Calculates the differentials of f and g
-        keys_list = [(index) for index in range(1, self.dim + 1)]
+        keys_list = [(index,) for index in range(1, self.dim + 1)]
         df = dict(zip(keys_list, sym.derive_by_array(f, self.coords)))
         dg = dict(zip(keys_list, sym.derive_by_array(g, self.coords)))
         # Calculates {f,g} = <g,P#(df)> = ∑_{i} (P#(df))^i * (dg)_i
@@ -310,7 +317,7 @@ class PoissonGeometry:
         # Return a symbolic type expression or the same expression in latex format
         return sym.latex(bracket_f_g) if latex_format else bracket_f_g
 
-    def curl_operator(self, multivector, function):
+    def curl_operator(self, multivector, function, latex_format=False):
         """ Calculate the divergence of multivertoc field.
 
         Parameters
@@ -320,20 +327,25 @@ class PoissonGeometry:
         :function:
             Is a nowhere vanishing function in a string type. If the function is constant you can input the
             number type.
+        :latex_format:
+            Is a boolean flag to indicates if the result is given in latex format or not, its default value is False
 
         Returns
         =======
             Returns the divergence of multivertor field in a dictionary format with integer type 'keys'
-            and string type 'values'.
+            and string type 'values' if latex format is False or in otherwise is the same result but in latex format
 
         Example
         ========
-            >>> pg6 = PoissonGeometry(6)
-            >>> multivector = {(1,2): ‘x1*x2’, (1,3): ‘-x1*x3’, (2,3): ‘2*x3’, (3,4): ‘1’, (3,5): ‘-1’, (4,6): ‘1’}
+            >>> # Instance the class to dimension 6
+            >>> pg = PoissonGeometry(6)
+            >>> multivector = {(1,2): ‘x1*x2’, (1,3): ‘-x1*x3’, (2,3): ‘x2*x3’, (3,4): ‘1’, (3,5): ‘-1’, (4,6): ‘1’}
             >>> # If the function is constant only input the number.
             >>> function = 1
-            >>> pg6.curl operator(multivector, function)
-            >>>
+            >>> pg.curl_operator(multivector, function)
+            >>> {0: 0}
+            >>> pg.curl operator(multivector, function,latex_format=False)
+            >>> '0'
         """
 
         if isinstance(multivector, str):
@@ -349,8 +361,12 @@ class PoissonGeometry:
                 for key in multivector:
                     for j in range(1, deg_multivector + 1):
                         index = tuple(k for l, k in enumerate(key) if l not in [j - 1])
-                        curl_multivector[index] = sym.simplify(curl_multivector[index] + (-1)**(j) * (sym.diff(sym.sympify(multivector[key]), self.coords[list(key).pop(j - 1) - 1]) + 1/(sym.sympify(function)) * sym.sympify(multivector[key]) * sym.diff(sym.sympify(function), self.coords[list(key).pop(j - 1) - 1]))) # noqa
-                return remove_values_zero(tuple_to_int(curl_multivector))
+                        curl_multivector[index] = sym.simplify(curl_multivector[index] + (-1)**(j) * (sym.diff(sym.sympify(multivector[key]), self.coords[list(key).pop(j - 1) - 1]) + 1/(sym.sympify(function)) * sym.sympify(multivector[key]) * sym.diff(sym.sympify(function), self.coords[list(key).pop(j - 1) - 1])))  # noqa
+                if not latex_format:
+                    return remove_values_zero(curl_multivector)
+                else:
+                    return symbolic_expression(remove_values_zero(curl_multivector), self.dim,
+                                               self.coords, self.variable).Mv_latex_str()
 
     def lichnerowicz_poisson_operator(self, bivector, multivector, latex_format=False):
         """ Calculates the Schouten-Nijenhuis bracket between a given (Poisson) bivector field and a (arbitrary)
@@ -378,14 +394,16 @@ class PoissonGeometry:
 
         Example
         ========
+            >>> # Instance the class to dimension 3
+            >>> pg = PoissonGeometry(3)
             >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
             >>> bivector = {(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'}
             >>> # For multivector (x1*x2*x3)*Dx1^Dx2^Dx3
             >>> multivector = {(1,2,3): 'x1*x2*x3'}
             >>> # [bivector, multivector] = 0
-            >>> lichnerowicz_poisson_operator(bivector, multivector latex_format=False)
+            >>> pg.lichnerowicz_poisson_operator(bivector, multivector, latex_format=False)
             >>> 0
-            >>> lichnerowicz_poisson_operator(self, bivector, multivector latex_format=True)
+            >>> pg.lichnerowicz_poisson_operator(self, bivector, multivector latex_format=True)
             >>> '0'
         """
 
@@ -486,12 +504,14 @@ class PoissonGeometry:
 
         Example
         ========
+            >>> # Instance the class to dimension 3
+            >>> pg = PoissonGeometry(3)
             >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
             >>> bivector = {(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'}
             >>> # Calculates [P, P]
-            >>> jacobiator(bivector, latex_format=False)
-            >>> {(1,2,3): 0}
-            >>> jacobiator(self, bivector, latex_format=True):
+            >>> pg.jacobiator(bivector, latex_format=False)
+            >>> {0 : 0}
+            >>> pg.jacobiator(bivector, latex_format=True)
             >>> '0'
         """
         return self.lichnerowicz_poisson_operator(bivector, bivector, latex_format=latex_format)
@@ -511,10 +531,12 @@ class PoissonGeometry:
 
         Example
         ========
+            >>> # Instance the class to dimension 3
+            >>> pg = PoissonGeometry(3)
             >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
             >>> bivector = {(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'}
             >>> # [P, P]
-            >>> is_poisson_bivector(bivector):
+            >>> pg.is_poisson_bivector(bivector):
             >>> True
         """
         bivector_result = self.lichnerowicz_poisson_operator(bivector, bivector)
@@ -537,12 +559,14 @@ class PoissonGeometry:
 
         Example
         ========
+            >>> # Instance the class to dimension 3
+            >>> pg = PoissonGeometry(3)
             >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
             >>> bivector = {(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'}
             >>> # For vector field x1*Dx1 + x2*Dx2 + x3*Dx
             >>> vector_field = {(1,): 'x1', (2,): 'x2', (3,): 'x3'}
             >>> # [Z, P]
-            >>> is_poisson_vf(bivector, vector_field)
+            >>> pg.is_poisson_vf(bivector, vector_field)
             >>> False
         """
         bivector_result = self.lichnerowicz_poisson_operator(bivector, vector_field)
@@ -563,13 +587,15 @@ class PoissonGeometry:
 
         Example
         ========
-            >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
-            >>> bivector = {(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'}
-            >>> # For vector field x1*Dx1 + x2*Dx2 + x3*Dx
-            >>> vector_field = {(1): 'x1', (2): 'x2', (3): 'x3'}
-            >>> # [Z, P]
-            >>> is_poisson_pair(bivector, vector_field)
-            >>> False
+            >>> # Instance the class to dimension 3
+            >>> pg = PoissonGeometry(3)
+            >>> # For bivector a*x1*x2*Dx1^Dx2 - b*x1*x3*Dx1^Dx3 + b*x1*x3*Dx2^Dx3
+            >>> P = {(1,2): 'a*x1*x2', (1,3): '-b*x1*x3', (2,3): 'b*x2*x3'}
+            >>> # For vector field x3**2*x1*Dx1
+            >>> Q = {(1,2): 'x3**2'}
+            >>> # [P, Q]
+            >>> pg.is_poisson_pair(P, Q)
+            >>> True
         """
         bivector_result = self.lichnerowicz_poisson_operator(bivector_1, bivector_2)
         return True if symbolic_expression(bivector_result, self.dim, self.coords, self.variable).is_zero() else False
@@ -601,14 +627,16 @@ class PoissonGeometry:
 
         Example
         =======
+            >>> # Instance the class to dimension 3
+            >>> pg = PoissonGeometry(3)
             >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
             >>> bivector = {(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'}
             >>> # For the function exp:R^3 --> R
             >>> function = 'exp(x1 + x2 + x3)'
             >>> # Calculates Z' = Z - (1/h)*X_h that is (-x2 + x3)*Dx1 + (x1 - x3)*Dx2 + (-x1 + x2)*Dx3
-            >>> modular_vf(bivector, function)
+            >>> pg.modular_vf(bivector, function)
             >>> {(1,): -x2 + x3, (2,): x1 - x3, (3,): -x1 + x2}
-            >>> modular_vf(bivector, function, latex_format=True)
+            >>> pg.modular_vf(bivector, function, latex_format=True)
             >>> '\\left ( - x_{2} + x_{3}\\right ) \\boldsymbol{Dx}_{1} + \\left ( x_{1} - x_{3}\\right ) \\boldsy
                 mbol{Dx}_{2} + \\left ( - x_{1} + x_{2}\\right ) \\boldsymbol{Dx}_{3}'
         """
@@ -635,9 +663,11 @@ class PoissonGeometry:
 
         Example
         ========
+            >>> # Instance the class to dimension 3
+            >>> pg = PoissonGeometry(3)
             >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
             >>> bivector = {(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'}
-            >>> is_homogeneous_unimodular(bivector)
+            >>> pg.is_homogeneous_unimodular(bivector)
             >>> True
         """
         modular_vf = self.modular_vf(bivector, 1)
@@ -669,6 +699,8 @@ class PoissonGeometry:
 
         Example
         =======
+            >>> # Instance the class to dimension 3
+            >>> pg = PoissonGeometry(3)
             >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
             >>> bivector = {(1, 2): 'x3', (1, 3): '-x2', (2, 3): 'x1'}
             >>> # For one form alpha
@@ -677,18 +709,22 @@ class PoissonGeometry:
             >>> one_form_2 = {(1,): 'b1*x1', (2,): 'b2*x2', (3,): 'b3*x3'}
             >>> # Calculates
             >>> # {alpha,beta}_P = (b1*(a2 - a3) - b2*(a1 - a3) + b3*(a1 - a2))*(-x2*x3*dx1 - x1*x3*dx2 - x1*x2*dx3)
-            >>> one_forms_bracket(bivector, one_form_1, one_form_2)
-            >>> {1: -x2*x3*(b1*(a2 - a3) - b2*(a1 - a3) + b3*(a1 - a2)),
-                 2: -x1*x3*(b1*(a2 - a3) - b2*(a1 - a3) + b3*(a1 - a2)),
-                 3: -x1*x2*(b1*(a2 - a3) - b2*(a1 - a3) + b3*(a1 - a2))}
-            >>> modular_vf(bivector, one_form_1, one_form_2, latex_format=True)
-            >>> ''
+            >>> pg.one_forms_bracket(bivector, one_form_1, one_form_2)
+            >>> {(1,): -x2*x3*(b1*(a2 - a3) - b2*(a1 - a3) + b3*(a1 - a2)),
+                 (2,): -x1*x3*(b1*(a2 - a3) - b2*(a1 - a3) + b3*(a1 - a2)),
+                 (3,): -x1*x2*(b1*(a2 - a3) - b2*(a1 - a3) + b3*(a1 - a2))}
+            >>> pg.one_forms_bracket(bivector, one_form_1, one_form_2, latex_format=True)
+            >>> 'x_{2} x_{3} \\left(a_{1} b_{2} - a_{1} b_{3} - a_{2} b_{1} + a_{2} b_{3} + a_{3} b_{1} -
+                 a_{3} b_{2}\\right) \\boldsymbol{dx}_{1} + x_{1} x_{3} \\left(a_{1} b_{2} - a_{1} b_{3} -
+                 a_{2} b_{1} + a_{2} b_{3} + a_{3} b_{1} - a_{3} b_{2}\\right) \\boldsymbol{dx}_{2} +
+                 x_{1} x_{2} \\left(a_{1} b_{2} - a_{1} b_{3} - a_{2} b_{1} + a_{2} b_{3} + a_{3} b_{1} -
+                 a_{3} b_{2}\\right) \\boldsymbol{dx}_{3}'
         """
         # Defines as alpha = one_form_1, beta = one_form_2 and P = bivector.
         # This block converts strings to symbolic variables
         for i in range(1, self.dim + 1):
-            one_form_1[i] = sym.sympify(one_form_1.get((i,), 0))
-            one_form_2[i] = sym.sympify(one_form_2.get((i,), 0))
+            one_form_1[(i,)] = sym.sympify(one_form_1.get((i,), 0))
+            one_form_2[(i,)] = sym.sympify(one_form_2.get((i,), 0))
 
         # List with 'dim' zeros
         ii_sharp_alpha_d_beta = [0] * self.dim
@@ -700,24 +736,24 @@ class PoissonGeometry:
         for z in itools.combinations(range(1, self.dim + 1), 2):
             ii_sharp_alpha_d_beta[z[0] - 1] = sym.simplify(
                 ii_sharp_alpha_d_beta[z[0] - 1] + self.sharp_morphism(
-                    bivector, one_form_1, remove_zeros=False)[z[1]] * (sym.diff(
-                        one_form_2[z[0]], self.coords[z[1] - 1]) - sym.diff(
-                        one_form_2[z[1]], self.coords[z[0] - 1])))
+                    bivector, one_form_1, remove_zeros=False)[(z[1],)] * (sym.diff(
+                        one_form_2[(z[0],)], self.coords[z[1] - 1]) - sym.diff(
+                        one_form_2[(z[1],)], self.coords[z[0] - 1])))
             ii_sharp_alpha_d_beta[z[1] - 1] = sym.simplify(
                 ii_sharp_alpha_d_beta[z[1] - 1] + self.sharp_morphism(
-                    bivector, one_form_1, remove_zeros=False)[z[0]] * (sym.diff(
-                        one_form_2[z[1]], self.coords[z[0] - 1]) - sym.diff(
-                        one_form_2[z[0]], self.coords[z[1] - 1])))
+                    bivector, one_form_1, remove_zeros=False)[(z[0],)] * (sym.diff(
+                        one_form_2[(z[1],)], self.coords[z[0] - 1]) - sym.diff(
+                        one_form_2[(z[0],)], self.coords[z[1] - 1])))
             ii_sharp_beta_d_alpha[z[0] - 1] = sym.simplify(
                 ii_sharp_beta_d_alpha[z[0] - 1] + self.sharp_morphism(
-                    bivector, one_form_2, remove_zeros=False)[z[1]] * (sym.diff(
-                        one_form_1[z[0]], self.coords[z[1] - 1]) - sym.diff(
-                        one_form_1[z[1]], self.coords[z[0] - 1])))
+                    bivector, one_form_2, remove_zeros=False)[(z[1],)] * (sym.diff(
+                        one_form_1[(z[0],)], self.coords[z[1] - 1]) - sym.diff(
+                        one_form_1[(z[1],)], self.coords[z[0] - 1])))
             ii_sharp_beta_d_alpha[z[1] - 1] = sym.simplify(
                 ii_sharp_beta_d_alpha[z[1] - 1] + self.sharp_morphism(
-                    bivector, one_form_2, remove_zeros=False)[z[0]] * (sym.diff(
-                        one_form_1[z[1]], self.coords[z[0] - 1]) - sym.diff(
-                        one_form_1[z[0]], self.coords[z[1] - 1])))
+                    bivector, one_form_2, remove_zeros=False)[(z[0],)] * (sym.diff(
+                        one_form_1[(z[1],)], self.coords[z[0] - 1]) - sym.diff(
+                        one_form_1[(z[0],)], self.coords[z[1] - 1])))
 
         """ This block calculate d_P(alpha,beta) that is the same to d(<beta,P#(alpha)>), where <,> the pairing and
             d(<beta,P#(alpha)>) = d(P#(alpha)^i * beta_i)
@@ -734,7 +770,8 @@ class PoissonGeometry:
                 + d_pairing_beta_sharp_alpha[i]))
 
         # Converts one_forms_brack_aux to dictionary
-        one_forms_brack = dict(zip(range(1, self.dim + 1),
+        keys_list = [(index,) for index in range(1, self.dim + 1)]
+        one_forms_brack = dict(zip(keys_list,
                                    one_forms_brack_aux))
 
         # Return a symbolic type expression or the same expression in latex format
@@ -760,14 +797,16 @@ class PoissonGeometry:
 
         Example
         =======
+            >>> # Instance the class to dimension 3
+            >>> pg = PoissonGeometry(3)
             >>> # For bivector x1*Dx2^Dx3
             >>> bivector = {(1,2): 'x1'}
             >>> # Calculates a normal form
-            >>> linear_normal_form_R3(bivector)
+            >>> pg.linear_normal_form_R3(bivector)
             >>> {(1,3): 4*a*x2 + x1, (2,3): 4*a*x1 + x2}
-            >>> linear_normal_form_R3(bivector, latex_format=True)
+            >>> pg.linear_normal_form_R3(bivector, latex_format=True)
             >>> '\\left ( 4 a x_{2} + x_{1}\\right ) \\boldsymbol{Dx}_{1}\\wedge \\boldsymbol{Dx}_{3} +
-                \\left ( 4 a x_{1} + x_{2}\\right ) \\boldsymbol{Dx}_{2}\\wedge \\boldsymbol{Dx}_{3}'
+                 \\left ( 4 a x_{1} + x_{2}\\right ) \\boldsymbol{Dx}_{2}\\wedge \\boldsymbol{Dx}_{3}'
         """
         # Trivial case
         if all(vl == 0 for vl in bivector.values()):
@@ -899,6 +938,8 @@ class PoissonGeometry:
 
         Example
         ========
+            >>> # Instance the class to dimension 3
+            >>> pg = PoissonGeometry(3)
             >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
             >>> bivector_1 = {(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'}
             >>> # For bivector x1*Dx2^Dx3
@@ -928,16 +969,20 @@ class PoissonGeometry:
 
         Example
         ========
-            >>> pg3 = PoissonGeometry(3)
+            >>> # Instance the class to dimension 3
+            >>> pg = PoissonGeometry(3)
             >>> # For bivector P12*Dx1^Dx2 + P13*Dx1^Dx3 + P23*Dx2^Dx3
             >>> P = {(1,2): ‘P12’, (1,3): ‘P13’, (2,3): ‘P23’}
             >>> # For two form L12*dx1^dx2 + L13*dx1^dx3 + L23*dx2^dx3
             >>> lambda = {(1,2): ‘L12’, (1,3): ‘L13’, (2,3): ‘L23’}
-            >>> (gauge bivector, determinant) = pg3.gauge transformation(P, lambda)
+            >>> (gauge bivector, determinant) = pg.gauge transformation(P, lambda)
             >>> gauge bivector
-            >>>
+            >>> {  (1, 2): P12/(L12*P12 + L13*P13 + L23*P23 + 1),
+                   (1, 3): P13/(L12*P12 + L13*P13 + L23*P23 + 1),
+                   (2, 3): P23/(L12*P12 + L13*P13 + L23*P23 + 1)
+                }
             >>> determinant
-            >>>
+            >>> (L12*P12 + L13*P13 + L23*P23 + 1)**2
         """
         two_form_B = two_tensor_form_to_matrix(two_form, self.dim)
         I_minus_BP = sym.Matrix(sym.simplify(sym.eye(self.dim) - two_form_B * self.bivector_to_matrix(bivector)))
@@ -977,11 +1022,30 @@ class PoissonGeometry:
 
         Example
         ========
+            >>> # Instance the class to dimension 4
+            >>> pg = PoissonGeometry(4)
             >>> casimirs = ['x1**2 +x2**2 +x3**2', 'x4']
-            >>> flaschka_ratiu_bivector(casimirs, symplectic_form=False, latex_format=False)
-            >>> flaschka_ratiu_bivector(casimirs, symplectic_form=False, latex_format=True)
-            >>> flaschka_ratiu_bivector(casimirs, symplectic_form=True, latex_format=False)
-            >>> flaschka_ratiu_bivector(casimirs, symplectic_form=True, latex_format=True)
+            >>> pg.flaschka_ratiu_bivector(casimirs, symplectic_form=False, latex_format=False)
+            >>> {(1, 2): -2*x3, (1, 3): 2*x2, (2, 3): -2*x1}
+            >>> pg.flaschka_ratiu_bivector(casimirs, symplectic_form=False, latex_format=True)
+            >>> '-2*x3*Dx1^Dx2 + 2*x2*Dx1^Dx3 - 2*x1*Dx2^Dx3'
+            >>> bivector, symplectic_form = pg.flaschka_ratiu_bivector(casimirs, symplectic_form=True,
+                                                                       latex_format=False)
+            >>> bivector
+            >>> {(1, 2): -2*x3, (1, 3): 2*x2, (1, 4): 0, (2, 3): -2*x1, (2, 4): 0, (3, 4): 0}
+            >>> symplectic_form
+            >>> x3*Dx1^Dx2/(2*(x1**2 + x2**2 + x3**2)) - x2*Dx1^Dx3/(2*x1**2 + 2*x2**2 + 2*x3**2) + x1*Dx2^Dx3/(2*(x1**2 + x2**2 + x3**2)  # noqa
+            >>> bivector, symplectic_form = pg.flaschka_ratiu_bivector(casimirs, symplectic_form=True, latex_format=True)  # noqa
+            >>> bivector
+            >>> '- 2 x_{3} \\boldsymbol{Dx}_{1}\\wedge \\boldsymbol{Dx}_{2} + 2 x_{2} \\boldsymbol{Dx}_{1}
+                 \\wedge \\boldsymbol{Dx}_{3} - 2 x_{1} \\boldsymbol{Dx}_{2}\\wedge \\boldsymbol{Dx}_{3}'
+            >>> symplectic_form
+            >>> '\\frac{x_{3}}{2 \\left({\\left ( x_{1} \\right )}^{2} + {\\left ( x_{2} \\right )}^{2} +
+                 {\\left ( x_{3} \right )}^{2}\\right)} \\boldsymbol{Dx}_{1}\\wedge \\boldsymbol{Dx}_{2}
+                 - \\frac{x_{2}}{2 {\\left ( x_{1} \\right )}^{2} + 2 {\\left ( x_{2} \\right )}^{2} + 2
+                 {\\left ( x_{3} \right )}^{2}} \\boldsymbol{Dx}_{1}\\wedge \boldsymbol{Dx}_{3} +
+                 \frac{x_{1}}{2 \\left({\\left ( x_{1} \\right )}^{2} + {\\left ( x_{2} \\right )}^{2} +
+                 {\\left ( x_{3} \right )}^{2}\\right)} \\boldsymbol{Dx}_{2}\\wedge \\boldsymbol{Dx}_{3}'
         """
 
         if self.dim - len(casimirs) == 2:
