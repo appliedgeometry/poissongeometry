@@ -1,3 +1,10 @@
+[![Python](https://img.shields.io/pypi/pyversions/poissongeometry.svg?style=plastic)]()
+[![PyPI](https://badge.fury.io/py/poissongeometry.svg)](https://pypi.org/project/poissongeometry/)
+[![Documentation](https://img.shields.io/badge/api-reference-blue.svg)](https://colab.research.google.com/drive/1XYcaJQ29XwkblXQOYumT1s8_00bHUEKZ) 
+[![License](https://img.shields.io/badge/license-MIT-blue)](https://github.com/git/git-scm.com/blob/master/MIT-LICENSE.txt)
+![GitHub last commit](https://img.shields.io/github/last-commit/appliedgeometry/poissongeometry)
+
+---
 
 # `PoissonGeometry`
 A Python module for (local) Poisson-Nijenhuis calculus on Poisson manifolds, with the following functions:
@@ -53,28 +60,28 @@ Some of the functions in this module have been used to obtain the results in the
    * Import PoissonGeometry class
       ```
       >>> from poisson.poisson import PoissonGeometry
-      ```	 
+      ```  
 <!--  * Testing the class.
-	   For example we want convert to matriz the bivector <a href="https://www.codecogs.com/eqnedit.php?latex=$$\pi=x_{3}\frac{\partial}{\partial&space;x_{1}}\wedge\frac{\partial}{\partial&space;x_{2}}&space;-&space;x_{2}\frac{\partial}{\partial&space;x_{1}}\wedge\frac{\partial}{\partial&space;x_{3}}&space;&plus;&space;x_{1}\frac{\partial}{\partial&space;x_{2}}\wedge\frac{\partial}{\partial&space;x_{3}}$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$\pi=x_{3}\frac{\partial}{\partial&space;x_{1}}\wedge\frac{\partial}{\partial&space;x_{2}}&space;-&space;x_{2}\frac{\partial}{\partial&space;x_{1}}\wedge\frac{\partial}{\partial&space;x_{3}}&space;&plus;&space;x_{1}\frac{\partial}{\partial&space;x_{2}}\wedge\frac{\partial}{\partial&space;x_{3}}$$" title="$$\pi=x_{3}\frac{\partial}{\partial x_{1}}\wedge\frac{\partial}{\partial x_{2}} - x_{2}\frac{\partial}{\partial x_{1}}\wedge\frac{\partial}{\partial x_{3}} + x_{1}\frac{\partial}{\partial x_{2}}\wedge\frac{\partial}{\partial x_{3}}$$" /></a>
-	   then <a href="https://www.codecogs.com/eqnedit.php?latex=\pi" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\pi" title="\pi" /></a> is equivalent to ```{(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'}``` in this class.
-	   ```
-	   >>> from poisson import PoissonGeometry
-	   >>> # We instantiate the Poisson class for dimension 3
-	   >>> pg = PoissonGeometry(3)
-	   >>> pg.bivector_to_matrix({(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'})
-	   Matrix([
-	   [  0,  x3, -x2],
-	   [-x3,   0,  x1],
-	   [ x2, -x1,   0]])
-	   ```
-		
-		This function has an option for output is in latex format string, for this, we change the flag latex_format to True (its default value is False) as shown below.
-		
-		```
-		 >>> print(pg.bivector_to_matrix({(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'}, latex_format=True))
-		   \left[\begin{array}{ccc}0 & x_{3} & - x_{2}\\- x_{3} & 0 & x_{1}\\x_{2} & - x_{1} & 0\end{array}\right]
-		```
-		<!--For more information to how use this class you can read the [documentation]() or the our [wiki](https://github.com/mevangelista-alvarado/poisson_geometry/wiki)-->
+     For example we want convert to matriz the bivector <a href="https://www.codecogs.com/eqnedit.php?latex=$$\pi=x_{3}\frac{\partial}{\partial&space;x_{1}}\wedge\frac{\partial}{\partial&space;x_{2}}&space;-&space;x_{2}\frac{\partial}{\partial&space;x_{1}}\wedge\frac{\partial}{\partial&space;x_{3}}&space;&plus;&space;x_{1}\frac{\partial}{\partial&space;x_{2}}\wedge\frac{\partial}{\partial&space;x_{3}}$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$\pi=x_{3}\frac{\partial}{\partial&space;x_{1}}\wedge\frac{\partial}{\partial&space;x_{2}}&space;-&space;x_{2}\frac{\partial}{\partial&space;x_{1}}\wedge\frac{\partial}{\partial&space;x_{3}}&space;&plus;&space;x_{1}\frac{\partial}{\partial&space;x_{2}}\wedge\frac{\partial}{\partial&space;x_{3}}$$" title="$$\pi=x_{3}\frac{\partial}{\partial x_{1}}\wedge\frac{\partial}{\partial x_{2}} - x_{2}\frac{\partial}{\partial x_{1}}\wedge\frac{\partial}{\partial x_{3}} + x_{1}\frac{\partial}{\partial x_{2}}\wedge\frac{\partial}{\partial x_{3}}$$" /></a>
+     then <a href="https://www.codecogs.com/eqnedit.php?latex=\pi" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\pi" title="\pi" /></a> is equivalent to ```{(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'}``` in this class.
+     ```
+     >>> from poisson import PoissonGeometry
+     >>> # We instantiate the Poisson class for dimension 3
+     >>> pg = PoissonGeometry(3)
+     >>> pg.bivector_to_matrix({(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'})
+     Matrix([
+     [  0,  x3, -x2],
+     [-x3,   0,  x1],
+     [ x2, -x1,   0]])
+     ```
+    
+    This function has an option for output is in latex format string, for this, we change the flag latex_format to True (its default value is False) as shown below.
+    
+    ```
+     >>> print(pg.bivector_to_matrix({(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'}, latex_format=True))
+       \left[\begin{array}{ccc}0 & x_{3} & - x_{2}\\- x_{3} & 0 & x_{1}\\x_{2} & - x_{1} & 0\end{array}\right]
+    ```
+    <!--For more information to how use this class you can read the [documentation]() or the our [wiki](https://github.com/mevangelista-alvarado/poisson_geometry/wiki)-->
 
 <!--## TO DO
 Calculate Poisson Cohomology with linear coefficients.-->
@@ -105,9 +112,16 @@ This work is developed and maintained by:
 ## Acknowledgments ##
 This work was partially supported by the grants CONACyT, “Programa para un Avance Global e Integrado de la Matemática Mexicana” CONACyT-FORDECYT 26566 and "Aprendizaje Geométrico Profundo" UNAM-DGAPA-PAPIIT-IN104819.
 
+---
+
+<p align="center">
+  <img src="https://www.matem.unam.mx/++theme++im-theme-blue/images/unam-escudo-azul.png">
+  <img src="https://www.matem.unam.mx/++theme++im-theme-blue/images/logo_imunam.png">
+</p>
+
 <!-- 
 ## Do not forget.
 * Comment to others about this project 📢
 * Cite this project if you use it 🤓.
 * Finally, if you know one of the authors, invite him a beer🍺.
----
+-->
