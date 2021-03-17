@@ -757,7 +757,7 @@ class PoissonGeometry:
         if sym.simplify(self.dim - 2) <= 0:
             raise DimensionError(F'The dimension {self.dim} is minor to 3')
         if len(casimirs) != self.dim - 2:
-            raise CasimirError(F"The length to Casimir's functions is distinct {self.dim - 2}")
+            raise CasimirError(F"The length to Casimir's functions is distinct to {self.dim - 2}")
         # Convert the Casimir's functions to symbolic type
         casimirs = sym.sympify(casimirs)
         # Calculate the Poisson bivector
