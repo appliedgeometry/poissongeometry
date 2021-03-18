@@ -110,7 +110,7 @@ This work is developed and maintained by:
 }
 
 ## Acknowledgments ##
-This work was partially supported by the grants CONACyT, “Programa para un Avance Global e Integrado de la Matemática Mexicana” CONACyT-FORDECYT 26566 and "Aprendizaje Geométrico Profundo" UNAM-DGAPA-PAPIIT-IN104819.
+This work was partially supported by the grants CONACyT, “Programa para un Avance Global e Integrado de la Matemática Mexicana” CONACyT-FORDECYT 26566 and "Aprendizaje Geométrico Profundo" UNAM-DGAPA-PAPIIT-IN104819. JCRP wishes to also thank CONACyT for a594postdoctoral fellowship held during the production of this work
 
 ---
 
