@@ -57,7 +57,7 @@ Some of the functions in this module have been used to obtain the results in the
       ```
       (venv_name) C:Users/dekstop/poisson$ python
       ```
-   * Import **PoissonGeometry** module
+   * **Import PoissonGeometry module**
       ```
       >>> from poisson.poisson import PoissonGeometry
       ```  
