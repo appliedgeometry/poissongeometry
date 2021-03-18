@@ -57,7 +57,7 @@ Some of the functions in this module have been used to obtain the results in the
       ```
       (venv_name) C:Users/dekstop/poisson$ python
       ```
-   * Import PoissonGeometry class
+   * Import **PoissonGeometry** module
       ```
       >>> from poisson.poisson import PoissonGeometry
       ```  
@@ -87,7 +87,7 @@ Some of the functions in this module have been used to obtain the results in the
 Calculate Poisson Cohomology with linear coefficients.-->
 
 ## Bugs & Contributions
-Our issue tracker is at https://github.com/appliedgeometry/poissongeometry/issues. Please report any bugs that you find. Or, even better, if you are interested in our project you can fork the repository on GitHub and create a pull request. 
+Our issue tracker is at https://github.com/appliedgeometry/poissongeometry/issues. Please report any bugs that you find. Or, even better, if you are interested in our project you can fork the repository on GitHub and create a pull request.
 
 ## Licence 📄
 MIT licence
@@ -109,7 +109,7 @@ This work is developed and maintained by:
     primaryClass={math.DG}<br/>
 }
 
-## Acknowledgments ##
+## Acknowledgments
 This work was partially supported by the grants CONACyT, “Programa para un Avance Global e Integrado de la Matemática Mexicana” CONACyT-FORDECYT 26566 and "Aprendizaje Geométrico Profundo" UNAM-DGAPA-PAPIIT-IN104819. JCRP wishes to also thank CONACyT for a postdoctoral fellowship held during the production of this work.
 
 ---
