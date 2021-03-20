@@ -21,26 +21,26 @@
         primaryClass={math.DG}
     }
 
-    This file contains the all auxiliary functions to use in the Poisson geometry module
+    This file contains the Errors Custom class to
+    use in the module Poisson geometry module
 """
-from __future__ import unicode_literals
-from poisson.errors import DimensionError
 
 
-def validate_dimension(dim):
-    """ This method check if the dimension variable is valid for the this class"""
-    if not isinstance(dim, int):
-        raise DimensionError(F"Your variable {dim} is not a int type")
-
-    if dim < 1:
-        raise DimensionError("Your dimension is not greater than two")
-    else:
-        return dim
+class DimensionError(Exception):
+    pass
 
 
-def del_columns(matrix, columns):
-    """"""
-    copy_matrix = matrix.copy()
-    copy_matrix.col_del(columns[0])
-    copy_matrix.col_del(columns[1] - 1)
-    return copy_matrix
+class MultivectorError(Exception):
+    pass
+
+
+class FunctionError(Exception):
+    pass
+
+
+class DiferentialFormError(Exception):
+    pass
+
+
+class CasimirError(Exception):
+    pass
