@@ -17,10 +17,11 @@ setuptools.setup(
     install_requires=['sympy', 'numpy'],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
-        "Programming Language :: PYTHON :: 3 :: ONLY",
+        "Programming Language :: Python :: 3 :: Only",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
-        "Inteded Audience :: Science/Research",
+        "Topic :: Scientific/Engineering :: Mathematics",
+        "Intended Audience :: Science/Research",
     ],
     python_requires='>=3.6',
- )
+)
