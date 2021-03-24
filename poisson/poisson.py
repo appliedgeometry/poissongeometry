@@ -681,7 +681,9 @@ class PoissonGeometry:
         gauge_det = 1 + (((-1) * bivector_matrix.row(0)) * two_form_matrix.col(0))[0] + sum_viT_adj_I_deltas_ui
 
         if det and not gauge_biv:
-            return sym.latex(gauge_det) if latex else gauge_det
+            if latex:
+               return sym.latex(gauge_det)
+            return gauge_det
 
         gauge_det = sym.simplify(gauge_det)
         if gauge_det == 0:
@@ -698,9 +700,12 @@ class PoissonGeometry:
         gauge_bivector = {(e[0] + 1, e[1] + 1): e[2] for e in gauge_matrix_RL if e[0] < e[1]}
 
         if det:
-            return sym.latex(gauge_bivector), sym.latex(gauge_det) if latex else gauge_bivector, gauge_det
-
-        return sym.latex(gauge_bivector) if latex else gauge_bivector
+            if latex:
+                return sym.latex(gauge_bivector), sym.latex(gauge_det)
+            return gauge_bivector, gauge_det
+        if latex:
+            return sym.latex(gauge_bivector)
+        return gauge_bivector
 
     def flaschka_ratiu_bivector(self, casimirs, symplectic_form=False, latex=False):
         """ Calculate a Poisson bivector from Flaschka-Ratui formula where all Casimir function is in "casimir"
@@ -771,9 +776,13 @@ class PoissonGeometry:
         if symplectic_form:
             norm = sum([e**2 for e in FR_bivector.values()])
             symp_form = {e: (-1) * (1/norm) * FR_bivector[e] for e in FR_bivector}
-            return sym.latex(FR_bivector), sym.latex(symp_form) if latex else FR_bivector, symp_form
+            if latex:
+                return sym.latex(FR_bivector), sym.latex(symp_form)
+            return FR_bivector, symp_form
 
-        return sym.latex(FR_bivector) if latex else FR_bivector
+        if latex:
+            return sym.latex(FR_bivector)
+        return FR_bivector
 
     def linear_normal_form_R3(self, bivector, latex=False):
         """ Calculates a normal form for Lie-Poisson bivector fields on R^3 modulo linear isomorphisms.
