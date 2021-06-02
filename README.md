@@ -9,14 +9,18 @@
 # `PoissonGeometry`
 A Python module for (local) Poisson-Nijenhuis calculus on Poisson manifolds, with the following functions:
 
-| **poisson_bracket**       | **hamiltonian_vf**            | **lichnerowicz_poisson_operator** |
-|:-------------------------:|:-----------------------------:|:---------------------------------:|
-| **modular_vf**            | **curl_operator**             | **flaschka_ratiu_bivector**       |
-| **sharp_morphism**        | **bivector_to_matrix**        | **jacobiator**                    |
-| **one_forms_bracket**     | **gauge_transformation**      | **is_homogeneous_unimodular**     |
-| **linear_normal_form_R3** | **isomorphic_lie_poisson_R3** | **is_in_kernel**                  |
-| **is_poisson_tensor**     | **is_casimir**                | **is_poisson_vf**                 | 
-|                           | **is_poisson_pair**           |                                   |
+| **poisson_bracket**         | **hamiltonian_vf**              | **lichnerowicz_poisson_operator**  |
+|:---------------------------:|:-------------------------------:|:----------------------------------:|
+| **modular_vf**              | **curl_operator**               | **flaschka_ratiu_bivector**        |
+| **sharp_morphism**          | **bivector_to_matrix**          | **jacobiator**                     |
+| **one_forms_bracket**       | **gauge_transformation**        | **is_unimodular_homogeneous** *    |
+| **linear_normal_form_R3**   | **isomorphic_lie_poisson_R3**   | **is_in_kernel** *                 |
+| **is_poisson_tensor** *     | **is_casimir** *                | **is_poisson_vf** *                | 
+|                             | **is_poisson_pair** *           |                                    |
+
+
+**Remark:** We  have  indicated  with  an  asterisk  (*)  the  six  methods  whose  implementations  require  testing  whether  a  symbolic  expression  is  zero.   These  are naturally limited by theoretical computational constraints.
+
 
 This repository accompanies our paper ['On Computational Poisson Geometry I: Symbolic Foundations'](https://arxiv.org/abs/1912.01746).
 
