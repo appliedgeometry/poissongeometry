@@ -19,7 +19,7 @@ A Python module for (local) Poisson-Nijenhuis calculus on Poisson manifolds, wit
 |                             | **is_poisson_pair** *           |                                    |
 
 
-**Remark:** We  have  indicated  with  an  asterisk  (*)  the  six  methods  whose  implementations  require  testing  whether  a  symbolic  expression  is  zero.   These  are naturally limited by theoretical computational constraints.
+**Remark.** We  have  indicated  with  an  asterisk  (*)  the  six  methods  whose  implementations  require  testing  whether  a  symbolic  expression  is  zero.   These  are naturally limited by theoretical computational constraints.
 
 
 This repository accompanies our paper ['On Computational Poisson Geometry I: Symbolic Foundations'](https://arxiv.org/abs/1912.01746).
