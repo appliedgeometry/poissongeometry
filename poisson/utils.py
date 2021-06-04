@@ -30,10 +30,10 @@ from poisson.errors import DimensionError
 def validate_dimension(dim):
     """ This method check if the dimension variable is valid for the this class"""
     if not isinstance(dim, int):
-        raise DimensionError(F"Your variable {dim} is not a int type")
+        raise DimensionError(F"{dim} is not int")
 
-    if dim < 1:
-        raise DimensionError("Your dimension is not greater than two")
+    if dim < 2:
+        raise DimensionError(F"{dim} < 2")
     else:
         return dim
 
@@ -44,3 +44,11 @@ def del_columns(matrix, columns):
     copy_matrix.col_del(columns[0])
     copy_matrix.col_del(columns[1] - 1)
     return copy_matrix
+
+
+def show_coordinates(coordinates):
+    """"""
+    if len(coordinates) >= 4:
+        return f'({coordinates[0]},...,{coordinates[-1]})'
+    else:
+        return f'({coordinates})'

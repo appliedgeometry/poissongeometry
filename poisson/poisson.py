@@ -28,8 +28,9 @@ import collections
 import itertools as itls
 from poisson.errors import (MultivectorError, FunctionError,
                             DiferentialFormError, CasimirError,
-                            DimensionError)
-from poisson.utils import validate_dimension, del_columns
+                            DimensionError, Nonlinear,
+                            Nonhomogeneous)
+from poisson.utils import validate_dimension, del_columns, show_coordinates
 
 
 class PoissonGeometry:
@@ -42,6 +43,8 @@ class PoissonGeometry:
         self.variable = variable
         # Create the symbolics symbols
         self.coords = sym.symbols(f'{self.variable}1:{self.dim + 1}')
+        # Print the coordinates
+        self.coordinates = show_coordinates(self.coords)
 
     def bivector_to_matrix(self, bivector, latex=False):
         """ Constructs the matrix of a 2-contravariant tensor field or bivector field.
@@ -137,10 +140,12 @@ class PoissonGeometry:
             where i < j.
         """
         sharp_vector = (-1) * (bivector_matrix * one_form_vector)
-        sharp = {(e + 1,): sharp_vector[e] for e in range(self.dim) if sym.simplify(sharp_vector[e]) != 0}
-
         # Return a vector field expression in LaTeX format or a symbolic dictionary.
-        return sym.latex(sharp) if latex else sharp
+        if latex:
+            sharp = {(e + 1,): sharp_vector[e] for e in range(self.dim) if sym.simplify(sharp_vector[e]) != 0}
+            return sym.latex(sharp)
+        else:
+            return {(e + 1,): f"{sharp_vector[e]}" for e in range(self.dim) if sym.simplify(sharp_vector[e]) != 0}
 
     def is_in_kernel(self, bivector, one_form):
         """ Check if a differential 1-form alpha belongs to the kernel of a given Poisson bivector field,
@@ -305,10 +310,11 @@ class PoissonGeometry:
             return ff_ham_vf
 
         # Calculates {f,g}
-        bracket = [d_gg[e[0] - 1] * ff_ham_vf[e] for e in ff_ham_vf]
+        bracket = [d_gg[e[0] - 1] * sym.sympify(ff_ham_vf[e]) for e in ff_ham_vf]
         bracket = sum(bracket)
 
-        return sym.latex(bracket) if latex else bracket
+        # Return a vector field expression in LaTeX format or a symbolic dictionary.
+        return sym.latex(bracket) if latex else f"{bracket}"
 
     def curl_operator(self, multivector, function, latex=False):
         """ Calculate the divergence of multivertoc field.
@@ -347,7 +353,7 @@ class PoissonGeometry:
             return {}
 
         if isinstance(multivector, str):
-            return sym.sympify(0)
+            return "0"
 
         len_keys = []
         for e in multivector:
@@ -374,14 +380,15 @@ class PoissonGeometry:
         for term in curl_terms:
             counter.update(term)
         curl = dict(counter)
-        curl = {e: curl[e] for e in curl if sym.simplify(curl[e]) != 0}
+        sym_curl = {e: curl[e] for e in curl if sym.simplify(curl[e]) != 0}
+        str_curl = {e: f"{curl[e]}" for e in curl if sym.simplify(curl[e]) != 0}
 
         if deg_multivector - 1 == 0:
             if latex:
-                return sym.latex(list(curl.values())[0])
-            return list(curl.values())[0]
+                return sym.latex(list(sym_curl.values())[0])
+            return list(str_curl.values())[0]
 
-        return sym.latex(curl) if latex else curl
+        return sym.latex(sym_curl) if latex else str_curl
 
     def modular_vf(self, bivector, function, latex=False):
         """ Calculates the modular vector field Z of a given Poisson bivector field P relative to the volume form
@@ -429,7 +436,7 @@ class PoissonGeometry:
         # Calculate the curl operation
         return self.curl_operator(bivector, function, latex=latex)
 
-    def is_homogeneous_unimodular(self, bivector):
+    def is_unimodular_homogeneous(self, bivector):
         """ Check if a homogeneous Poisson bivector field is unimodular
             or not.
 
@@ -448,9 +455,18 @@ class PoissonGeometry:
             >>> pg = PoissonGeometry(3)
             >>> # For bivector x3*Dx1^Dx2 - x2*Dx1^Dx3 + x1*Dx2^Dx3
             >>> bivector = {(1,2): 'x3', (1,3): '-x2', (2,3): 'x1'}
-            >>> pg.is_homogeneous_unimodular(bivector)
+            >>> pg.is_unimodular_homogeneous(bivector)
             >>> True
         """
+        # Verify that bivector is homogeneous
+        for key in bivector:
+            if sym.homogeneous_order(bivector[key], *self.coords) is None:
+                msg = f'{key}: {bivector[key]} is not a polynomial homogeneous with respect to {self.coordinates}'
+                raise Nonhomogeneous(msg)
+            if sym.homogeneous_order(bivector[key], *self.coords) < 0:
+                msg = f'{key}: {bivector[key]} is not a polynomial homogeneous with respect to {self.coordinates}'
+                raise Nonhomogeneous(msg)
+        # Finish the new implementation
         mod_vf = self.modular_vf(bivector, '1')
         if not isinstance(mod_vf, dict):
             return mod_vf
@@ -623,9 +639,9 @@ class PoissonGeometry:
         d_pairing_form_2_sharp_1 = sym.Matrix(sym.derive_by_array(pairing_form_2_sharp_1, self.coords))
 
         bracket_vector = - d_form_2_sharp_1 + d_form_1_sharp_2 + d_pairing_form_2_sharp_1
-        bracket = {(e + 1,): bracket_vector[e] for e in range(self.dim) if sym.simplify(bracket_vector[e]) != 0}
-
-        return sym.latex(bracket) if latex else bracket
+        sym_bracket = {(e + 1,): bracket_vector[e] for e in range(self.dim) if sym.simplify(bracket_vector[e]) != 0}
+        str_bracket = {(e + 1,): f"{bracket_vector[e]}" for e in range(self.dim) if sym.simplify(bracket_vector[e]) != 0}  # noqa:E501
+        return sym.latex(sym_bracket) if latex else str_bracket
 
     def gauge_transformation(self, bivector, two_form, gauge_biv=True, det=False, latex=False):
         """ This method compute the Gauge transformation of a Poisson bivector field.
@@ -682,8 +698,8 @@ class PoissonGeometry:
 
         if det and not gauge_biv:
             if latex:
-               return sym.latex(gauge_det)
-            return gauge_det
+                return sym.latex(gauge_det)
+            return f"{gauge_det}"
 
         gauge_det = sym.simplify(gauge_det)
         if gauge_det == 0:
@@ -697,15 +713,16 @@ class PoissonGeometry:
 
         gauge_matrix = sym.matrices.SparseMatrix(gauge_matrix)
         gauge_matrix_RL = gauge_matrix.RL
-        gauge_bivector = {(e[0] + 1, e[1] + 1): e[2] for e in gauge_matrix_RL if e[0] < e[1]}
+        sym_gauge_bivector = {(e[0] + 1, e[1] + 1): e[2] for e in gauge_matrix_RL if e[0] < e[1]}
+        str_gauge_bivector = {(e[0] + 1, e[1] + 1): f"{e[2]}" for e in gauge_matrix_RL if e[0] < e[1]}
 
         if det:
             if latex:
-                return sym.latex(gauge_bivector), sym.latex(gauge_det)
-            return gauge_bivector, gauge_det
+                return sym.latex(sym_gauge_bivector), sym.latex(gauge_det)
+            return str_gauge_bivector, f"{gauge_det}"
         if latex:
-            return sym.latex(gauge_bivector)
-        return gauge_bivector
+            return sym.latex(sym_gauge_bivector)
+        return str_gauge_bivector
 
     def flaschka_ratiu_bivector(self, casimirs, symplectic_form=False, latex=False):
         """ Calculate a Poisson bivector from Flaschka-Ratui formula where all Casimir function is in "casimir"
@@ -770,19 +787,21 @@ class PoissonGeometry:
         indixes = itls.combinations(range(self.dim), 2)
         FR_matrices = {(e[0] + 1, e[1] + 1): del_columns(grad_casims_matrix, e) for e in indixes}
         FR_bivector = {e: (-1)**(sum(e)) * FR_matrices[e].det(method='LU') for e in FR_matrices}
-        FR_bivector = {e: FR_bivector[e] for e in FR_bivector if sym.simplify(FR_bivector[e]) != 0}
+        sym_FR_bivector = {e: FR_bivector[e] for e in FR_bivector if sym.simplify(FR_bivector[e]) != 0}
+        str_FR_bivector = {e: f"{FR_bivector[e]}" for e in FR_bivector if sym.simplify(FR_bivector[e]) != 0}
 
         # Calculate the symplectic form
         if symplectic_form:
             norm = sum([e**2 for e in FR_bivector.values()])
-            symp_form = {e: (-1) * (1/norm) * FR_bivector[e] for e in FR_bivector}
+            sym_symp_form = {e: (-1) * (1/norm) * FR_bivector[e] for e in FR_bivector}
+            str_symp_form = {e: f"{(-1) * (1/norm) * FR_bivector[e]}" for e in FR_bivector}
             if latex:
-                return sym.latex(FR_bivector), sym.latex(symp_form)
-            return FR_bivector, symp_form
+                return sym.latex(sym_FR_bivector), sym.latex(sym_symp_form)
+            return str_FR_bivector, str_symp_form
 
         if latex:
-            return sym.latex(FR_bivector)
-        return FR_bivector
+            return sym.latex(sym_FR_bivector)
+        return str_FR_bivector
 
     def linear_normal_form_R3(self, bivector, latex=False):
         """ Calculates a normal form for Lie-Poisson bivector fields on R^3 modulo linear isomorphisms.
@@ -812,6 +831,16 @@ class PoissonGeometry:
             >>> '\\left ( 4 a x_{2} + x_{1}\\right ) \\boldsymbol{Dx}_{1}\\wedge \\boldsymbol{Dx}_{3} +
                  \\left ( 4 a x_{1} + x_{2}\\right ) \\boldsymbol{Dx}_{2}\\wedge \\boldsymbol{Dx}_{3}'
         """
+        # Verify that bivector is homogeneous
+        for key in bivector:
+            if sym.homogeneous_order(bivector[key], *self.coords) is None:
+                msg = f'{key}: {bivector[key]} is not a linear polynomial with respect to {self.coordinates}'
+                raise Nonlinear(msg)
+
+            if sym.homogeneous_order(bivector[key], *self.coords) != 1:
+                msg = f'{key}: {bivector[key]} is not a linear polynomial with respect to {self.coordinates}'
+                raise Nonlinear(msg)
+
         # Verifies the bivector
         if not bool(bivector):
             return {}
@@ -839,7 +868,7 @@ class PoissonGeometry:
         egvals_hess = [sym.re(e) for e in hessian_pair_E_P.eigenvals(rational=True, multiple=True)]
         sign_hess = sum([sym.sign(e) for e in egvals_hess])
 
-        if self.is_homogeneous_unimodular(bivector):
+        if self.is_unimodular_homogeneous(bivector):
             if sym.simplify(rank_hess - 3) == 0:
                 if sym.simplify(sym.Abs(sign_hess) - 3) == 0:
                     if latex:
@@ -972,7 +1001,7 @@ class PoissonGeometry:
 
         return False
 
-    def lichnerowicz_poisson_operator(self, bivector, multivector, latex=False):
+    def coboundary_operator(self, bivector, multivector, latex=False):
         """ Calculates the Schouten-Nijenhuis bracket between a given (Poisson) bivector field and a (arbitrary)
             multivector field.
             The Lichnerowicz-Poisson operator is defined as
@@ -1005,9 +1034,9 @@ class PoissonGeometry:
             >>> # For multivector (x1*x2*x3)*Dx1^Dx2^Dx3
             >>> multivector = {(1,2,3): 'x1*x2*x3'}
             >>> # [bivector, multivector] = 0
-            >>> pg.lichnerowicz_poisson_operator(bivector, multivector, latex=False)
+            >>> pg.coboundary_operator(bivector, multivector, latex=False)
             >>> {}
-            >>> pg.lichnerowicz_poisson_operator(bivector, multivector latex=True)
+            >>> pg.coboundary_operator(bivector, multivector latex=True)
             >>> '{}'
         """
         if not bool(multivector):
@@ -1056,7 +1085,7 @@ class PoissonGeometry:
                 nw_idx = [e for e in z if e != i]
                 # Calculates the Poisson bracket {xi,A^J}, J == nw_idx
                 mltv_nw_idx = mltv.get(tuple(nw_idx), 0)
-                lich_poiss_aux_11 = (-1)**(z.index(i)) * self.poisson_bracket(bivector, self.coords[i - 1], mltv_nw_idx)  # noqa: E501
+                lich_poiss_aux_11 = (-1)**(z.index(i)) * sym.sympify(self.poisson_bracket(bivector, self.coords[i - 1], mltv_nw_idx))  # noqa: E501
                 lich_poiss_aux_1 = lich_poiss_aux_1 + lich_poiss_aux_11
             # Add the brackets {xi,A^J} in the list schouten_biv_mltv_1
             schouten_biv_mltv_1.update({z: lich_poiss_aux_1})
@@ -1097,9 +1126,10 @@ class PoissonGeometry:
         # Sum and add the terms in schouten_biv_mltv_1 and schouten_biv_mltv_2
         for ky in schouten_biv_mltv_1.keys():
             schouten_biv_mltv.update({ky: schouten_biv_mltv_1[ky] + schouten_biv_mltv_2[ky]})
-        schouten_biv_mltv = {e: schouten_biv_mltv[e] for e in schouten_biv_mltv if sym.simplify(schouten_biv_mltv[e]) != 0}  # noqa: E501
+        sym_schouten_biv_mltv = {e: schouten_biv_mltv[e] for e in schouten_biv_mltv if sym.simplify(schouten_biv_mltv[e]) != 0}  # noqa: E501
+        str_schouten_biv_mltv = {e: f"{schouten_biv_mltv[e]}" for e in schouten_biv_mltv if sym.simplify(schouten_biv_mltv[e]) != 0}  # noqa: E501
 
-        return sym.latex(schouten_biv_mltv) if latex else schouten_biv_mltv
+        return sym.latex(sym_schouten_biv_mltv) if latex else str_schouten_biv_mltv
 
     def jacobiator(self, bivector, latex=False):
         """ Calculates de Schouten-Nijenhuis bracket of a given bivector field with himself, that is [P,P]
@@ -1129,7 +1159,7 @@ class PoissonGeometry:
             >>> pg.jacobiator(bivector, latex=True)
             >>> '\\left\\{ \\right\\}'
         """
-        jac = self.lichnerowicz_poisson_operator(bivector, bivector, latex=latex)
+        jac = self.coboundary_operator(bivector, bivector, latex=latex)
         if not isinstance(jac, dict):
             return jac
         return jac
@@ -1157,7 +1187,7 @@ class PoissonGeometry:
             >>> pg.is_poisson_bivector(bivector)
             >>> True
         """
-        jac = self.lichnerowicz_poisson_operator(bivector, bivector)
+        jac = self.coboundary_operator(bivector, bivector)
         if not isinstance(jac, dict):
             return jac
         return False if bool(jac) else True
@@ -1189,7 +1219,7 @@ class PoissonGeometry:
             >>> pg.is_poisson_vf(bivector, vector_field)
             >>> False
         """
-        sch_biv_vf = self.lichnerowicz_poisson_operator(bivector, vector_field)
+        sch_biv_vf = self.coboundary_operator(bivector, vector_field)
         if not isinstance(sch_biv_vf, dict):
             return sch_biv_vf
         return False if bool(sch_biv_vf) else True
@@ -1219,7 +1249,7 @@ class PoissonGeometry:
             >>> pg.is_poisson_pair(P, Q)
             >>> True
         """
-        sch_biv1_biv2 = self.lichnerowicz_poisson_operator(bivector_1, bivector_2)
+        sch_biv1_biv2 = self.coboundary_operator(bivector_1, bivector_2)
         if not isinstance(sch_biv1_biv2, dict):
             return sch_biv1_biv2
         return False if bool(sch_biv1_biv2) else True

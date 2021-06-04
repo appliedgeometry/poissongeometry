@@ -44,3 +44,11 @@ class DiferentialFormError(Exception):
 
 class CasimirError(Exception):
     pass
+
+
+class Nonlinear(Exception):
+    pass
+
+
+class Nonhomogeneous(Exception):
+    pass
