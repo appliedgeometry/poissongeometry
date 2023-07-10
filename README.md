@@ -104,22 +104,26 @@ This work is developed and maintained by:
 
 ## Thanks for citing our work if you use it! 🤓 ##
 
-@misc{evangelistaalvarado2019computational,<br/>
-    title={On Computational Poisson Geometry I: Symbolic Foundations},<br/>
-    author={M. A. Evangelista-Alvarado and J. C. Ruíz-Pantaleón and P. Suárez-Serrato},<br/>
-    year={2019},<br/>
-    eprint={1912.01746},<br/>
-    archivePrefix={arXiv},<br/>
-    primaryClass={math.DG}<br/>
+```
+@articleInfo{Evangelista-Alvarado Miguel Ángel 2021 Journal of Geometric Mechanics,
+title = {On computational Poisson geometry I: Symbolic foundations},
+journal = {Journal of Geometric Mechanics},
+volume = {13},number = {4},pages = {607-628},
+year = {2021},
+issn = {1941-4889},
+doi = {10.3934/jgm.2021018},
+url = {/article/id/a7acc48a-54f1-4348-8b45-f5a31428bd29},
+author = {Evangelista-Alvarado Miguel Ángel and Ruíz-Pantaleón José Crispín and Suárez-Serrato Pablo},
+keywords = {Poisson structures, Poisson-Nijenhuis calculus, symbolic computation, Python}
 }
-
+```
 ## Acknowledgments
 This work was partially supported by the grants CONACyT, “Programa para un Avance Global e Integrado de la Matemática Mexicana” CONACyT-FORDECYT 26566 and "Aprendizaje Geométrico Profundo" UNAM-DGAPA-PAPIIT-IN104819. JCRP wishes to also thank CONACyT for a postdoctoral fellowship held during the production of this work.
 
 ---
 
 <p align="center">
-  <img src="https://www.matem.unam.mx/++theme++im-theme-blue/images/unam-escudo-azul.png">
+  <img src="https://www.matem.unam.mx/++theme++im-theme-blue/images/escudo_unam.png">
   <img src="https://www.matem.unam.mx/++theme++im-theme-blue/images/logo_imunam.png">
 </p>
 
