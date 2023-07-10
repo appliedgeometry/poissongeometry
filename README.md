@@ -108,13 +108,14 @@ This work is developed and maintained by:
 @articleInfo{Evangelista-Alvarado Miguel Ángel 2021 Journal of Geometric Mechanics,
 title = {On computational Poisson geometry I: Symbolic foundations},
 journal = {Journal of Geometric Mechanics},
-volume = {13},number = {4},pages = {607-628},
+volume = {13},
+number = {4},
+pages = {607-628},
 year = {2021},
 issn = {1941-4889},
 doi = {10.3934/jgm.2021018},
 url = {/article/id/a7acc48a-54f1-4348-8b45-f5a31428bd29},
 author = {Evangelista-Alvarado Miguel Ángel and Ruíz-Pantaleón José Crispín and Suárez-Serrato Pablo},
-keywords = {Poisson structures, Poisson-Nijenhuis calculus, symbolic computation, Python}
 }
 ```
 ## Acknowledgments
