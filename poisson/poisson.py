@@ -142,10 +142,10 @@ class PoissonGeometry:
         sharp_vector = (-1) * (bivector_matrix * one_form_vector)
         # Return a vector field expression in LaTeX format or a symbolic dictionary.
         if latex:
-            sharp = {(e + 1,): sharp_vector[e] for e in range(self.dim)}
+            sharp = {(e + 1,): sym.simplify(sharp_vector[e]) for e in range(self.dim)}
             return sym.latex(sharp)
         else:
-            return {(e + 1,): f"{sharp_vector[e]}" for e in range(self.dim)}
+            return {(e + 1,): f"{sym.simplify(sharp_vector[e])}" for e in range(self.dim)}
 
     def is_in_kernel(self, bivector, one_form):
         """ Check if a differential 1-form alpha belongs to the kernel of a given Poisson bivector field,
