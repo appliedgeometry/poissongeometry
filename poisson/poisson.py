@@ -350,10 +350,10 @@ class PoissonGeometry:
             raise FunctionError(F'Fuction {function} == 0')
 
         if not bool(multivector):
-            return {}
+            raise MultivectorError(F'Multivector {multivector} is empty')
 
         if isinstance(multivector, str):
-            return "0"
+            raise MultivectorError(F'Multivector {multivector} is not a dict')
 
         len_keys = []
         for e in multivector:
@@ -380,8 +380,8 @@ class PoissonGeometry:
         for term in curl_terms:
             counter.update(term)
         curl = dict(counter)
-        sym_curl = {e: curl[e] for e in curl if sym.simplify(curl[e]) != 0}
-        str_curl = {e: f"{curl[e]}" for e in curl if sym.simplify(curl[e]) != 0}
+        sym_curl = {e: curl[e] for e in curl}
+        str_curl = {e: f"{curl[e]}" for e in curl}
 
         if deg_multivector - 1 == 0:
             if latex:
