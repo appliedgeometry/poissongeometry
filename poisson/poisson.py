@@ -177,6 +177,8 @@ class PoissonGeometry:
         image = self.sharp_morphism(bivector, one_form)
         if not isinstance(image, dict):
             return image
+        if all(value == '0' for value in image.values()):
+            image = {}
         return False if bool(image) else True
 
     def hamiltonian_vf(self, bivector, ham_function, latex=False):
@@ -251,6 +253,8 @@ class PoissonGeometry:
         ham_vf = self.hamiltonian_vf(bivector, function)
         if not isinstance(ham_vf, dict):
             return ham_vf
+        if all(value == '0' for value in ham_vf.values()):
+            ham_vf = {}
         return False if bool(ham_vf) else True
 
     def poisson_bracket(self, bivector, function_1, function_2, latex=False):
@@ -470,6 +474,8 @@ class PoissonGeometry:
         mod_vf = self.modular_vf(bivector, '1')
         if not isinstance(mod_vf, dict):
             return mod_vf
+        if all(value == '0' for value in mod_vf.values()):
+            mod_vf = {}
         return False if bool(mod_vf) else True
 
     def one_forms_bracket(self, bivector, one_form_1, one_form_2, latex=False):
@@ -526,6 +532,7 @@ class PoissonGeometry:
             if len(tuple(filter(lambda x: (x <= 0), e))) > 0:
                 raise MultivectorError(F'invalid key {e} in {bivector}')
 
+        # Check
         if self.is_in_kernel(bivector, one_form_1) and self.is_in_kernel(bivector, one_form_2):
             return {}
 
@@ -1190,6 +1197,8 @@ class PoissonGeometry:
         jac = self.coboundary_operator(bivector, bivector)
         if not isinstance(jac, dict):
             return jac
+        if all(value == '0' for value in jac.values()):
+            jac = {}
         return False if bool(jac) else True
 
     def is_poisson_vf(self, bivector, vector_field):
@@ -1222,6 +1231,8 @@ class PoissonGeometry:
         sch_biv_vf = self.coboundary_operator(bivector, vector_field)
         if not isinstance(sch_biv_vf, dict):
             return sch_biv_vf
+        if all(value == '0' for value in sch_biv_vf.values()):
+            sch_biv_vf = {}
         return False if bool(sch_biv_vf) else True
 
     def is_poisson_pair(self, bivector_1, bivector_2):
@@ -1252,4 +1263,6 @@ class PoissonGeometry:
         sch_biv1_biv2 = self.coboundary_operator(bivector_1, bivector_2)
         if not isinstance(sch_biv1_biv2, dict):
             return sch_biv1_biv2
+        if all(value == '0' for value in sch_biv1_biv2.values()):
+            sch_biv1_biv2 = {}
         return False if bool(sch_biv1_biv2) else True
